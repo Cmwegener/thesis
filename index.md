@@ -4,3 +4,4 @@
 [Percent Cover](https://cmwegener.github.io/thesis/percentcover.html)  
 [Oogonia per meter](https://cmwegener.github.io/thesis/oogoina_per_meter.html)  
 [Oogonia per conceptacle](https://cmwegener.github.io/thesis/oogonia_per_conceptacle.html)
+[Percent Reproductive Apices](https://cmwegener.github.io/thesis/percent_ra.html)
