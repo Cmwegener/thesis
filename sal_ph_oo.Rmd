@@ -1,0 +1,153 @@
+---
+title: 'Experiment: Oogonia released per treatment'
+author: "Chelsey Wegener"
+date: "9/22/2020"
+output: html_document
+---
+
+Here I produce a 3D graph with oogonia, salinity and pH. For oogonia, I'll take the average of oogonia released per thalli. For pH I'll correct the pH Hach readings based on our discrete samples (explained below). For salinity I'll use the average salinity in the units measured by Hach.  
+
+For pH I will correct the value of the unit Hach values to the discrete values using the regressions line I made here: https://cmwegener.github.io/thesis/hach_vs_discrete.html
+pH_Hach=1.8+0.78*pH_discrete  
+pH_discrete=(pH_Hach - 1.8)/.78
+
+
+```{r setup, include=FALSE}
+rm(list=ls()) 
+library(ggplot2)
+library(ggpubr)
+library(scales)
+library(lubridate)
+library(readr)
+library(dplyr)
+library(chron)
+library(plotly)
+library(dplyr)
+library(tidyr)
+library(taRifx)
+
+exp<-read.csv("C:/Users/chels/Box Sync/Thesis/Data/Working data/mesocosm_all.csv", header = TRUE, sep=",", fileEncoding="UTF-8-BOM", stringsAsFactors = FALSE)
+
+
+```
+
+Convert unit_ph_hach to discrete pH using equation.
+```{r}
+exp$unit_ph_discrete<-(exp$unit_ph_hach-1.8)/.78
+```
+
+Convert to number
+```{r}
+exp$oo_disc_1<-as.numeric(exp$oo_disc_1)
+exp$oo_disc_2<-as.numeric(exp$oo_disc_2)
+exp$oo_disc_3<-as.numeric(exp$oo_disc_3)
+exp$oo_disc_4<-as.numeric(exp$oo_disc_4)
+
+exp$unit_sal_hach<-as.numeric(exp$unit_sal_hach)
+```
+
+Average oogonia per thalli (average per unit)
+```{r}
+exp$avg_oo<-rowMeans(exp[,c('oo_disc_1', 'oo_disc_2', 'oo_disc_3','oo_disc_4')], na.rm=TRUE)
+```
+
+
+Let's subset the data per run
+```{r}
+r1<-subset(exp, run=='1')
+r2<-subset(exp, run=='2')
+r3<-subset(exp,run=='3')
+```
+
+
+Average unit pH over the course of each experiment (using converted values)
+```{r}
+r1_av_ph<-aggregate( unit_ph_discrete ~ thalli,r1, mean)
+
+r2_av_ph<-aggregate( unit_ph_discrete ~ thalli,r2, mean)
+
+r3_av_ph<-aggregate( unit_ph_discrete ~ thalli,r3, mean)
+```
+
+Average unit salinity over the course of each experiment (using Hach readings)
+```{r}
+r1_av_sal<-aggregate( unit_sal_hach ~ thalli,r1, mean)
+
+r2_av_sal<-aggregate( unit_sal_hach ~ thalli,r2, mean)
+
+r3_av_sal<-aggregate( unit_sal_hach ~ thalli,r3, mean)
+
+```
+
+Combine pH and salinity to make new data frame
+```{r}
+r1_ph_sal<-cbind(r1_av_ph, r1_av_sal)
+r2_ph_sal<-cbind(r2_av_ph, r2_av_sal)
+r3_ph_sal<-cbind(r3_av_ph, r3_av_sal)
+
+```
+
+Add run number
+```{r}
+r1_ph_sal$run<-"1"
+r2_ph_sal$run<-"2"
+r3_ph_sal$run<-"3"
+```
+
+Change column names. Not needed. Just helps me check track
+```{r}
+names(r1_ph_sal)[names(r1_ph_sal) == "unit_sal_hach"] <- "sal_graph"
+names(r2_ph_sal)[names(r2_ph_sal) == "unit_sal_hach"] <- "sal_graph"
+names(r3_ph_sal)[names(r3_ph_sal) == "unit_sal_hach"] <- "sal_graph"
+
+names(r1_ph_sal)[names(r1_ph_sal) == "unit_ph_discrete"] <- "ph_graph"
+names(r2_ph_sal)[names(r2_ph_sal) == "unit_ph_discrete"] <- "ph_graph"
+names(r3_ph_sal)[names(r3_ph_sal) == "unit_ph_discrete"] <- "ph_graph"
+
+```
+
+Add average oogoina data
+```{r}
+r1_all<-merge(r1, r1_ph_sal[, c("thalli", "sal_graph", "ph_graph")], by="thalli")
+
+r2_all<-merge(r2, r2_ph_sal[, c("thalli", "sal_graph", "ph_graph")], by="thalli")
+
+r3_all<-merge(r3, r3_ph_sal[, c("thalli", "sal_graph", "ph_graph")], by="thalli")
+
+final<-rbind(r1_all, r2_all, r3_all)
+
+final<-final[!is.na(final$avg_oo), ]
+```
+
+3D plot
+```{r}
+plot_ly(final, x = ~ph_graph, y = ~sal_graph, z = ~avg_oo, color = ~treatment, colors = c('red', 'blue', "goldenrod1", 'green')) %>%
+  layout(title="Interactive effect of salinity and pH on oogonia released")%>%
+  add_markers(size=2) %>% 
+  layout(scene = list(xaxis = list(title = 'pH'),
+                      yaxis = list(title = 'Salinity'),
+                      zaxis = list(title = 'Oogoinia')))
+```
+Not colorblind friendly. 
+
+To add a surface I need to make a matrix
+```{r}
+rm(list=setdiff(ls(), "final"))
+final <- subset(final, select = c(avg_oo, ph_graph, sal_graph))
+
+matrix<-data.matrix(final)
+```
+
+Now I can plot
+```{r}
+plot_ly(final, x = ~ph_graph, y = ~sal_graph, z = matrix) %>%
+  layout(title="Interactive effect of salinity and pH on oogonia released")%>%
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = 'pH'),
+                      yaxis = list(title = 'Salinity'),
+                      zaxis = list(title = 'Oogoinia')))
+                             
+```
+
+
+
