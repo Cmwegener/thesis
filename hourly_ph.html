@@ -372,127 +372,22 @@ summary {
 <p><strong>Average hourly pH</strong></p>
 <p>Data at EOS are collected every 6 minutes, data at China Camp and Richardson Bay is collected every 15 minutes. No pH data available at Fort Point. I’m going to convert all data to average hourly (60min) salinity so that everything is consitent. The outliers were removed before this step. Outliers detected by QC flag and +/- 2sd from 7 day rolling mean. Using averageTime function in openair package to calculate hourly salinity mean. For timeAverage function to work, you need a date or POSIXct column named “date”. interval = frequency of data collection.</p>
 <pre class="r"><code>rm(list=ls())
-library(tidyverse)</code></pre>
-<pre><code>## -- Attaching packages -------------------------------------------------------------------------------------- tidyverse 1.3.0 --</code></pre>
-<pre><code>## v ggplot2 3.3.2     v purrr   0.3.4
-## v tibble  3.0.3     v dplyr   1.0.2
-## v tidyr   1.1.2     v stringr 1.4.0
-## v readr   1.3.1     v forcats 0.5.0</code></pre>
-<pre><code>## -- Conflicts ----------------------------------------------------------------------------------------- tidyverse_conflicts() --
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>library(ggpubr)
-library(scales)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;scales&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     discard</code></pre>
-<pre><code>## The following object is masked from &#39;package:readr&#39;:
-## 
-##     col_factor</code></pre>
-<pre class="r"><code>library(chron)
-library(plotly)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;plotly&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
-## 
-##     last_plot</code></pre>
-<pre><code>## The following object is masked from &#39;package:stats&#39;:
-## 
-##     filter</code></pre>
-<pre><code>## The following object is masked from &#39;package:graphics&#39;:
-## 
-##     layout</code></pre>
-<pre class="r"><code>library(taRifx)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;taRifx&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:plotly&#39;:
-## 
-##     distinct</code></pre>
-<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
-## 
-##     between, distinct, first, last</code></pre>
-<pre><code>## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     rep_along</code></pre>
-<pre class="r"><code>library(aweek)
+library(tidyverse)
+library(ggpubr)
+library(scales)
+library(chron)
+library(plotly)
+library(taRifx)
+library(aweek)
 library(easypackages)
-library(renv)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;renv&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     modify</code></pre>
-<pre><code>## The following object is masked from &#39;package:stats&#39;:
-## 
-##     update</code></pre>
-<pre><code>## The following objects are masked from &#39;package:utils&#39;:
-## 
-##     history, upgrade</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     load, remove</code></pre>
-<pre class="r"><code>library(here)</code></pre>
-<pre><code>## here() starts at C:/Users/chels/Box Sync/Thesis/Data/Working data</code></pre>
-<pre class="r"><code>library(ggthemes)
-library(gridExtra)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;gridExtra&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
-## 
-##     combine</code></pre>
-<pre class="r"><code>library(patchwork)
-library(tidyquant)</code></pre>
-<pre><code>## Loading required package: lubridate</code></pre>
-<pre><code>## 
-## Attaching package: &#39;lubridate&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:chron&#39;:
-## 
-##     days, hours, minutes, seconds, years</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     date, intersect, setdiff, union</code></pre>
-<pre><code>## Loading required package: PerformanceAnalytics</code></pre>
-<pre><code>## Loading required package: xts</code></pre>
-<pre><code>## Loading required package: zoo</code></pre>
-<pre><code>## 
-## Attaching package: &#39;zoo&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     as.Date, as.Date.numeric</code></pre>
-<pre><code>## 
-## Attaching package: &#39;xts&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:taRifx&#39;:
-## 
-##     first, last</code></pre>
-<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
-## 
-##     first, last</code></pre>
-<pre><code>## 
-## Attaching package: &#39;PerformanceAnalytics&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:graphics&#39;:
-## 
-##     legend</code></pre>
-<pre><code>## Loading required package: quantmod</code></pre>
-<pre><code>## Loading required package: TTR</code></pre>
-<pre><code>## Registered S3 method overwritten by &#39;quantmod&#39;:
-##   method            from
-##   as.zoo.data.frame zoo</code></pre>
-<pre><code>## Version 0.4-0 included new data defaults. See ?getSymbols.</code></pre>
-<pre><code>## == Need to Learn tidyquant? ===================================================================================================
-## Business Science offers a 1-hour course - Learning Lab #9: Performance Analysis &amp; Portfolio Optimization with tidyquant!
-## &lt;/&gt; Learn more at: https://university.business-science.io/p/learning-labs-pro &lt;/&gt;</code></pre>
-<pre class="r"><code>library(recipes) </code></pre>
-<pre><code>## 
-## Attaching package: &#39;recipes&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:stringr&#39;:
-## 
-##     fixed</code></pre>
-<pre><code>## The following object is masked from &#39;package:stats&#39;:
-## 
-##     step</code></pre>
-<pre class="r"><code>library(cranlogs)
+library(renv)
+library(here)
+library(ggthemes)
+library(gridExtra)
+library(patchwork)
+library(tidyquant)
+library(recipes) 
+library(cranlogs)
 library(knitr)
 library(openair)</code></pre>
 <p><strong>China Camp</strong></p>
