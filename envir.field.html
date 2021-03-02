@@ -11,7 +11,6 @@
 
 <meta name="author" content="Chelsey Wegener" />
 
-<meta name="date" content="2020-11-23" />
 
 <title>Environmental and field data</title>
 
@@ -365,7 +364,7 @@ summary {
 
 <h1 class="title toc-ignore">Environmental and field data</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">11/23/2020</h4>
+<h4 class="date">01 March, 2021</h4>
 
 </div>
 
@@ -374,7 +373,8 @@ summary {
 <p>Steps for environmental data: The environmental data here has been cleaned and is the hourly median dfs. First I filter between survey dates, then take median. Next I did daily minimum, daily maximum, daily range, and daily median and saved these in a csv to explore more later. I then took the median of those values subseted between survey dates. I combine the data into one df per site/station. At the end I’ll export these as csvs which I could then use for analysis.</p>
 <p>Notes:<br />
 -another code that works for counting rows: length(which(a1$max.daily.sal &lt; 10))</p>
-<p><strong>Set up</strong></p>
+<p>Field data: <a href="https://github.com/Cmwegener/thesis/tree/master/data/field" class="uri">https://github.com/Cmwegener/thesis/tree/master/data/field</a><br />
+Environmental <a href="data:https://github.com/Cmwegener/thesis/tree/master/data/environmental" class="uri">data:https://github.com/Cmwegener/thesis/tree/master/data/environmental</a> <strong>Set up</strong></p>
 <pre class="r"><code>rm(list=ls())
 
 library(tidyverse)
@@ -397,7 +397,10 @@ library(knitr)
 library(openair)
 library(data.table)</code></pre>
 <p>Read in field data</p>
-<pre class="r"><code>field&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Final data/CB_field_data_plus.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)</code></pre>
+<pre class="r"><code>field&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/field/CB_field_data_plus.csv&quot;,
+    header = TRUE
+  )</code></pre>
 <p>####Paradise Cay and China Camp####</p>
 <pre class="r"><code>#subset site
 pc&lt;-subset(field, field$site.old == &quot;PC&quot;)
@@ -454,7 +457,10 @@ pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)</code></pre>
 <p>Now I need to add the summaries of the environmental data. I’ll look at data between field surveys and 30days prior for the first field survey.</p>
 <p>Salinity</p>
 <pre class="r"><code>#read and format data
-cc_sal&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/cc_sal.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+cc_sal&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/cc_sal.csv&quot;,
+    header = TRUE
+  )
 cc_sal$date&lt;-as.Date(cc_sal$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #look at survey dates
@@ -650,7 +656,10 @@ cc.daily.med.sal$date&lt;-as.Date(cc.daily.med.sal$date, format=c(&quot;%Y-%m-%d
 pc.cc&lt;-merge(pc.cc, cc.daily.med.sal[,c(&quot;date&quot;, &quot;daily.med.sal&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Dissolved oxygen</p>
 <pre class="r"><code>#read in data
-cc_do&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/cc_do.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+cc_do&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/cc_do.csv&quot;,
+    header = TRUE
+  )
 cc_do$date&lt;-as.Date(cc_do$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
@@ -843,7 +852,10 @@ cc.daily.med.do$date&lt;-as.Date(cc.daily.med.do$date, format=c(&quot;%Y-%m-%d&q
 pc.cc&lt;-merge(pc.cc, cc.daily.med.do[,c(&quot;date&quot;, &quot;daily.med.do&quot;)], by=&quot;date&quot;)</code></pre>
 <p>pH</p>
 <pre class="r"><code>#read in data
-cc_ph&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/cc_ph.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+cc_ph&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/cc_ph.csv&quot;,
+    header = TRUE
+  )
 cc_ph$date&lt;-as.Date(cc_ph$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
@@ -1032,9 +1044,12 @@ cc.daily.med.ph$date&lt;-as.Date(cc.daily.med.ph$date, format=c(&quot;%Y-%m-%d&q
 
 #merge dfs
 pc.cc&lt;-merge(pc.cc, cc.daily.med.ph[,c(&quot;date&quot;, &quot;daily.med.ph&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Water temperature (wt for ease of coding)</p>
+<p>Water temperature</p>
 <pre class="r"><code>#read in data
-cc_wt&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/cc_watertemp.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+cc_wt&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/cc_watertemp.csv&quot;,
+    header = TRUE
+  )
 cc_wt$date&lt;-as.Date(cc_wt$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
@@ -1225,14 +1240,9 @@ cc.daily.med.wt$date&lt;-as.Date(cc.daily.med.wt$date, format=c(&quot;%Y-%m-%d&q
 #merge dfs
 pc.cc&lt;-merge(pc.cc, cc.daily.med.wt[,c(&quot;date&quot;, &quot;daily.med.wt&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Save csvs</p>
-<pre class="r"><code>write.csv(pc.cc, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/pc.cc.csv&quot;)
-write.csv(cc.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/cc.daily.sum.csv&quot;)</code></pre>
+<pre class="r"><code>write.csv(cc.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/cc.daily.sum.csv&quot;)</code></pre>
+<p>cc.daily sum: <a href="https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/cc.daily.sum.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/cc.daily.sum.csv</a></p>
 <p>Now I’m coing to count “events” and adding them to the above dataframes. I’m having a hard time doing a loop or counting “3 consecutive days of salinity below x” so instead I’m going to just count “days with salinity below x” and use that for analysis. These counts will be subseted by survey dates as done above.</p>
-<pre class="r"><code>cc.daily.sum&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/cc.daily.sum.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
-
-pc.cc&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/pc.cc.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
-
-pc.cc$date&lt;-as.Date(pc.cc$date, format=c(&quot;%Y-%m-%d&quot;))</code></pre>
 <p>Subset by survey dates</p>
 <pre class="r"><code>a1&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-05-14&quot; &amp; cc.daily.sum$date &lt; &quot;2018-06-14&quot;,]
 a2&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-06-14&quot; &amp; cc.daily.sum$date &lt; &quot;2018-07-17&quot;,]
@@ -1405,7 +1415,8 @@ cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt15&quot;)], by=&quot;date&quot;)</code></pre>
-<p>What should I do for range? Trying a range greater than 10 because that seems kinda extreme but I’m not sure what to use here. Number of days with a daily salinity range &gt;10</p>
+<p>What should I do for range? Trying a range greater than 10 because that seems kinda extreme but I’m not sure what to use here.<br />
+Number of days with a daily salinity range &gt;10</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.sal.range&gt;10, ])
 aa2&lt;-nrow(a2[a2$daily.sal.range&gt;10, ])
 aa3&lt;-nrow(a3[a3$daily.sal.range&gt;10, ])
@@ -1588,8 +1599,6 @@ cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Save csvs</p>
-<pre class="r"><code>write.csv(pc.cc, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/pc.cc.csv&quot;)</code></pre>
 <p>####Point Chauncy and EOS Tiburon#### Monthly summaries of the field data</p>
 <pre class="r"><code>#subset for site
 nd&lt;-subset(field, field$site.old == &quot;ND&quot;)
@@ -1647,9 +1656,11 @@ nd.eos&lt;-merge(nd.eos, nd.r, by=&quot;date&quot;, all=TRUE)
 rm(nd, nd.r)</code></pre>
 <p>Salinity</p>
 <pre class="r"><code>#read in and format data
-eos_sal&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos_sal.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+eos_sal&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/eos_sal.csv&quot;,
+    header = TRUE
+  )
 eos_sal$date&lt;-as.Date(eos_sal$date, format=c(&quot;%Y-%m-%d&quot;))
-
 
 #look
 print(nd.eos$date)</code></pre>
@@ -1852,7 +1863,10 @@ eos.daily.med.sal$date&lt;-as.Date(eos.daily.med.sal$date, format=c(&quot;%Y-%m-
 nd.eos&lt;-merge(nd.eos, eos.daily.med.sal[,c(&quot;date&quot;, &quot;daily.med.sal&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Dissolved oxygen</p>
 <pre class="r"><code>#read in data
-eos_do&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos_do.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+eos_do&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/eos_do.csv&quot;,
+    header = TRUE
+  )
 eos_do$date&lt;-as.Date(eos_do$date, format=c(&quot;%Y-%m-%d&quot;))
 
 a1&lt;- eos_do[eos_do$date &gt;= &quot;2018-05-14&quot; &amp; eos_do$date &lt; &quot;2018-06-14&quot;,]
@@ -2055,7 +2069,10 @@ eos.daily.med.do$date&lt;-as.Date(eos.daily.med.do$date, format=c(&quot;%Y-%m-%d
 nd.eos&lt;-merge(nd.eos, eos.daily.med.do[,c(&quot;date&quot;, &quot;daily.med.do&quot;)], by=&quot;date&quot;)</code></pre>
 <p>pH</p>
 <pre class="r"><code>#read in data
-eos_ph&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos_ph.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+eos_ph&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/eos_ph.csv&quot;,
+    header = TRUE
+  )
 eos_ph$date&lt;-as.Date(eos_ph$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
@@ -2257,7 +2274,10 @@ eos.daily.med.ph$date&lt;-as.Date(eos.daily.med.ph$date, format=c(&quot;%Y-%m-%d
 nd.eos&lt;-merge(nd.eos, eos.daily.med.ph[,c(&quot;date&quot;, &quot;daily.med.ph&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Water temperature</p>
 <pre class="r"><code>#read in data
-eos_wt&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos_watertemp.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+eos_wt&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/eos_watertemp.csv&quot;,
+    header = TRUE
+  )
 eos_wt$date&lt;-as.Date(eos_wt$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset data
@@ -2458,14 +2478,10 @@ eos.daily.med.wt$date&lt;-as.Date(eos.daily.med.wt$date, format=c(&quot;%Y-%m-%d
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.daily.med.wt[,c(&quot;date&quot;, &quot;daily.med.wt&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Save csv</p>
-<pre class="r"><code>write.csv(nd.eos, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/nd.eos.csv&quot;)
-write.csv(eos.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos.daily.sum.csv&quot;)</code></pre>
+<pre class="r"><code>write.csv(eos.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos.daily.sum.csv&quot;)</code></pre>
+<p>eos.daily.sum: <a href="https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/eos.daily.sum.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/eos.daily.sum.csv</a></p>
 <p>Daily summaries and “monthly” summaries done. Time for occurances of events</p>
-<pre class="r"><code>eos.daily.sum&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos.daily.sum.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
-
-nd.eos&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/nd.eos.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
-
-nd.eos$date&lt;-as.Date(nd.eos$date, format=c(&quot;%Y-%m-%d&quot;))</code></pre>
+<pre class="r"><code>nd.eos$date&lt;-as.Date(nd.eos$date, format=c(&quot;%Y-%m-%d&quot;))</code></pre>
 <p>Subset by survey dates</p>
 <pre class="r"><code>a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
 a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
@@ -2816,7 +2832,7 @@ eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;daily.ph.range.gt0.5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Water temperature none, not sure if this is worth going into more. More interested in air temperature anyway</p>
+<p>Water temperature none, not sure if this is worth going into more for now. More interested in air temperature anyway</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.max.wt&lt;20, ])
 aa2&lt;-nrow(a2[a2$daily.max.wt&lt;20, ])
 aa3&lt;-nrow(a3[a3$daily.max.wt&lt;20, ])
@@ -2843,8 +2859,6 @@ eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Save csvs</p>
-<pre class="r"><code>write.csv(nd.eos, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/nd.eos.csv&quot;)</code></pre>
 <p>####Brickyard Park and Richardson Bay#### Monthly summaries of the field data</p>
 <pre class="r"><code>#subset site
 by&lt;-subset(field, field$site.old == &quot;BY&quot;)
@@ -2900,7 +2914,10 @@ by.rb&lt;-merge(by.rb, by.r, by=&quot;date&quot;, all=TRUE)
 rm(by, by.r)</code></pre>
 <p>Salinity</p>
 <pre class="r"><code>#read in an format data
-rb_sal&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb_sal.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+rb_sal&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/rb_sal.csv&quot;,
+    header = TRUE
+  )
 rb_sal$date&lt;-as.Date(rb_sal$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #looking at survey dates
@@ -3109,7 +3126,10 @@ rb.daily.med.sal$date&lt;-as.Date(rb.daily.med.sal$date, format=c(&quot;%Y-%m-%d
 by.rb&lt;-merge(by.rb, rb.daily.med.sal[,c(&quot;date&quot;, &quot;daily.med.sal&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Dissolved oxygen</p>
 <pre class="r"><code>#read in data
-rb_do&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb_do.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+rb_do&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/rb_do.csv&quot;,
+    header = TRUE
+  )
 rb_do$date&lt;-as.Date(rb_do$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset by date
@@ -3315,7 +3335,11 @@ rb.daily.med.do$date&lt;-as.Date(rb.daily.med.do$date, format=c(&quot;%Y-%m-%d&q
 by.rb&lt;-merge(by.rb, rb.daily.med.do[,c(&quot;date&quot;, &quot;daily.med.do&quot;)], by=&quot;date&quot;)</code></pre>
 <p>pH</p>
 <pre class="r"><code>#read in data
-rb_ph&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb_ph.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+rb_ph&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/rb_ph.csv&quot;,
+    header = TRUE
+  )
+
 rb_ph$date&lt;-as.Date(rb_ph$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
@@ -3523,7 +3547,10 @@ rb.daily.med.ph$date&lt;-as.Date(rb.daily.med.ph$date, format=c(&quot;%Y-%m-%d&q
 by.rb&lt;-merge(by.rb, rb.daily.med.ph[,c(&quot;date&quot;, &quot;daily.med.ph&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Water temperature</p>
 <pre class="r"><code>#read in data
-rb_wt&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb_watertemp.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+rb_wt&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/rb_watertemp.csv&quot;,
+    header = TRUE
+  )
 rb_wt$date&lt;-as.Date(rb_wt$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
@@ -3727,15 +3754,8 @@ rb.daily.med.wt$date&lt;-as.Date(rb.daily.med.wt$date, format=c(&quot;%Y-%m-%d&q
 
 #merge dfs
 by.rb&lt;-merge(by.rb, rb.daily.med.wt[,c(&quot;date&quot;, &quot;daily.med.wt&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Save csv</p>
-<pre class="r"><code>write.csv(by.rb, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/by.rb.csv&quot;)
-write.csv(rb.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb.daily.sum.csv&quot;)</code></pre>
-<p>Read in data</p>
-<pre class="r"><code>rb.daily.sum&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb.daily.sum.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
-
-by.rb&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/by.rb.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
-
-by.rb$date&lt;-as.Date(by.rb$date, format=c(&quot;%Y-%m-%d&quot;))</code></pre>
+<p>Daily summary</p>
+<pre class="r"><code>by.rb$date&lt;-as.Date(by.rb$date, format=c(&quot;%Y-%m-%d&quot;))</code></pre>
 <p>Subset by survey dates</p>
 <pre class="r"><code>a1&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-05-15&quot; &amp; rb.daily.sum$date &lt; &quot;2018-06-15&quot;,]
 a2&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-06-15&quot; &amp; rb.daily.sum$date &lt; &quot;2018-07-16&quot;,]
@@ -3922,7 +3942,7 @@ rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt15&quot;)], by=&quot;date&quot;)</code></pre>
-<p>What should I do for range? Trying a range greater than 10 because that seems kibya extreme but I’m not sure what to use here. Number of days with a daily salinity range &gt;10</p>
+<p>What should I do for range? Trying a range greater than 10 because that seems extreme but I’m not sure what to use here. Number of days with a daily salinity range &gt;10</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.sal.range&gt;10, ])
 aa2&lt;-nrow(a2[a2$daily.sal.range&gt;10, ])
 aa3&lt;-nrow(a3[a3$daily.sal.range&gt;10, ])
@@ -4120,8 +4140,8 @@ rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 #merge dfs
 by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Save csv</p>
-<pre class="r"><code>write.csv(by.rb, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/by.rb.csv&quot;)
-write.csv(rb.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb.daily.sum.csv&quot;)</code></pre>
+<pre class="r"><code>write.csv(rb.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb.daily.sum.csv&quot;)</code></pre>
+<p>rb.daily.sum: <a href="https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/rb.daily.sum.csv" class="uri">https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/rb.daily.sum.csv</a></p>
 <p>####<strong>Fort Point and Horseshoe Bay</strong></p>
 <p>Monthly summaries of the field data</p>
 <pre class="r"><code>hs&lt;-subset(field, field$site.old == &quot;HS&quot;)
@@ -4177,7 +4197,10 @@ hs.fp&lt;-merge(hs.fp, hs.r, by=&quot;date&quot;, all=TRUE)
 rm(hs, hs.r)</code></pre>
 <p>Salinity</p>
 <pre class="r"><code>#read in data
-fp_sal&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/fp_sal.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+fp_sal&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/fp_sal.csv&quot;,
+    header = TRUE
+  )
 fp_sal$date&lt;-as.Date(fp_sal$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #looking at survey dates
@@ -4411,7 +4434,10 @@ fp.filler$daily.ph.range&lt;-NA
 hs.fp&lt;-merge(hs.fp, fp.filler, by=&quot;date&quot;)</code></pre>
 <p>Water temperature</p>
 <pre class="r"><code>#read in data
-fp_wt&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/fp_watertemp.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+fp_wt&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/fp_watertemp.csv&quot;,
+    header = TRUE
+  )
 fp_wt$date&lt;-as.Date(fp_wt$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #Subset the data by dates 
@@ -4616,14 +4642,10 @@ fp.daily.med.wt$date&lt;-as.Date(fp.daily.med.wt$date, format=c(&quot;%Y-%m-%d&q
 #merge dfs
 hs.fp&lt;-merge(hs.fp, fp.daily.med.wt, hs=&quot;date&quot;)</code></pre>
 <p>Write csv</p>
-<pre class="r"><code>write.csv(hs.fp, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/hs.fp.csv&quot;)
-write.csv(fp.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/fp.daily.sum.csv&quot;)</code></pre>
-<p>Read in field data</p>
-<pre class="r"><code>fp.daily.sum&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/fp.daily.sum.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
-
-hs.fp&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/hs.fp.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
-
-hs.fp$date&lt;-as.Date(hs.fp$date, format=c(&quot;%Y-%m-%d&quot;))</code></pre>
+<pre class="r"><code>write.csv(fp.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/fp.daily.sum.csv&quot;)</code></pre>
+<p>fp.daily.sum: <a href="https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/fp.daily.sum.csv" class="uri">https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/fp.daily.sum.csv</a></p>
+<p>Daily summary</p>
+<pre class="r"><code>hs.fp$date&lt;-as.Date(hs.fp$date, format=c(&quot;%Y-%m-%d&quot;))</code></pre>
 <p>Subset hs survey dates</p>
 <pre class="r"><code>a1&lt;-fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-05-15&quot; &amp; fp.daily.sum$date &lt; &quot;2018-06-15&quot;,]
 a2&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-06-15&quot; &amp; fp.daily.sum$date &lt; &quot;2018-07-16&quot;,]
@@ -4912,26 +4934,19 @@ fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 hs.fp&lt;-merge(hs.fp, fp.dates, hs=&quot;date&quot;)</code></pre>
-<p>Write csv</p>
-<pre class="r"><code>write.csv(hs.fp, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/hs.fp.csv&quot;)</code></pre>
 <p>####Combine dfs####</p>
-<pre class="r"><code>#removing unneeded column
-pc.cc&lt;-subset(pc.cc, select=-c(X))
-nd.eos&lt;-subset(nd.eos, select=-c(X))
-by.rb&lt;-subset(by.rb, select=-c(X))
-hs.fp&lt;-subset(hs.fp, select=-c(X))
-
-#adding site name
+<pre class="r"><code>#adding site name
 pc.cc$site&lt;-&quot;pc.cc&quot;
 nd.eos$site&lt;-&quot;nd.eos&quot;
 by.rb$site&lt;-&quot;by.rb&quot;
 hs.fp$site&lt;-&quot;hs.fp&quot;
 
 #combine
-all&lt;-rbind(pc.cc,nd.eos,by.rb,hs.fp)
+all&lt;-dplyr::bind_rows(pc.cc,nd.eos,by.rb,hs.fp)
 
 #save csv
 write.csv(all, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/envi.field.all.csv&quot;)</code></pre>
+<p>final combined df for analysis:<a href="https://github.com/Cmwegener/thesis/tree/master/data/environment_field" class="uri">https://github.com/Cmwegener/thesis/tree/master/data/environment_field</a></p>
 
 
 
