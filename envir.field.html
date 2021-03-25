@@ -364,7 +364,7 @@ summary {
 
 <h1 class="title toc-ignore">Environmental and field data</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">01 March, 2021</h4>
+<h4 class="date">25 March, 2021</h4>
 
 </div>
 
@@ -453,6 +453,23 @@ pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)
 
 #mean percent reproductive dry weight
 pc.r&lt;-aggregate(perc.rdw ~ date, pc, mean, na.rm=TRUE)
+pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)
+
+#mean oogonia per receptacle
+pc$oog.recpt&lt;-(pc$avg.oog * pc$no.concept.recp)
+pc.r&lt;-aggregate(no.concept.recp ~ date, pc, mean, na.rm=TRUE)
+pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)
+
+#mean oogonia per thalli 
+#(note: theres 2 apices per receptical)
+# oogonia/receptacle * (1 receptacle / 2 apices) * reproductive apices/thalli = oogonia/thalli
+pc$oog.thalli &lt;- (pc$oog.recpt * 0.5 * pc$apices.repro)
+pc.r&lt;-aggregate(oog.thalli ~ date, pc, mean, na.rm=TRUE)
+pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)
+
+#mean conceptacle per thalli
+pc$con.thalli &lt;- (pc$no.concept.recp * pc$apices.repro)
+pc.r&lt;-aggregate(con.thalli ~ date, pc, mean, na.rm=TRUE)
 pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)</code></pre>
 <p>Now I need to add the summaries of the environmental data. I’ll look at data between field surveys and 30days prior for the first field survey.</p>
 <p>Salinity</p>
@@ -1651,6 +1668,23 @@ nd.eos&lt;-merge(nd.eos, nd.r, by=&quot;date&quot;, all=TRUE)
 
 #mean percent reproductive dry weight
 nd.r&lt;-aggregate(perc.rdw ~ date, nd, mean, na.rm=TRUE)
+nd.eos&lt;-merge(nd.eos, nd.r, by=&quot;date&quot;, all=TRUE)
+
+#mean oogonia per receptacle
+nd$oog.recpt&lt;-(nd$avg.oog * nd$no.concept.recp)
+nd.r&lt;-aggregate(no.concept.recp ~ date, nd, mean, na.rm=TRUE)
+nd.eos&lt;-merge(nd.eos, nd.r, by=&quot;date&quot;, all=TRUE)
+
+#mean oogonia per thalli 
+#(note: theres 2 apices per receptical)
+# oogonia/receptacle * (1 receptacle / 2 apices) * reproductive apices/thalli = oogonia/thalli
+nd$oog.thalli &lt;- (nd$oog.recpt * 0.5 * nd$apices.repro)
+nd.r&lt;-aggregate(oog.thalli ~ date, nd, mean, na.rm=TRUE)
+nd.eos&lt;-merge(nd.eos, nd.r, by=&quot;date&quot;, all=TRUE)
+
+#mean conceptacle per thalli
+nd$con.thalli &lt;- (nd$no.concept.recp * nd$apices.repro)
+nd.r&lt;-aggregate(con.thalli ~ date, nd, mean, na.rm=TRUE)
 nd.eos&lt;-merge(nd.eos, nd.r, by=&quot;date&quot;, all=TRUE)
 
 rm(nd, nd.r)</code></pre>
@@ -2909,6 +2943,23 @@ by.rb&lt;-merge(by.rb, by.r, by=&quot;date&quot;, all=TRUE)
 
 #mean percent reproductive dry weight
 by.r&lt;-aggregate(perc.rdw ~ date, by, mean, na.rm=TRUE)
+by.rb&lt;-merge(by.rb, by.r, by=&quot;date&quot;, all=TRUE)
+
+#mean oogonia per receptacle
+by$oog.recpt&lt;-(by$avg.oog * by$no.concept.recp)
+by.r&lt;-aggregate(no.concept.recp ~ date, by, mean, na.rm=TRUE)
+by.rb&lt;-merge(by.rb, by.r, by=&quot;date&quot;, all=TRUE)
+
+#mean oogonia per thalli 
+#(note: theres 2 apices per receptical)
+# oogonia/receptacle * (1 receptacle / 2 apices) * reproductive apices/thalli = oogonia/thalli
+by$oog.thalli &lt;- (by$oog.recpt * 0.5 * by$apices.repro)
+by.r&lt;-aggregate(oog.thalli ~ date, by, mean, na.rm=TRUE)
+by.rb&lt;-merge(by.rb, by.r, by=&quot;date&quot;, all=TRUE)
+
+#mean conceptacle per thalli
+by$con.thalli &lt;- (by$no.concept.recp * by$apices.repro)
+by.r&lt;-aggregate(con.thalli ~ date, by, mean, na.rm=TRUE)
 by.rb&lt;-merge(by.rb, by.r, by=&quot;date&quot;, all=TRUE)
 
 rm(by, by.r)</code></pre>
@@ -4192,6 +4243,23 @@ hs.fp&lt;-merge(hs.fp, hs.r, by=&quot;date&quot;, all=TRUE)
 
 #mean percent reproductive dry weight
 hs.r&lt;-aggregate(perc.rdw ~ date, hs, mean, na.rm=TRUE)
+hs.fp&lt;-merge(hs.fp, hs.r, by=&quot;date&quot;, all=TRUE)
+
+#mean oogonia per receptacle
+hs$oog.recpt&lt;-(hs$avg.oog * hs$no.concept.recp)
+hs.r&lt;-aggregate(no.concept.recp ~ date, hs, mean, na.rm=TRUE)
+hs.fp&lt;-merge(hs.fp, hs.r, by=&quot;date&quot;, all=TRUE)
+
+#mean oogonia per thalli 
+#(note: theres 2 apices per receptical)
+# oogonia/receptacle * (1 receptacle / 2 apices) * reproductive apices/thalli = oogonia/thalli
+hs$oog.thalli &lt;- (hs$oog.recpt * 0.5 * hs$apices.repro)
+hs.r&lt;-aggregate(oog.thalli ~ date, hs, mean, na.rm=TRUE)
+hs.fp&lt;-merge(hs.fp, hs.r, by=&quot;date&quot;, all=TRUE)
+
+#mean conceptacle per thalli
+hs$con.thalli &lt;- (hs$no.concept.recp * hs$apices.repro)
+hs.r&lt;-aggregate(con.thalli ~ date, hs, mean, na.rm=TRUE)
 hs.fp&lt;-merge(hs.fp, hs.r, by=&quot;date&quot;, all=TRUE)
 
 rm(hs, hs.r)</code></pre>
