@@ -364,7 +364,7 @@ summary {
 
 <h1 class="title toc-ignore">Environmental and field data</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">25 March, 2021</h4>
+<h4 class="date">11 May, 2021</h4>
 
 </div>
 
@@ -401,6 +401,15 @@ library(data.table)</code></pre>
       &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/field/CB_field_data_plus.csv&quot;,
     header = TRUE
   )</code></pre>
+<p>Removing outlier<br />
+I have a note from my lab notebook about an extra large thalli I collected. It was heavier than the scale limit and no other thalli collected was that heavy. Additionally it has almost double the number of reproductive apices to the next highest on (401 RA while the next highest is 235). As such it is not a good represenative of the population and I am removing this outlier from analysis.</p>
+<pre class="r"><code>#outlier on row 515. Keeping field data but removing thalli specific data (weight, apices, ects). Since it wasn&#39;t selected as the subset for additional reproductive analysis (number of conceptacles, oogonica, ect) those paramaters are already &quot;NA&#39;
+field$ww.veg&lt;-replace(field$ww.veg, 515,NA)
+field$ww.repro&lt;-replace(field$ww.repro, 515,NA)
+field$dw.veg&lt;-replace(field$dw.veg, 515,NA)
+field$dw.repro&lt;-replace(field$dw.repro, 515,NA)
+field$apices.repro&lt;-replace(field$apices.repro, 515,NA)
+field$apices.veg&lt;-replace(field$apices.veg, 515,NA)</code></pre>
 <p>####Paradise Cay and China Camp####</p>
 <pre class="r"><code>#subset site
 pc&lt;-subset(field, field$site.old == &quot;PC&quot;)
@@ -2278,7 +2287,7 @@ nd.eos&lt;-merge(nd.eos, eos.daily.ph.range[,c(&quot;date&quot;, &quot;daily.ph.
 
 
 #daily median
-#mean of these phinity periods
+#mean of these ph periods
 aa1&lt;-median(a1$daily.med.ph, na.rm=TRUE)
 aa2&lt;-median(a2$daily.med.ph, na.rm=TRUE)
 aa3&lt;-median(a3$daily.med.ph, na.rm=TRUE)
@@ -5013,8 +5022,8 @@ hs.fp$site&lt;-&quot;hs.fp&quot;
 all&lt;-dplyr::bind_rows(pc.cc,nd.eos,by.rb,hs.fp)
 
 #save csv
-write.csv(all, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/envi.field.all.csv&quot;)</code></pre>
-<p>final combined df for analysis:<a href="https://github.com/Cmwegener/thesis/tree/master/data/environment_field" class="uri">https://github.com/Cmwegener/thesis/tree/master/data/environment_field</a></p>
+write.csv(all, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/envi.field.noair.csv&quot;)</code></pre>
+<p>final combined df for analysis:<a href="https://github.com/Cmwegener/thesis/blob/master/data/environment_field/envi.field.noair.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environment_field/envi.field.noair.csv</a></p>
 
 
 
