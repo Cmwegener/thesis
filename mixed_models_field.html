@@ -364,7 +364,7 @@ summary {
 
 <h1 class="title toc-ignore">Mixed Model - field data only</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">10 May, 2021</h4>
+<h4 class="date">11 May, 2021</h4>
 
 </div>
 
@@ -604,7 +604,7 @@ mlm2.2&lt;-lmer(sqrt.no.fuc.q ~ week_nr + sqr.week_nr + (1|site), data=all)</cod
 ## hs.fp    3.0481475
 ## nd.eos  -0.6202658
 ## pc.cc   -6.2971310</code></pre>
-<p><strong>Interpretation of output:</strong> Total Fucus density does change over time. Intercept 14.57 is within the 95% confidence interval (9.19 to 20.61) and the slope does not pass through zero. Need help interpretting but I think the output indicates that there was a decrease of about 5 Fucus per week.</p>
+<p><strong>Interpretation of output:</strong> Total Fucus density does change over time. Intercept 14.57 is within the 95% confidence interval (9.19 to 20.61) and the slope does not pass through zero. Need help interpretting with the transformation (losing 0.4 fucus a week?).</p>
 </div>
 <div id="is-reproduction-affectd-by-time" class="section level4">
 <h4>3. Is reproduction affectd by time?</h4>
@@ -789,14 +789,15 @@ Good fit- look into removing outlier, look into error message</p>
 <pre><code>## Analysis of Variance Table
 ##         npar     Sum Sq    Mean Sq F value
 ## week_nr    1 1126433588 1126433588  7.6181</code></pre>
-<pre class="r"><code>#confint(mlm3.3)
+<pre class="r"><code>#confint(mlm3.3) getting error?
 ranef(mlm3.3)$site</code></pre>
 <pre><code>##        (Intercept)
 ## by.rb            0
 ## hs.fp            0
 ## nd.eos           0
 ## pc.cc            0</code></pre>
-<p><strong>Interpretation of output:</strong> can’t interpret output very well becasue I’m getting an error for the confident intervals</p>
+<p><strong>Interpretation of output:</strong> can’t interpret output very well becasue I’m getting an error for the confident intervals.<br />
+Error: <a href="https://stackoverflow.com/questions/44386686/interpolation-function-approx-in-r-gives-error-need-at-least-two-non-na-valu" class="uri">https://stackoverflow.com/questions/44386686/interpolation-function-approx-in-r-gives-error-need-at-least-two-non-na-valu</a></p>
 <p>3.4 Is percent reproductive tissue affected by the season?<br />
 Good fit- look into split in data</p>
 <p>perc.rdw ~ time + site(random)</p>
@@ -926,6 +927,7 @@ no.large.fuc.q ~ time + site(random)</p>
 ## pc.cc            0</code></pre>
 <p><strong>Interpretation of output</strong> Although the intercept 8.73 is between the 95% confidence interval (6.52 to 11.68), the slope -0.05 passes through zero (-0.133 to .006), meaning large Fucus density does not statistically change over time. This supports the idea that large fucus thalli provide a farily constant and stable habitat for invertebrates (vs small thalli that decrease). This also supports that large thalli more significantly contribute to percent cover while small thalli contribute to total density.</p>
 <p>3.6 Is juvenile density affected by the season?<br />
+Good fit- with transformation<br />
 no.small.fuc.q ~ time + site(random)</p>
 <pre class="r"><code>mlm3.6&lt;-lmer(no.small.fuc.q~ week_nr + (1|site), data=all)
 plot(mlm3.6)</code></pre>
