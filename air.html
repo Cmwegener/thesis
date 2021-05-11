@@ -364,7 +364,7 @@ summary {
 
 <h1 class="title toc-ignore">Air temp</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">06 May, 2021</h4>
+<h4 class="date">11 May, 2021</h4>
 
 </div>
 
@@ -417,8 +417,10 @@ library(data.table)</code></pre>
   ret&lt;-c(median=m, stdev=s, hi.95=hi, lo.95=lo)
 }</code></pre>
 <p>####Air Temperature EOS#### Read in data</p>
-<pre class="r"><code>eos.air&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos_air_temp.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
-
+<pre class="r"><code>eos.air&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/raw/eos_air_temp.csv&quot;,
+    header = TRUE
+  )
 eos.air$date&lt;-as.POSIXct(eos.air$date, format = c(&quot;%Y-%m-%d&quot;))
 eos.air$datetime&lt;-as.POSIXct(eos.air$datetime, format = c(&quot;%Y-%m-%dT%H:%M:%SZ&quot;))
 
@@ -501,7 +503,10 @@ write.csv(air.1hr.med, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bo
 <h4>Air Temperatue Golden Gate Bridge</h4>
 <p>Read in and set up data</p>
 <pre class="r"><code># read in data
-gg.air&lt;-read.csv(&quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/gg_air.csv&quot;, header = TRUE, sep=&quot;,&quot;, fileEncoding=&quot;UTF-8-BOM&quot;, stringsAsFactors = FALSE)
+gg.air&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/raw/gg_air.csv&quot;,
+    header = TRUE
+  )
 
 gg.air&lt;-subset(gg.air, select= -c(X))
 
@@ -639,7 +644,7 @@ gg.air.tide$air_temp[gg.air.tide$TideHeight &gt; 1] &lt;- NA</code></pre>
 <p>Read in field and enironmental data</p>
 <pre class="r"><code>field&lt;-
 read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environment_field/envi.field.all.csv&quot;,
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environment_field/envi.field.noair.csv&quot;,
     header = TRUE
   )</code></pre>
 <p>pc.cc = paradise cay<br />
@@ -1467,8 +1472,8 @@ hs.gg$site&lt;-&quot;hs.fp&quot;
 all&lt;-dplyr::bind_rows(pc.eos, nd.eos, by.gg, hs.gg)
 
 #save csv
-write.csv(all, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/envi.field.all.air.csv&quot;)</code></pre>
-<p>final combined df for analysis:(put on GitHub once it’s ready)</p>
+write.csv(all, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/envi.field.all.csv&quot;)</code></pre>
+<p>final combined df for analysis:</p>
 </div>
 
 
