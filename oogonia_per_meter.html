@@ -370,7 +370,7 @@ summary {
 
 
 <p>Goal: to calculate and visualize (not sure which graph type is best) oogonia per meter. This is calculated: (average oogonia/#conceptacles) * (#conceptacles/receptacles)=average oogonia/receptacle –&gt; (average oogonia/receptacle) * (1receptacle/2 reproductive apice)= oogonia/reproductive apice –&gt; (oogonia/reproductive apice) * (reproductive apice/ large thallus density)=oogonia per large thallus –&gt;take the average of (oogonia/large thallus) (3 values to 1 value per month) –&gt; average(oogonia/large thallus) * (large thallus/0.25m^2) =oogonia/m^2</p>
-<p>Read in and format data</p>
+<p>Setting up</p>
 <pre class="r"><code>rm(list=ls()) 
 library(ggplot2)
 library(ggpubr)
@@ -415,7 +415,7 @@ library(lubridate)</code></pre>
 ## 
 ##     layout</code></pre>
 <pre class="r"><code>library(dplyr)</code></pre>
-<p>Setting up</p>
+<p>Data</p>
 <pre class="r"><code>alldata&lt;-
   read.csv(
       &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/field/CB_field_data_plus.csv&quot;,
