@@ -404,7 +404,7 @@ all$date&lt;-as.Date(all$date, format = c(&quot;%m/%d/%Y&quot;))</code></pre>
 all$perc.rdw&lt;-(all$dw.repro/(all$dw.repro + all$dw.veg))*100
 
 #percent vegetative dry weight
-all$perc.vdw&lt;-(100-all$perc.rdw)
+all$perc.vdw&lt;-(all$dw.veg/(all$dw.repro + all$dw.veg))*100
 
 #percent reproductive apices
 all$perc.ra&lt;-(all$apices.repro/(all$apices.repro + all$apices.veg))*100
@@ -419,7 +419,7 @@ all$con.per.rec&lt;-all$oog.per.con*all$no.concept.recp
 all$oo.per.ra&lt;-all$con.per.rec/2
 
 #oogonia per thalli
-all$oo.per.thalli&lt;-all$oo.per.ra*all$apices.repro</code></pre>
+all$oo.per.thalli&lt;-(all$oo.per.ra*all$apices.repro)</code></pre>
 <p>Write csv</p>
 <pre class="r"><code>write.csv(all, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Final data/CB_field_data_plus.csv&quot;)</code></pre>
 <p>Data frame on GitHub: <a href="https://raw.githubusercontent.com/Cmwegener/thesis/master/data/field/CB_field_data_plus.csv" class="uri">https://raw.githubusercontent.com/Cmwegener/thesis/master/data/field/CB_field_data_plus.csv</a></p>
