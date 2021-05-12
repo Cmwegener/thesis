@@ -375,7 +375,7 @@ summary {
 - Confirm interpretation of results<br />
 - We talked about changing the family of distribution but do we need to do that if the transformations helped the fit?<br />
 - Should I start doing this with the environmental data?</p>
-<p>What’s new:<br />
+<p>What’s new: - Attempted to compare models to a null, not sure this is neccessary. Performs a Likelihood Ratio Test and output AIC and BIC values. (<a href="https://stat.ethz.ch/pipermail/r-sig-mixed-models/2011q1/015590.html" class="uri">https://stat.ethz.ch/pipermail/r-sig-mixed-models/2011q1/015590.html</a>)<br />
 - Data transformations for model 2.2 and 3.6. Having a hard time finding and understanding how to do data transformations within lme4 so I’m just going to do data transformations in the df for now. Achieves the same goal I was hoping for a different coding approach so I’ll look into it more - In the process of reading link from Karina (<a href="https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf" class="uri">https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf</a> )<br />
 - Still need to look into some of the warnings and messages I’m getting but I want to finish reading the paper</p>
 <p>Questions:<br />
@@ -389,7 +389,9 @@ summary {
 <p>For “time” variable I will be using number of weeks since the first survey (with the first survey week being 0) which will allow me to convert it to a numneric variable and use quadratic terms as needed. This also allows the model to interpolate back to a defined “0”.</p>
 <p>For now I’m not looking at interactions terms. The third link below has some insight on how to approach interaction terms in mixed model. I think this will be more important when I’m looking at the environmental data.</p>
 <p>Helpful resources: <a href="https://m-clark.github.io/mixed-models-with-R/introduction.html" class="uri">https://m-clark.github.io/mixed-models-with-R/introduction.html</a> <a href="https://ourcodingclub.github.io/tutorials/mixed-models/" class="uri">https://ourcodingclub.github.io/tutorials/mixed-models/</a> <a href="http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#model-definition" class="uri">http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#model-definition</a><br />
-<a href="https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf" class="uri">https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf</a> <a href="https://ademos.people.uic.edu/Chapter18.html" class="uri">https://ademos.people.uic.edu/Chapter18.html</a></p>
+<a href="https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf" class="uri">https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf</a> <a href="https://ademos.people.uic.edu/Chapter18.html" class="uri">https://ademos.people.uic.edu/Chapter18.html</a> understanding the output: <a href="https://campus.datacamp.com/courses/hierarchical-and-mixed-effects-models-in-r/linear-mixed-effect-models?ex=7" class="uri">https://campus.datacamp.com/courses/hierarchical-and-mixed-effects-models-in-r/linear-mixed-effect-models?ex=7</a> <a href="https://stat.ethz.ch/pipermail/r-sig-mixed-models/2011q1/subject.html#12692" class="uri">https://stat.ethz.ch/pipermail/r-sig-mixed-models/2011q1/subject.html#12692</a></p>
+<p>Notes:<br />
+- you can compare models by using anova(model1, model2) and see which model accounts for more of the variance. This can also be used to compare a null model</p>
 <p>Questions for analysis:<br />
 ABUNDANCE (site only, no time) —-&gt; Not doing these. <strong>Check with Karina</strong> but I think we’ve concluded that is this not insightful so I will be skipping this for now. I think this was more a question when we were trying to understand what the data looked like more. If I do answer this, I don’t think it’d be a mixed model. I could probably to a simple lm with cover ~ site, look at anova<br />
 1. Is there a difference in Fucus abundance between sites?<br />
@@ -434,7 +436,6 @@ library(dplyr)
 
 #new
 library(AICcmodavg)
-
 library(plm) #for random factors
 library(lme4)
 library(car)</code></pre>
@@ -528,6 +529,21 @@ mlm2.1</code></pre>
 ## hs.fp    0.2296800
 ## nd.eos  -0.1302416
 ## pc.cc   -0.2530308</code></pre>
+<pre class="r"><code>#comparing to a null? cover ~ site
+null&lt;-lmer(cover~ (1|site), data=all)
+#performs a Likelihood Ratio Test (LRT) and prints values of AIC and BIC
+anova(mlm2.1, null)</code></pre>
+<pre><code>## refitting model(s) with ML (instead of REML)</code></pre>
+<pre><code>## Data: all
+## Models:
+## null: cover ~ (1 | site)
+## mlm2.1: cover ~ week_nr + (1 | site)
+##        npar     AIC     BIC logLik deviance  Chisq Df Pr(&gt;Chisq)   
+## null      3 -64.908 -58.575 35.454  -70.908                        
+## mlm2.1    4 -70.048 -61.605 39.024  -78.048 7.1405  1   0.007536 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#anoher way of confirming week number significantly affects percent cover? </code></pre>
 <p><strong>Interpretation of output:</strong> There is a difference in Fucus percent cover over time. The intercept is significant with a value of 68% (95% confidence interval 35% to 100%). Percent cover is slighting decreasing over time with a slope of -.01 meaning the decrease was about 1% per week.</p>
 <p>2.2 Is there a difference in Fucus total density over time?<br />
 Good fit- with transformations density ~ site (random) + time</p>
