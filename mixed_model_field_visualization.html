@@ -378,7 +378,7 @@ summary {
 <a href="https://stackoverflow.com/questions/9447329/how-to-plot-the-results-of-a-mixed-model" class="uri">https://stackoverflow.com/questions/9447329/how-to-plot-the-results-of-a-mixed-model</a><br />
 <a href="https://terpconnect.umd.edu/~egurarie/teaching/Biol709/Topic3/Lecture16_MixedEffectsModels.html#mixed_effects_models" class="uri">https://terpconnect.umd.edu/~egurarie/teaching/Biol709/Topic3/Lecture16_MixedEffectsModels.html#mixed_effects_models</a><br />
 <a href="https://stackoverflow.com/questions/31075407/plot-mixed-effects-model-in-ggplot" class="uri">https://stackoverflow.com/questions/31075407/plot-mixed-effects-model-in-ggplot</a> <a href="https://cran.r-project.org/web/packages/ggeffects/vignettes/ggeffects.html" class="uri">https://cran.r-project.org/web/packages/ggeffects/vignettes/ggeffects.html</a></p>
-<p>Setting up the same way I did in my mlm markdown. Redundant and hopefully I find a better way of doing this</p>
+<p>Setting up the same way I did in my mixed model markdown</p>
 <pre class="r"><code>rm(list=ls())
 
 library(tidyverse)
@@ -416,8 +416,8 @@ all$date&lt;-as.Date(all$date, format = c(&quot;%Y-%m-%d&quot;)) </code></pre>
 <p>Convert date to number of weeks of surveys. Starting at week 0 being the first survey. This will make it a contiuous variable and then I can add a quadratic term to it. This is different that “week number of the year” so I have to use a customized approach. I was able to find a similar question online: <a href="https://stackoverflow.com/questions/54406803/assigning-custom-week-number-in-r/54407091" class="uri">https://stackoverflow.com/questions/54406803/assigning-custom-week-number-in-r/54407091</a>, <a href="https://stackoverflow.com/questions/19780415/lubridate-week-to-find-consecutive-week-number-for-multi-year-periods" class="uri">https://stackoverflow.com/questions/19780415/lubridate-week-to-find-consecutive-week-number-for-multi-year-periods</a></p>
 <pre class="r"><code># subtracts minimun week number, +0 sets what week you want to start it on
 all$week_nr &lt;- (interval(min(all$date), all$date) %/% weeks(1)) + 0</code></pre>
-<p>####Graph of predicted values over time over raw data points####</p>
-<p>Starting with the simplest model (Cover ~ site(random) + time).Plotting the model’s predicted value with a grey band that is +/- the standard error from the predicted value with the raw data behind it.<br />
+<p>####Graph of predicted values over time plotted over raw data points####</p>
+<p>Starting with the simplest model (Cover ~ site(random) + time). Plotting the model’s predicted value with a grey band that is +/- the standard error from the predicted value with the raw data behind it.<br />
 <a href="https://ourcodingclub.github.io/tutorials/mixed-models/#presenting" class="uri">https://ourcodingclub.github.io/tutorials/mixed-models/#presenting</a></p>
 <pre class="r"><code>#model
 mlm2.1&lt;-lmer(cover~ week_nr + (1|site), data=all)
@@ -484,13 +484,13 @@ pred.mm &lt;- ggpredict(mlm2.1, terms = c(&quot;week_nr&quot;))  # this gives ov
 ## Bayesian Inf. Crit.            488.647           
 ## =================================================
 ## Note:               *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
-<p>Not sure this is quite what we want but I like that you can put multiple predictors andd models in the same table.<br />
+<p>Not quite what we want but I like that you can put multiple predictors andd models in the same table.<br />
 <a href="https://cran.r-project.org/web/packages/sjPlot/vignettes/tab_mixed.html" class="uri">https://cran.r-project.org/web/packages/sjPlot/vignettes/tab_mixed.html</a></p>
 <pre class="r"><code># load required packages
 library(sjPlot)</code></pre>
 <pre><code>## Warning: package &#39;sjPlot&#39; was built under R version 4.0.5</code></pre>
+<pre><code>## Learn more about sjPlot with &#39;browseVignettes(&quot;sjPlot&quot;)&#39;.</code></pre>
 <pre class="r"><code>library(sjmisc)</code></pre>
-<pre><code>## Learn more about sjmisc with &#39;browseVignettes(&quot;sjmisc&quot;)&#39;.</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;sjmisc&#39;</code></pre>
 <pre><code>## The following object is masked from &#39;package:purrr&#39;:
