@@ -364,22 +364,23 @@ summary {
 
 <h1 class="title toc-ignore">Field mlm visulatizations</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">25 May, 2021</h4>
+<h4 class="date">10 June, 2021</h4>
 
 </div>
 
 
 <p><strong>Goal:</strong> To make visualizations for my mixed linear models, specifically the field work models here.</p>
+<p>Components:<br />
+- Graph with predicted values for each week. X-axis is the week number, y-axis is the predicted value (ex. density) and each point with standard error shading. In the background will the the raw data points. –&gt; first half of markdown<br />
+- Table of results with fixed and random effects. Look in the literature for examples. Look into tidy table tools and the tables I’ve made in R previously. –&gt; second half</p>
 <p>Questions:<br />
 - Model 2.2 graph: not sure why the predicted values per site are curved while the overall model is straight? We transformed the data to address the curve so is this a relic of the raw data? - Table outputting p-values, why? <a href="https://cran.r-project.org/web/packages/sjPlot/vignettes/tab_mixed.html" class="uri">https://cran.r-project.org/web/packages/sjPlot/vignettes/tab_mixed.html</a> - Only output (small) difference between model and table is the confidence intervals, why?<br />
 <a href="https://stats.stackexchange.com/questions/146988/getting-degrees-of-freedom-from-lmer" class="uri">https://stats.stackexchange.com/questions/146988/getting-degrees-of-freedom-from-lmer</a><br />
 <a href="https://stat.ethz.ch/pipermail/r-help/2006-May/094765.html" class="uri">https://stat.ethz.ch/pipermail/r-help/2006-May/094765.html</a><br />
-<a href="http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#why-doesnt-lme4-display-denominator-degrees-of-freedomp-values-what-other-options-do-i-have" class="uri">http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#why-doesnt-lme4-display-denominator-degrees-of-freedomp-values-what-other-options-do-i-have</a> - I found a way to specify the method to calculate df but I’m not sure the best approach. From ?tab_model df.method and p.val let’s you choose the computing method:<br />
+<a href="http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#why-doesnt-lme4-display-denominator-degrees-of-freedomp-values-what-other-options-do-i-have" class="uri">http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#why-doesnt-lme4-display-denominator-degrees-of-freedomp-values-what-other-options-do-i-have</a><br />
+- I found a way to specify the method to calculate df but I’m not sure the best approach. From ?tab_model df.method and p.val let’s you choose the computing method:<br />
 “Method for computing degrees of freedom for p-values, standard errors and confidence intervals (CI). Only applies to mixed models. Use df.method =”wald&quot; for a faster, but less precise computation. df.method = “kenward” (or df.method = “kr”) uses Kenward-Roger approximation for the degrees of freedom. df.method = “satterthwaite” uses Satterthwaite’s approximation and “ml1” uses a “m-l-1” heuristic see degrees_of_freedom for details). Use show.df = TRUE to show the approximated degrees of freedom for each coefficient.&quot;<br />
 - I think the table is displaying signifcance based on the 95%ci without taking into consideration the slope</p>
-<p>Components:<br />
-- Graph with predicted values for each week. X-axis is the week number, y-axis is the predicted value (ex. density) and each point with standard error shading. In the background will the the raw data points. –&gt; first half of markdown<br />
-- - Table of results with fixed and random effects. Look in the literature for examples. Look into tidy table tools and the tables I’ve made in R previously. –&gt; second half</p>
 <p>Useful links:<br />
 <a href="https://lmudge13.github.io/sample_code/mixed_effects.html" class="uri">https://lmudge13.github.io/sample_code/mixed_effects.html</a><br />
 <a href="https://stackoverflow.com/questions/9447329/how-to-plot-the-results-of-a-mixed-model" class="uri">https://stackoverflow.com/questions/9447329/how-to-plot-the-results-of-a-mixed-model</a><br />
@@ -1375,6 +1376,7 @@ annotate_figure(
 <pre class="r"><code># load required packages
 library(sjPlot) # table functions</code></pre>
 <pre><code>## Warning: package &#39;sjPlot&#39; was built under R version 4.0.5</code></pre>
+<pre><code>## Install package &quot;strengejacke&quot; from GitHub (`devtools::install_github(&quot;strengejacke/strengejacke&quot;)`) to load all sj-packages at once!</code></pre>
 <pre class="r"><code>library(sjmisc)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;sjmisc&#39;</code></pre>
