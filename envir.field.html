@@ -364,7 +364,7 @@ summary {
 
 <h1 class="title toc-ignore">Environmental and field data</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">11 May, 2021</h4>
+<h4 class="date">15 June, 2021</h4>
 
 </div>
 
@@ -413,7 +413,7 @@ field$apices.veg&lt;-replace(field$apices.veg, 515,NA)</code></pre>
 <p>####Paradise Cay and China Camp####</p>
 <pre class="r"><code>#subset site
 pc&lt;-subset(field, field$site.old == &quot;PC&quot;)
-pc$date&lt;-as.Date(pc$date, format=c(&quot;%m/%d/%Y&quot;))
+pc$date&lt;-as.Date(pc$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #calculating the following parameters per survey/month
 
@@ -457,7 +457,7 @@ pc.r&lt;-aggregate(perc.ra ~ date, pc, mean, na.rm=TRUE)
 pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)
 
 #mean oogonia per conceptacle
-pc.r&lt;-aggregate(avg.oog ~ date, pc, mean, na.rm=TRUE)
+pc.r&lt;-aggregate(oog.per.con ~ date, pc, mean, na.rm=TRUE)
 pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)
 
 #mean percent reproductive dry weight
@@ -465,7 +465,7 @@ pc.r&lt;-aggregate(perc.rdw ~ date, pc, mean, na.rm=TRUE)
 pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)
 
 #mean oogonia per receptacle
-pc$oog.recpt&lt;-(pc$avg.oog * pc$no.concept.recp)
+pc$oog.recpt&lt;-(pc$oog.per.con * pc$no.concept.recp)
 pc.r&lt;-aggregate(no.concept.recp ~ date, pc, mean, na.rm=TRUE)
 pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)
 
@@ -1628,7 +1628,7 @@ pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&quo
 <p>####Point Chauncy and EOS Tiburon#### Monthly summaries of the field data</p>
 <pre class="r"><code>#subset for site
 nd&lt;-subset(field, field$site.old == &quot;ND&quot;)
-nd$date&lt;-as.Date(nd$date, format=c(&quot;%m/%d/%Y&quot;))
+nd$date&lt;-as.Date(nd$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #calculating the following parameters per survey/month
 
@@ -1672,7 +1672,7 @@ nd.r&lt;-aggregate(perc.ra ~ date, nd, mean, na.rm=TRUE)
 nd.eos&lt;-merge(nd.eos, nd.r, by=&quot;date&quot;, all=TRUE)
 
 #mean oogonia per conceptacle
-nd.r&lt;-aggregate(avg.oog ~ date, nd, mean, na.rm=TRUE)
+nd.r&lt;-aggregate(oog.per.con ~ date, nd, mean, na.rm=TRUE)
 nd.eos&lt;-merge(nd.eos, nd.r, by=&quot;date&quot;, all=TRUE)
 
 #mean percent reproductive dry weight
@@ -1680,7 +1680,7 @@ nd.r&lt;-aggregate(perc.rdw ~ date, nd, mean, na.rm=TRUE)
 nd.eos&lt;-merge(nd.eos, nd.r, by=&quot;date&quot;, all=TRUE)
 
 #mean oogonia per receptacle
-nd$oog.recpt&lt;-(nd$avg.oog * nd$no.concept.recp)
+nd$oog.recpt&lt;-(nd$oog.per.con * nd$no.concept.recp)
 nd.r&lt;-aggregate(no.concept.recp ~ date, nd, mean, na.rm=TRUE)
 nd.eos&lt;-merge(nd.eos, nd.r, by=&quot;date&quot;, all=TRUE)
 
@@ -2905,7 +2905,7 @@ nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&
 <p>####Brickyard Park and Richardson Bay#### Monthly summaries of the field data</p>
 <pre class="r"><code>#subset site
 by&lt;-subset(field, field$site.old == &quot;BY&quot;)
-by$date&lt;-as.Date(by$date, format=c(&quot;%m/%d/%Y&quot;))
+by$date&lt;-as.Date(by$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #mean of fucus density
 by.rb&lt;-aggregate(no.fuc.q ~ date, by, mean, na.rm=TRUE)
@@ -2947,7 +2947,7 @@ by.r&lt;-aggregate(perc.ra ~ date, by, mean, na.rm=TRUE)
 by.rb&lt;-merge(by.rb, by.r, by=&quot;date&quot;, all=TRUE)
 
 #mean oogonia per conceptacle
-by.r&lt;-aggregate(avg.oog ~ date, by, mean, na.rm=TRUE)
+by.r&lt;-aggregate(oog.per.con ~ date, by, mean, na.rm=TRUE)
 by.rb&lt;-merge(by.rb, by.r, by=&quot;date&quot;, all=TRUE)
 
 #mean percent reproductive dry weight
@@ -2955,7 +2955,7 @@ by.r&lt;-aggregate(perc.rdw ~ date, by, mean, na.rm=TRUE)
 by.rb&lt;-merge(by.rb, by.r, by=&quot;date&quot;, all=TRUE)
 
 #mean oogonia per receptacle
-by$oog.recpt&lt;-(by$avg.oog * by$no.concept.recp)
+by$oog.recpt&lt;-(by$oog.per.con * by$no.concept.recp)
 by.r&lt;-aggregate(no.concept.recp ~ date, by, mean, na.rm=TRUE)
 by.rb&lt;-merge(by.rb, by.r, by=&quot;date&quot;, all=TRUE)
 
@@ -4205,7 +4205,7 @@ by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&quo
 <p>####<strong>Fort Point and Horseshoe Bay</strong></p>
 <p>Monthly summaries of the field data</p>
 <pre class="r"><code>hs&lt;-subset(field, field$site.old == &quot;HS&quot;)
-hs$date&lt;-as.Date(hs$date, format=c(&quot;%m/%d/%Y&quot;))
+hs$date&lt;-as.Date(hs$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #monthly mean of fucus density
 hs.fp&lt;-aggregate(no.fuc.q ~ date, hs, mean, na.rm=TRUE)
@@ -4247,7 +4247,7 @@ hs.r&lt;-aggregate(perc.ra ~ date, hs, mean, na.rm=TRUE)
 hs.fp&lt;-merge(hs.fp, hs.r, by=&quot;date&quot;, all=TRUE)
 
 #mean oogonia per conceptacle
-hs.r&lt;-aggregate(avg.oog ~ date, hs, mean, na.rm=TRUE)
+hs.r&lt;-aggregate(oog.per.con ~ date, hs, mean, na.rm=TRUE)
 hs.fp&lt;-merge(hs.fp, hs.r, by=&quot;date&quot;, all=TRUE)
 
 #mean percent reproductive dry weight
@@ -4255,7 +4255,7 @@ hs.r&lt;-aggregate(perc.rdw ~ date, hs, mean, na.rm=TRUE)
 hs.fp&lt;-merge(hs.fp, hs.r, by=&quot;date&quot;, all=TRUE)
 
 #mean oogonia per receptacle
-hs$oog.recpt&lt;-(hs$avg.oog * hs$no.concept.recp)
+hs$oog.recpt&lt;-(hs$oog.per.con * hs$no.concept.recp)
 hs.r&lt;-aggregate(no.concept.recp ~ date, hs, mean, na.rm=TRUE)
 hs.fp&lt;-merge(hs.fp, hs.r, by=&quot;date&quot;, all=TRUE)
 
