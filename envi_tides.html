@@ -587,10 +587,10 @@ eos.ph.tide$ph[eos.ph.tide$TideHeight &lt; 1] &lt;- NA
 rb.ph.tide$ph[rb.ph.tide$TideHeight &lt; 1] &lt;- NA
 
 #water temp
-cc.wtemp.tide$wtempinity[cc.wtemp.tide$TideHeight &lt; 1] &lt;- NA
-eos.wtemp.tide$wtempinity[eos.wtemp.tide$TideHeight &lt; 1] &lt;- NA
-rb.wtemp.tide$wtempinity[rb.wtemp.tide$TideHeight &lt; 1] &lt;- NA
-fp.wtemp.tide$wtempinity[fp.wtemp.tide$TideHeight &lt; 1] &lt;- NA
+cc.wtemp.tide$water_temp[cc.wtemp.tide$TideHeight &lt; 1] &lt;- NA
+eos.wtemp.tide$water_temp[eos.wtemp.tide$TideHeight &lt; 1] &lt;- NA
+rb.wtemp.tide$water_temp[rb.wtemp.tide$TideHeight &lt; 1] &lt;- NA
+fp.wtemp.tide$water_temp[fp.wtemp.tide$TideHeight &lt; 1] &lt;- NA
 
 
 #remove when submerged, &gt;1m
@@ -608,10 +608,10 @@ cc.ph.tide&lt;-cc.ph.tide[!is.na(cc.ph.tide$ph),]
 eos.ph.tide&lt;-eos.ph.tide[!is.na(eos.ph.tide$ph),]
 rb.ph.tide&lt;-rb.ph.tide[!is.na(rb.ph.tide$ph),]
 
-cc.wtemp.tide&lt;-cc.wtemp.tide[!is.na(cc.wtemp.tide$wtemp),]
-eos.wtemp.tide&lt;-eos.wtemp.tide[!is.na(eos.wtemp.tide$wtemp),]
-rb.wtemp.tide&lt;-rb.wtemp.tide[!is.na(rb.wtemp.tide$wtemp),]
-fp.wtemp.tide&lt;-fp.wtemp.tide[!is.na(fp.wtemp.tide$wtemp),]
+cc.wtemp.tide&lt;-cc.wtemp.tide[!is.na(cc.wtemp.tide$water_temp),]
+eos.wtemp.tide&lt;-eos.wtemp.tide[!is.na(eos.wtemp.tide$water_temp),]
+rb.wtemp.tide&lt;-rb.wtemp.tide[!is.na(rb.wtemp.tide$water_temp),]
+fp.wtemp.tide&lt;-fp.wtemp.tide[!is.na(fp.wtemp.tide$water_temp),]
 
 eos.air.tide&lt;-eos.air.tide[!is.na(eos.air.tide$air_temperature),]
 gg.air.tide&lt;-gg.air.tide[!is.na(gg.air.tide$air_temperature),]</code></pre>
