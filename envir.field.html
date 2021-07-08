@@ -364,13 +364,13 @@ summary {
 
 <h1 class="title toc-ignore">Environmental and field data</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">15 June, 2021</h4>
+<h4 class="date">08 July, 2021</h4>
 
 </div>
 
 
-<p><strong>Overview:</strong> Setting up my environmental and field data to run analysis. On the same row I’ll have monthly field variables (ex. mean density one month) and enviromental data since the last field survey or since 30 days prior. I will have four data frames at the end of this, one for each field site and its closest water station. China camp and paradise cay, EOS pier and point chauncy, Richardson Bay and brickyard park, and Horseshoe bay and fort point. Possibly a cleaner way to do this but this works.</p>
-<p>Steps for environmental data: The environmental data here has been cleaned and is the hourly median dfs. First I filter between survey dates, then take median. Next I did daily minimum, daily maximum, daily range, and daily median and saved these in a csv to explore more later. I then took the median of those values subseted between survey dates. I combine the data into one df per site/station. At the end I’ll export these as csvs which I could then use for analysis.</p>
+<p><strong>Overview:</strong> Setting up my environmental and field data to run analysis. On the same row I’ll have monthly field variables (ex. mean density one month) and enviromental data since the last field survey or since 30 days prior. Field data will be linked with closest water station. China camp and paradise cay, EOS pier and point chauncy, Richardson Bay and brickyard park, and Horseshoe bay and fort point. I also have EOS air linked with Paradised Cay and Point Chauncy field data and Golden Gate air data with Horseshoe Bay and Richardson Bay field data. Possibly a cleaner way to do this but this works. I then merge all data to one large df that I will use for analysis.</p>
+<p>Steps for environmental data: The environmental data here has been cleaned and is the filtered for tide hourly median dfs. First I filter between survey dates, then take median. Next I did daily minimum, daily maximum, daily range, and daily median and saved these in a csv to explore more later. I then took the median of those values subseted between survey dates. I combine the data into one df per site/station. At the end I’ll export these as csvs which I could then use for analysis. UPDATE: 7/8/2021 I removed dissoloved oxygen from this markdown. I did not filter dissolved oxygen for tide. Not using dissolved oxygen in my analysis. I was orgionally interested in dissolved oxygen as a pH proxy.</p>
 <p>Notes:<br />
 -another code that works for counting rows: length(which(a1$max.daily.sal &lt; 10))</p>
 <p>Field data: <a href="https://github.com/Cmwegener/thesis/tree/master/data/field" class="uri">https://github.com/Cmwegener/thesis/tree/master/data/field</a><br />
@@ -483,11 +483,11 @@ pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)</code></pre>
 <p>Now I need to add the summaries of the environmental data. I’ll look at data between field surveys and 30days prior for the first field survey.</p>
 <p>Salinity</p>
 <pre class="r"><code>#read and format data
-cc_sal&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/cc_sal.csv&quot;,
+cc.sal.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/cc.sal.tide.csv&quot;,
     header = TRUE
   )
-cc_sal$date&lt;-as.Date(cc_sal$date, format=c(&quot;%Y-%m-%d&quot;))
+cc.sal.tide$date&lt;-as.Date(cc.sal.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #look at survey dates
 print(pc.cc$date)</code></pre>
@@ -495,20 +495,20 @@ print(pc.cc$date)</code></pre>
 ##  [6] &quot;2019-01-30&quot; &quot;2019-02-20&quot; &quot;2019-03-15&quot; &quot;2019-04-11&quot; &quot;2019-05-09&quot;
 ## [11] &quot;2019-06-09&quot; &quot;2019-07-21&quot; &quot;2019-08-04&quot; &quot;2019-09-12&quot;</code></pre>
 <pre class="r"><code>#Subset data by dates between surveys
-a1&lt;- cc_sal[cc_sal$date &gt;= &quot;2018-05-14&quot; &amp; cc_sal$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc_sal[cc_sal$date &gt;= &quot;2018-06-14&quot; &amp; cc_sal$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc_sal[cc_sal$date &gt;= &quot;2018-07-17&quot; &amp; cc_sal$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc_sal[cc_sal$date &gt;= &quot;2018-08-07&quot; &amp; cc_sal$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc_sal[cc_sal$date &gt;= &quot;2018-09-11&quot; &amp; cc_sal$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc_sal[cc_sal$date &gt;= &quot;2018-12-05&quot; &amp; cc_sal$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc_sal[cc_sal$date &gt;= &quot;2019-01-30&quot; &amp; cc_sal$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc_sal[cc_sal$date &gt;= &quot;2019-02-20&quot; &amp; cc_sal$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc_sal[cc_sal$date &gt;= &quot;2019-03-15&quot; &amp; cc_sal$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc_sal[cc_sal$date &gt;= &quot;2019-04-11&quot; &amp; cc_sal$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc_sal[cc_sal$date &gt;= &quot;2019-05-09&quot; &amp; cc_sal$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc_sal[cc_sal$date &gt;= &quot;2019-06-09&quot; &amp; cc_sal$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc_sal[cc_sal$date &gt;= &quot;2019-07-21&quot; &amp; cc_sal$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc_sal[cc_sal$date &gt;= &quot;2019-08-04&quot; &amp; cc_sal$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-05-14&quot; &amp; cc.sal.tide$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-06-14&quot; &amp; cc.sal.tide$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-07-17&quot; &amp; cc.sal.tide$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-08-07&quot; &amp; cc.sal.tide$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-09-11&quot; &amp; cc.sal.tide$date &lt; &quot;2018-12-05&quot;,]
+a6&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-12-05&quot; &amp; cc.sal.tide$date &lt; &quot;2019-01-30&quot;,]
+a7&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-01-30&quot; &amp; cc.sal.tide$date &lt; &quot;2019-02-20&quot;,]
+a8&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-02-20&quot; &amp; cc.sal.tide$date &lt; &quot;2019-03-15&quot;,]
+a9&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-03-15&quot; &amp; cc.sal.tide$date &lt; &quot;2019-04-11&quot;,]
+a10&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-04-11&quot; &amp; cc.sal.tide$date &lt; &quot;2019-05-09&quot;,]
+a11&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-05-09&quot; &amp; cc.sal.tide$date &lt; &quot;2019-06-09&quot;,]
+a12&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-06-09&quot; &amp; cc.sal.tide$date &lt; &quot;2019-07-21&quot;,]
+a13&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-07-21&quot; &amp; cc.sal.tide$date &lt; &quot;2019-08-04&quot;,]
+a14&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-08-04&quot; &amp; cc.sal.tide$date &lt; &quot;2019-09-12&quot;,]
 
 #median
 aa1&lt;-median(a1$salinity, na.rm=TRUE)
@@ -540,7 +540,7 @@ pc.cc&lt;-merge(pc.cc, cc.mon.sal[,c(&quot;date&quot;, &quot;salinity&quot;)], b
 <p>Daily median, range, minimum, and maximum salinity</p>
 <pre class="r"><code>#table summary saved as a df. Finds the daily median and daily max and min values bases on date column
 #tried to do daily range here but it didn&#39;t seem to work. I&#39;ll just take the difference between the max and min columns
-cc.daily.sum&lt;-as.data.frame(setDT(cc_sal)[, .(max.daily.sal = max(salinity), min.daily.sal = min(salinity), daily.med.sal=median(salinity)), .(date)])
+cc.daily.sum&lt;-as.data.frame(setDT(cc.sal.tide)[, .(max.daily.sal = max(salinity), min.daily.sal = min(salinity), daily.med.sal=median(salinity)), .(date)])
 
 #daily range
 cc.daily.sum$daily.sal.range&lt;-cc.daily.sum$max.daily.sal - cc.daily.sum$min.daily.sal
@@ -680,225 +680,29 @@ cc.daily.med.sal$date&lt;-as.Date(cc.daily.med.sal$date, format=c(&quot;%Y-%m-%d
 
 #merge dfs
 pc.cc&lt;-merge(pc.cc, cc.daily.med.sal[,c(&quot;date&quot;, &quot;daily.med.sal&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Dissolved oxygen</p>
-<pre class="r"><code>#read in data
-cc_do&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/cc_do.csv&quot;,
-    header = TRUE
-  )
-cc_do$date&lt;-as.Date(cc_do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#subset
-a1&lt;- cc_do[cc_do$date &gt;= &quot;2018-05-14&quot; &amp; cc_do$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc_do[cc_do$date &gt;= &quot;2018-06-14&quot; &amp; cc_do$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc_do[cc_do$date &gt;= &quot;2018-07-17&quot; &amp; cc_do$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc_do[cc_do$date &gt;= &quot;2018-08-07&quot; &amp; cc_do$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc_do[cc_do$date &gt;= &quot;2018-09-11&quot; &amp; cc_do$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc_do[cc_do$date &gt;= &quot;2018-12-05&quot; &amp; cc_do$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc_do[cc_do$date &gt;= &quot;2019-01-30&quot; &amp; cc_do$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc_do[cc_do$date &gt;= &quot;2019-02-20&quot; &amp; cc_do$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc_do[cc_do$date &gt;= &quot;2019-03-15&quot; &amp; cc_do$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc_do[cc_do$date &gt;= &quot;2019-04-11&quot; &amp; cc_do$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc_do[cc_do$date &gt;= &quot;2019-05-09&quot; &amp; cc_do$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc_do[cc_do$date &gt;= &quot;2019-06-09&quot; &amp; cc_do$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc_do[cc_do$date &gt;= &quot;2019-07-21&quot; &amp; cc_do$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc_do[cc_do$date &gt;= &quot;2019-08-04&quot; &amp; cc_do$date &lt; &quot;2019-09-12&quot;,]
-
-#median
-aa1&lt;-median(a1$do, na.rm=TRUE)
-aa2&lt;-median(a2$do, na.rm=TRUE)
-aa3&lt;-median(a3$do, na.rm=TRUE)
-aa4&lt;-median(a4$do, na.rm=TRUE)
-aa5&lt;-median(a5$do, na.rm=TRUE)
-aa6&lt;-median(a6$do, na.rm=TRUE)
-aa7&lt;-median(a7$do, na.rm=TRUE)
-aa8&lt;-median(a8$do, na.rm=TRUE)
-aa9&lt;-median(a9$do, na.rm=TRUE)
-aa10&lt;-median(a10$do, na.rm=TRUE)
-aa11&lt;-median(a11$do, na.rm=TRUE)
-aa12&lt;-median(a12$do, na.rm=TRUE)
-aa13&lt;-median(a13$do, na.rm=TRUE)
-aa14&lt;-median(a14$do, na.rm=TRUE)
-
-#string these values to a data frame
-cc.mon.do&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,             &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.mon.do&lt;-as.data.frame(cc.mon.do)
-
-#change column names
-names(cc.mon.do)[1] &lt;- &quot;date&quot;
-names(cc.mon.do)[2] &lt;- &quot;dissolved.oxygen&quot;
-cc.mon.do$date&lt;-as.Date(cc.mon.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.mon.do, by=&quot;date&quot;)</code></pre>
-<p>Daily median, range, minimum, and maximum dissolved oxygen</p>
-<pre class="r"><code>#table summary for daily max, min, and median
-cc.daily.sum.do&lt;-as.data.frame(setDT(cc_do)[, .(max.daily.do = max(do), min.daily.do = min(do), daily.med.do=median(do)), .(date)])
-
-#daily range
-cc.daily.sum.do$daily.do.range&lt;-cc.daily.sum.do$max.daily.do - cc.daily.sum.do$min.daily.do
-
-#merge with cc daily summary df
-cc.daily.sum&lt;-merge(cc.daily.sum, cc.daily.sum.do, by=&quot;date&quot;, all=TRUE)
-
-
-#Mean daily min 
-#subset dates 
-a1&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2018-05-14&quot; &amp; cc.daily.sum.do$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2018-06-14&quot; &amp; cc.daily.sum.do$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2018-07-17&quot; &amp; cc.daily.sum.do$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2018-08-07&quot; &amp; cc.daily.sum.do$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2018-09-11&quot; &amp; cc.daily.sum.do$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2018-12-05&quot; &amp; cc.daily.sum.do$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2019-01-30&quot; &amp; cc.daily.sum.do$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2019-02-20&quot; &amp; cc.daily.sum.do$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2019-03-15&quot; &amp; cc.daily.sum.do$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2019-04-11&quot; &amp; cc.daily.sum.do$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2019-05-09&quot; &amp; cc.daily.sum.do$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2019-06-09&quot; &amp; cc.daily.sum.do$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2019-07-21&quot; &amp; cc.daily.sum.do$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc.daily.sum.do[cc.daily.sum.do$date &gt;= &quot;2019-08-04&quot; &amp; cc.daily.sum.do$date &lt; &quot;2019-09-12&quot;,]
-
-#median
-aa1&lt;-median(a1$min.daily.do, na.rm=TRUE)
-aa2&lt;-median(a2$min.daily.do, na.rm=TRUE)
-aa3&lt;-median(a3$min.daily.do, na.rm=TRUE)
-aa4&lt;-median(a4$min.daily.do, na.rm=TRUE)
-aa5&lt;-median(a5$min.daily.do, na.rm=TRUE)
-aa6&lt;-median(a6$min.daily.do, na.rm=TRUE)
-aa7&lt;-median(a7$min.daily.do, na.rm=TRUE)
-aa8&lt;-median(a8$min.daily.do, na.rm=TRUE)
-aa9&lt;-median(a9$min.daily.do, na.rm=TRUE)
-aa10&lt;-median(a10$min.daily.do, na.rm=TRUE)
-aa11&lt;-median(a11$min.daily.do, na.rm=TRUE)
-aa12&lt;-median(a12$min.daily.do, na.rm=TRUE)
-aa13&lt;-median(a13$min.daily.do, na.rm=TRUE)
-aa14&lt;-median(a14$min.daily.do, na.rm=TRUE)
-
-#string these values to a data frame
-cc.daily.min.do&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,           &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.daily.min.do&lt;-as.data.frame(cc.daily.min.do)
-
-#change column names
-names(cc.daily.min.do)[1] &lt;- &quot;date&quot;
-names(cc.daily.min.do)[2] &lt;- &quot;daily.min.do&quot;
-cc.daily.min.do$date&lt;-as.Date(cc.daily.min.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.daily.min.do[,c(&quot;date&quot;, &quot;daily.min.do&quot;)], by=&quot;date&quot;)
-
-
-#daily maximum values
-#median 
-aa1&lt;-median(a1$max.daily.do, na.rm=TRUE)
-aa2&lt;-median(a2$max.daily.do, na.rm=TRUE)
-aa3&lt;-median(a3$max.daily.do, na.rm=TRUE)
-aa4&lt;-median(a4$max.daily.do, na.rm=TRUE)
-aa5&lt;-median(a5$max.daily.do, na.rm=TRUE)
-aa6&lt;-median(a6$max.daily.do, na.rm=TRUE)
-aa7&lt;-median(a7$max.daily.do, na.rm=TRUE)
-aa8&lt;-median(a8$max.daily.do, na.rm=TRUE)
-aa9&lt;-median(a9$max.daily.do, na.rm=TRUE)
-aa10&lt;-median(a10$max.daily.do, na.rm=TRUE)
-aa11&lt;-median(a11$max.daily.do, na.rm=TRUE)
-aa12&lt;-median(a12$max.daily.do, na.rm=TRUE)
-aa13&lt;-median(a13$max.daily.do, na.rm=TRUE)
-aa14&lt;-median(a14$max.daily.do, na.rm=TRUE)
-
-#string these values to a data frame
-cc.daily.max.do&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,           &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.daily.max.do&lt;-as.data.frame(cc.daily.max.do)
-
-#change column names
-names(cc.daily.max.do)[1] &lt;- &quot;date&quot;
-names(cc.daily.max.do)[2] &lt;- &quot;daily.max.do&quot;
-cc.daily.max.do$date&lt;-as.Date(cc.daily.max.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.daily.max.do[,c(&quot;date&quot;, &quot;daily.max.do&quot;)], by=&quot;date&quot;)
-
-
-#daily range
-#mean 
-aa1&lt;-median(a1$daily.do.range, na.rm=TRUE)
-aa2&lt;-median(a2$daily.do.range, na.rm=TRUE)
-aa3&lt;-median(a3$daily.do.range, na.rm=TRUE)
-aa4&lt;-median(a4$daily.do.range, na.rm=TRUE)
-aa5&lt;-median(a5$daily.do.range, na.rm=TRUE)
-aa6&lt;-median(a6$daily.do.range, na.rm=TRUE)
-aa7&lt;-median(a7$daily.do.range, na.rm=TRUE)
-aa8&lt;-median(a8$daily.do.range, na.rm=TRUE)
-aa9&lt;-median(a9$daily.do.range, na.rm=TRUE)
-aa10&lt;-median(a10$daily.do.range, na.rm=TRUE)
-aa11&lt;-median(a11$daily.do.range, na.rm=TRUE)
-aa12&lt;-median(a12$daily.do.range, na.rm=TRUE)
-aa13&lt;-median(a13$daily.do.range, na.rm=TRUE)
-aa14&lt;-median(a14$daily.do.range, na.rm=TRUE)
-
-#string these values to a data frame
-cc.daily.do.range&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,             &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.daily.do.range&lt;-as.data.frame(cc.daily.do.range)
-
-#change column names
-names(cc.daily.do.range)[1] &lt;- &quot;date&quot;
-names(cc.daily.do.range)[2] &lt;- &quot;daily.do.range&quot;
-cc.daily.do.range$date&lt;-as.Date(cc.daily.do.range$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.daily.do.range[,c(&quot;date&quot;, &quot;daily.do.range&quot;)], by=&quot;date&quot;)
-
-
-#daily median
-#mean of these doinity periods
-aa1&lt;-median(a1$daily.med.do, na.rm=TRUE)
-aa2&lt;-median(a2$daily.med.do, na.rm=TRUE)
-aa3&lt;-median(a3$daily.med.do, na.rm=TRUE)
-aa4&lt;-median(a4$daily.med.do, na.rm=TRUE)
-aa5&lt;-median(a5$daily.med.do, na.rm=TRUE)
-aa6&lt;-median(a6$daily.med.do, na.rm=TRUE)
-aa7&lt;-median(a7$daily.med.do, na.rm=TRUE)
-aa8&lt;-median(a8$daily.med.do, na.rm=TRUE)
-aa9&lt;-median(a9$daily.med.do, na.rm=TRUE)
-aa10&lt;-median(a10$daily.med.do, na.rm=TRUE)
-aa11&lt;-median(a11$daily.med.do, na.rm=TRUE)
-aa12&lt;-median(a12$daily.med.do, na.rm=TRUE)
-aa13&lt;-median(a13$daily.med.do, na.rm=TRUE)
-aa14&lt;-median(a14$daily.med.do, na.rm=TRUE)
-
-#string these values to a data frame
-cc.daily.med.do&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,           &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.daily.med.do&lt;-as.data.frame(cc.daily.med.do)
-
-#change column names
-names(cc.daily.med.do)[1] &lt;- &quot;date&quot;
-names(cc.daily.med.do)[2] &lt;- &quot;daily.med.do&quot;
-cc.daily.med.do$date&lt;-as.Date(cc.daily.med.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.daily.med.do[,c(&quot;date&quot;, &quot;daily.med.do&quot;)], by=&quot;date&quot;)</code></pre>
 <p>pH</p>
 <pre class="r"><code>#read in data
-cc_ph&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/cc_ph.csv&quot;,
+cc.ph.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/cc.ph.tide.csv&quot;,
     header = TRUE
   )
-cc_ph$date&lt;-as.Date(cc_ph$date, format=c(&quot;%Y-%m-%d&quot;))
+cc.ph.tide$date&lt;-as.Date(cc.ph.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
-a1&lt;- cc_ph[cc_ph$date &gt;= &quot;2018-05-14&quot; &amp; cc_ph$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc_ph[cc_ph$date &gt;= &quot;2018-06-14&quot; &amp; cc_ph$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc_ph[cc_ph$date &gt;= &quot;2018-07-17&quot; &amp; cc_ph$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc_ph[cc_ph$date &gt;= &quot;2018-08-07&quot; &amp; cc_ph$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc_ph[cc_ph$date &gt;= &quot;2018-09-11&quot; &amp; cc_ph$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc_ph[cc_ph$date &gt;= &quot;2018-12-05&quot; &amp; cc_ph$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc_ph[cc_ph$date &gt;= &quot;2019-01-30&quot; &amp; cc_ph$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc_ph[cc_ph$date &gt;= &quot;2019-02-20&quot; &amp; cc_ph$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc_ph[cc_ph$date &gt;= &quot;2019-03-15&quot; &amp; cc_ph$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc_ph[cc_ph$date &gt;= &quot;2019-04-11&quot; &amp; cc_ph$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc_ph[cc_ph$date &gt;= &quot;2019-05-09&quot; &amp; cc_ph$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc_ph[cc_ph$date &gt;= &quot;2019-06-09&quot; &amp; cc_ph$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc_ph[cc_ph$date &gt;= &quot;2019-07-21&quot; &amp; cc_ph$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc_ph[cc_ph$date &gt;= &quot;2019-08-04&quot; &amp; cc_ph$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-05-14&quot; &amp; cc.ph.tide$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-06-14&quot; &amp; cc.ph.tide$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-07-17&quot; &amp; cc.ph.tide$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-08-07&quot; &amp; cc.ph.tide$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-09-11&quot; &amp; cc.ph.tide$date &lt; &quot;2018-12-05&quot;,]
+a6&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-12-05&quot; &amp; cc.ph.tide$date &lt; &quot;2019-01-30&quot;,]
+a7&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-01-30&quot; &amp; cc.ph.tide$date &lt; &quot;2019-02-20&quot;,]
+a8&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-02-20&quot; &amp; cc.ph.tide$date &lt; &quot;2019-03-15&quot;,]
+a9&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-03-15&quot; &amp; cc.ph.tide$date &lt; &quot;2019-04-11&quot;,]
+a10&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-04-11&quot; &amp; cc.ph.tide$date &lt; &quot;2019-05-09&quot;,]
+a11&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-05-09&quot; &amp; cc.ph.tide$date &lt; &quot;2019-06-09&quot;,]
+a12&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-06-09&quot; &amp; cc.ph.tide$date &lt; &quot;2019-07-21&quot;,]
+a13&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-07-21&quot; &amp; cc.ph.tide$date &lt; &quot;2019-08-04&quot;,]
+a14&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-08-04&quot; &amp; cc.ph.tide$date &lt; &quot;2019-09-12&quot;,]
 
 #median 
 aa2&lt;-median(a2$ph, na.rm=TRUE)
@@ -928,7 +732,7 @@ cc.mon.ph$date&lt;-as.Date(cc.mon.ph$date, format=c(&quot;%Y-%m-%d&quot;))
 pc.cc&lt;-merge(pc.cc, cc.mon.ph, by=&quot;date&quot;)</code></pre>
 <p>Daily median, range, minimum, and maximum pH</p>
 <pre class="r"><code>#table summary for daily max, min, med ph
-cc.daily.sum.ph&lt;-as.data.frame(setDT(cc_ph)[, .(max.daily.ph = max(ph), min.daily.ph = min(ph), daily.med.ph=median(ph)), .(date)])
+cc.daily.sum.ph&lt;-as.data.frame(setDT(cc.ph.tide)[, .(max.daily.ph = max(ph), min.daily.ph = min(ph), daily.med.ph=median(ph)), .(date)])
 
 #daily range
 cc.daily.sum.ph$daily.ph.range&lt;-cc.daily.sum.ph$max.daily.ph - cc.daily.sum.ph$min.daily.ph
@@ -1072,27 +876,27 @@ cc.daily.med.ph$date&lt;-as.Date(cc.daily.med.ph$date, format=c(&quot;%Y-%m-%d&q
 pc.cc&lt;-merge(pc.cc, cc.daily.med.ph[,c(&quot;date&quot;, &quot;daily.med.ph&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Water temperature</p>
 <pre class="r"><code>#read in data
-cc_wt&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/cc_watertemp.csv&quot;,
+cc.wtemp.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/cc.wtemp.tide.csv&quot;,
     header = TRUE
   )
-cc_wt$date&lt;-as.Date(cc_wt$date, format=c(&quot;%Y-%m-%d&quot;))
+cc.wtemp.tide$date&lt;-as.Date(cc.wtemp.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
-a1&lt;- cc_wt[cc_wt$date &gt;= &quot;2018-05-14&quot; &amp; cc_wt$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc_wt[cc_wt$date &gt;= &quot;2018-06-14&quot; &amp; cc_wt$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc_wt[cc_wt$date &gt;= &quot;2018-07-17&quot; &amp; cc_wt$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc_wt[cc_wt$date &gt;= &quot;2018-08-07&quot; &amp; cc_wt$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc_wt[cc_wt$date &gt;= &quot;2018-09-11&quot; &amp; cc_wt$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc_wt[cc_wt$date &gt;= &quot;2018-12-05&quot; &amp; cc_wt$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc_wt[cc_wt$date &gt;= &quot;2019-01-30&quot; &amp; cc_wt$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc_wt[cc_wt$date &gt;= &quot;2019-02-20&quot; &amp; cc_wt$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc_wt[cc_wt$date &gt;= &quot;2019-03-15&quot; &amp; cc_wt$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc_wt[cc_wt$date &gt;= &quot;2019-04-11&quot; &amp; cc_wt$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc_wt[cc_wt$date &gt;= &quot;2019-05-09&quot; &amp; cc_wt$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc_wt[cc_wt$date &gt;= &quot;2019-06-09&quot; &amp; cc_wt$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc_wt[cc_wt$date &gt;= &quot;2019-07-21&quot; &amp; cc_wt$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc_wt[cc_wt$date &gt;= &quot;2019-08-04&quot; &amp; cc_wt$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-05-14&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-06-14&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-07-17&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-08-07&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-09-11&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-12-05&quot;,]
+a6&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-12-05&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-01-30&quot;,]
+a7&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-01-30&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-02-20&quot;,]
+a8&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-02-20&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-03-15&quot;,]
+a9&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-03-15&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-04-11&quot;,]
+a10&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-04-11&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-05-09&quot;,]
+a11&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-05-09&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-06-09&quot;,]
+a12&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-06-09&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-07-21&quot;,]
+a13&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-07-21&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-08-04&quot;,]
+a14&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-08-04&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-09-12&quot;,]
 
 #median
 aa1&lt;-median(a1$water_temp, na.rm=TRUE)
@@ -1123,7 +927,7 @@ cc.mon.wt$date&lt;-as.Date(cc.mon.wt$date, format=c(&quot;%Y-%m-%d&quot;))
 pc.cc&lt;-merge(pc.cc, cc.mon.wt, by=&quot;date&quot;)</code></pre>
 <p>Daily median, range, minimum, and maximum water temperature</p>
 <pre class="r"><code>#table summary for daily max, min, and median
-cc.daily.sum.wt&lt;-as.data.frame(setDT(cc_wt)[, .(max.daily.wt = max(water_temp), min.daily.wt = min(water_temp), daily.med.wt=median(water_temp)), .(date)])
+cc.daily.sum.wt&lt;-as.data.frame(setDT(cc.wtemp.tide)[, .(max.daily.wt = max(water_temp), min.daily.wt = min(water_temp), daily.med.wt=median(water_temp)), .(date)])
 
 #daily range
 cc.daily.sum.wt$daily.wt.range&lt;-cc.daily.sum.wt$max.daily.wt - cc.daily.sum.wt$min.daily.wt
@@ -1265,9 +1069,6 @@ cc.daily.med.wt$date&lt;-as.Date(cc.daily.med.wt$date, format=c(&quot;%Y-%m-%d&q
 
 #merge dfs
 pc.cc&lt;-merge(pc.cc, cc.daily.med.wt[,c(&quot;date&quot;, &quot;daily.med.wt&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Save csvs</p>
-<pre class="r"><code>write.csv(cc.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/cc.daily.sum.csv&quot;)</code></pre>
-<p>cc.daily sum: <a href="https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/cc.daily.sum.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/cc.daily.sum.csv</a></p>
 <p>Now I’m coing to count “events” and adding them to the above dataframes. I’m having a hard time doing a loop or counting “3 consecutive days of salinity below x” so instead I’m going to just count “days with salinity below x” and use that for analysis. These counts will be subseted by survey dates as done above.</p>
 <p>Subset by survey dates</p>
 <pre class="r"><code>a1&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-05-14&quot; &amp; cc.daily.sum$date &lt; &quot;2018-06-14&quot;,]
@@ -1494,8 +1295,7 @@ cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;daily.sal.range.gt5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Skipping DO to do pH instead</p>
-<p>Number of days where min.daily.ph is &lt;7</p>
+<p>pH Number of days where min.daily.ph is &lt;7</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.ph&lt;7, ])
 aa2&lt;-nrow(a2[a2$min.daily.ph&lt;7, ])
 aa3&lt;-nrow(a3[a3$min.daily.ph&lt;7, ])
@@ -1625,6 +1425,9 @@ cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&quot;)], by=&quot;date&quot;)</code></pre>
+<p>Save csvs</p>
+<pre class="r"><code>write.csv(pc.cc, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/cc.daily.sum.csv&quot;)</code></pre>
+<p>cc.daily sum: <a href="https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/cc.daily.sum.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/cc.daily.sum.csv</a></p>
 <p>####Point Chauncy and EOS Tiburon#### Monthly summaries of the field data</p>
 <pre class="r"><code>#subset for site
 nd&lt;-subset(field, field$site.old == &quot;ND&quot;)
@@ -1699,11 +1502,11 @@ nd.eos&lt;-merge(nd.eos, nd.r, by=&quot;date&quot;, all=TRUE)
 rm(nd, nd.r)</code></pre>
 <p>Salinity</p>
 <pre class="r"><code>#read in and format data
-eos_sal&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/eos_sal.csv&quot;,
+eos.sal.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/eos.sal.tide.csv&quot;,
     header = TRUE
   )
-eos_sal$date&lt;-as.Date(eos_sal$date, format=c(&quot;%Y-%m-%d&quot;))
+eos.sal.tide$date&lt;-as.Date(eos.sal.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #look
 print(nd.eos$date)</code></pre>
@@ -1711,21 +1514,21 @@ print(nd.eos$date)</code></pre>
 ##  [6] &quot;2018-12-05&quot; &quot;2019-01-30&quot; &quot;2019-02-20&quot; &quot;2019-03-15&quot; &quot;2019-04-11&quot;
 ## [11] &quot;2019-05-09&quot; &quot;2019-06-09&quot; &quot;2019-07-21&quot; &quot;2019-08-04&quot; &quot;2019-09-12&quot;</code></pre>
 <pre class="r"><code>#subset the salinity data by dates
-a1&lt;- eos_sal[eos_sal$date &gt;= &quot;2018-05-14&quot; &amp; eos_sal$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos_sal[eos_sal$date &gt;= &quot;2018-06-14&quot; &amp; eos_sal$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos_sal[eos_sal$date &gt;= &quot;2018-07-17&quot; &amp; eos_sal$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos_sal[eos_sal$date &gt;= &quot;2018-08-07&quot; &amp; eos_sal$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos_sal[eos_sal$date &gt;= &quot;2018-09-11&quot; &amp; eos_sal$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos_sal[eos_sal$date &gt;= &quot;2018-10-10&quot; &amp; eos_sal$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos_sal[eos_sal$date &gt;= &quot;2018-12-05&quot; &amp; eos_sal$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos_sal[eos_sal$date &gt;= &quot;2019-01-30&quot; &amp; eos_sal$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos_sal[eos_sal$date &gt;= &quot;2019-02-20&quot; &amp; eos_sal$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos_sal[eos_sal$date &gt;= &quot;2019-03-15&quot; &amp; eos_sal$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos_sal[eos_sal$date &gt;= &quot;2019-04-11&quot; &amp; eos_sal$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos_sal[eos_sal$date &gt;= &quot;2019-05-09&quot; &amp; eos_sal$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos_sal[eos_sal$date &gt;= &quot;2019-06-09&quot; &amp; eos_sal$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos_sal[eos_sal$date &gt;= &quot;2019-07-21&quot; &amp; eos_sal$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos_sal[eos_sal$date &gt;= &quot;2019-08-04&quot; &amp; eos_sal$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-05-14&quot; &amp; eos.sal.tide$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-06-14&quot; &amp; eos.sal.tide$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-07-17&quot; &amp; eos.sal.tide$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-08-07&quot; &amp; eos.sal.tide$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-09-11&quot; &amp; eos.sal.tide$date &lt; &quot;2018-10-10&quot;,]
+a6&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-10-10&quot; &amp; eos.sal.tide$date &lt; &quot;2018-12-05&quot;,]
+a7&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-12-05&quot; &amp; eos.sal.tide$date &lt; &quot;2019-01-30&quot;,]
+a8&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-01-30&quot; &amp; eos.sal.tide$date &lt; &quot;2019-02-20&quot;,]
+a9&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-02-20&quot; &amp; eos.sal.tide$date &lt; &quot;2019-03-15&quot;,]
+a10&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-03-15&quot; &amp; eos.sal.tide$date &lt; &quot;2019-04-11&quot;,]
+a11&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-04-11&quot; &amp; eos.sal.tide$date &lt; &quot;2019-05-09&quot;,]
+a12&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-05-09&quot; &amp; eos.sal.tide$date &lt; &quot;2019-06-09&quot;,]
+a13&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-06-09&quot; &amp; eos.sal.tide$date &lt; &quot;2019-07-21&quot;,]
+a14&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-07-21&quot; &amp; eos.sal.tide$date &lt; &quot;2019-08-04&quot;,]
+a15&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-08-04&quot; &amp; eos.sal.tide$date &lt; &quot;2019-09-12&quot;,]
 
 #median of these salinity periods
 aa1&lt;-median(a1$salinity, na.rm=TRUE)
@@ -1758,7 +1561,7 @@ eos.mon.sal$date&lt;-as.Date(eos.mon.sal$date, format=c(&quot;%Y-%m-%d&quot;))
 nd.eos&lt;-merge(nd.eos, eos.mon.sal[,c(&quot;date&quot;, &quot;salinity&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Daily median, range, minimum, and maximum salinity</p>
 <pre class="r"><code>#table summary for daily max and min
-eos.daily.sum&lt;-as.data.frame(setDT(eos_sal)[, .(max.daily.sal = max(salinity), min.daily.sal = min(salinity), daily.med.sal=median(salinity)), .(date)])
+eos.daily.sum&lt;-as.data.frame(setDT(eos.sal.tide)[, .(max.daily.sal = max(salinity), min.daily.sal = min(salinity), daily.med.sal=median(salinity)), .(date)])
 
 #daily range
 eos.daily.sum$daily.sal.range&lt;-eos.daily.sum$max.daily.sal - eos.daily.sum$min.daily.sal
@@ -1904,236 +1707,30 @@ eos.daily.med.sal$date&lt;-as.Date(eos.daily.med.sal$date, format=c(&quot;%Y-%m-
 
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.daily.med.sal[,c(&quot;date&quot;, &quot;daily.med.sal&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Dissolved oxygen</p>
-<pre class="r"><code>#read in data
-eos_do&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/eos_do.csv&quot;,
-    header = TRUE
-  )
-eos_do$date&lt;-as.Date(eos_do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-a1&lt;- eos_do[eos_do$date &gt;= &quot;2018-05-14&quot; &amp; eos_do$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos_do[eos_do$date &gt;= &quot;2018-06-14&quot; &amp; eos_do$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos_do[eos_do$date &gt;= &quot;2018-07-17&quot; &amp; eos_do$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos_do[eos_do$date &gt;= &quot;2018-08-07&quot; &amp; eos_do$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos_do[eos_do$date &gt;= &quot;2018-09-11&quot; &amp; eos_do$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos_do[eos_do$date &gt;= &quot;2018-10-10&quot; &amp; eos_do$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos_do[eos_do$date &gt;= &quot;2018-12-05&quot; &amp; eos_do$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos_do[eos_do$date &gt;= &quot;2019-01-30&quot; &amp; eos_do$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos_do[eos_do$date &gt;= &quot;2019-02-20&quot; &amp; eos_do$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos_do[eos_do$date &gt;= &quot;2019-03-15&quot; &amp; eos_do$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos_do[eos_do$date &gt;= &quot;2019-04-11&quot; &amp; eos_do$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos_do[eos_do$date &gt;= &quot;2019-05-09&quot; &amp; eos_do$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos_do[eos_do$date &gt;= &quot;2019-06-09&quot; &amp; eos_do$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos_do[eos_do$date &gt;= &quot;2019-07-21&quot; &amp; eos_do$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos_do[eos_do$date &gt;= &quot;2019-08-04&quot; &amp; eos_do$date &lt; &quot;2019-09-12&quot;,]
-
-#median 
-aa1&lt;-median(a1$do, na.rm=TRUE)
-aa2&lt;-median(a2$do, na.rm=TRUE)
-aa3&lt;-median(a3$do, na.rm=TRUE)
-aa4&lt;-median(a4$do, na.rm=TRUE)
-aa5&lt;-median(a5$do, na.rm=TRUE)
-aa6&lt;-median(a6$do, na.rm=TRUE)
-aa7&lt;-median(a7$do, na.rm=TRUE)
-aa8&lt;-median(a8$do, na.rm=TRUE)
-aa9&lt;-median(a9$do, na.rm=TRUE)
-aa10&lt;-median(a10$do, na.rm=TRUE)
-aa11&lt;-median(a11$do, na.rm=TRUE)
-aa12&lt;-median(a12$do, na.rm=TRUE)
-aa13&lt;-median(a13$do, na.rm=TRUE)
-aa14&lt;-median(a14$do, na.rm=TRUE)
-aa15&lt;-median(a15$do, na.rm=TRUE)
-
-
-#string these values to a data frame
-eos.mon.do&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.mon.do&lt;-as.data.frame(eos.mon.do)
-
-#change column names
-names(eos.mon.do)[1] &lt;- &quot;date&quot;
-names(eos.mon.do)[2] &lt;- &quot;dissolved.oxygen&quot;
-eos.mon.do$date&lt;-as.Date(eos.mon.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.mon.do[,c(&quot;date&quot;, &quot;dissolved.oxygen&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Daily median, range, minimum, and maximum dissolved oxygen</p>
-<pre class="r"><code>#table summary for daily max and min
-eos.daily.sum.do&lt;-as.data.frame(setDT(eos_do)[, .(max.daily.do = max(do), min.daily.do = min(do), daily.med.do=median(do)), .(date)])
-
-#daily range
-eos.daily.sum.do$daily.do.range&lt;-eos.daily.sum.do$max.daily.do - eos.daily.sum.do$min.daily.do
-
-#merge
-eos.daily.sum&lt;-merge(eos.daily.sum, eos.daily.sum.do, by=&quot;date&quot;, all=TRUE)
-
-#Daily min 
-#subset dates 
-a1&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2018-05-14&quot; &amp; eos.daily.sum.do$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2018-06-14&quot; &amp; eos.daily.sum.do$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2018-07-17&quot; &amp; eos.daily.sum.do$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2018-08-07&quot; &amp; eos.daily.sum.do$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2018-09-11&quot; &amp; eos.daily.sum.do$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2018-10-10&quot; &amp; eos.daily.sum.do$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2018-12-05&quot; &amp; eos.daily.sum.do$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2019-01-30&quot; &amp; eos.daily.sum.do$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2019-02-20&quot; &amp; eos.daily.sum.do$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2019-03-15&quot; &amp; eos.daily.sum.do$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2019-04-11&quot; &amp; eos.daily.sum.do$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2019-05-09&quot; &amp; eos.daily.sum.do$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2019-06-09&quot; &amp; eos.daily.sum.do$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2019-07-21&quot; &amp; eos.daily.sum.do$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos.daily.sum.do[eos.daily.sum.do$date &gt;= &quot;2019-08-04&quot; &amp; eos.daily.sum.do$date &lt; &quot;2019-09-12&quot;,]
-
-#median 
-aa1&lt;-median(a1$min.daily.do, na.rm=TRUE)
-aa2&lt;-median(a2$min.daily.do, na.rm=TRUE)
-aa3&lt;-median(a3$min.daily.do, na.rm=TRUE)
-aa4&lt;-median(a4$min.daily.do, na.rm=TRUE)
-aa5&lt;-median(a5$min.daily.do, na.rm=TRUE)
-aa6&lt;-median(a6$min.daily.do, na.rm=TRUE)
-aa7&lt;-median(a7$min.daily.do, na.rm=TRUE)
-aa8&lt;-median(a8$min.daily.do, na.rm=TRUE)
-aa9&lt;-median(a9$min.daily.do, na.rm=TRUE)
-aa10&lt;-median(a10$min.daily.do, na.rm=TRUE)
-aa11&lt;-median(a11$min.daily.do, na.rm=TRUE)
-aa12&lt;-median(a12$min.daily.do, na.rm=TRUE)
-aa13&lt;-median(a13$min.daily.do, na.rm=TRUE)
-aa14&lt;-median(a14$min.daily.do, na.rm=TRUE)
-aa15&lt;-median(a15$min.daily.do, na.rm=TRUE)
-
-
-#string these values to a data frame
-eos.daily.min.do&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.daily.min.do&lt;-as.data.frame(eos.daily.min.do)
-
-#change column names
-names(eos.daily.min.do)[1] &lt;- &quot;date&quot;
-names(eos.daily.min.do)[2] &lt;- &quot;daily.min.do&quot;
-eos.daily.min.do$date&lt;-as.Date(eos.daily.min.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.daily.min.do[,c(&quot;date&quot;, &quot;daily.min.do&quot;)], by=&quot;date&quot;)
-
-
-#daily maximum values
-#median 
-aa1&lt;-median(a1$max.daily.do, na.rm=TRUE)
-aa2&lt;-median(a2$max.daily.do, na.rm=TRUE)
-aa3&lt;-median(a3$max.daily.do, na.rm=TRUE)
-aa4&lt;-median(a4$max.daily.do, na.rm=TRUE)
-aa5&lt;-median(a5$max.daily.do, na.rm=TRUE)
-aa6&lt;-median(a6$max.daily.do, na.rm=TRUE)
-aa7&lt;-median(a7$max.daily.do, na.rm=TRUE)
-aa8&lt;-median(a8$max.daily.do, na.rm=TRUE)
-aa9&lt;-median(a9$max.daily.do, na.rm=TRUE)
-aa10&lt;-median(a10$max.daily.do, na.rm=TRUE)
-aa11&lt;-median(a11$max.daily.do, na.rm=TRUE)
-aa12&lt;-median(a12$max.daily.do, na.rm=TRUE)
-aa13&lt;-median(a13$max.daily.do, na.rm=TRUE)
-aa14&lt;-median(a14$min.daily.do, na.rm=TRUE)
-aa15&lt;-median(a15$min.daily.do, na.rm=TRUE)
-
-
-#string these values to a data frame
-eos.daily.max.do&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.daily.max.do&lt;-as.data.frame(eos.daily.max.do)
-
-#change column names
-names(eos.daily.max.do)[1] &lt;- &quot;date&quot;
-names(eos.daily.max.do)[2] &lt;- &quot;daily.max.do&quot;
-eos.daily.max.do$date&lt;-as.Date(eos.daily.max.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.daily.max.do[,c(&quot;date&quot;, &quot;daily.max.do&quot;)], by=&quot;date&quot;)
-
-
-#daily range
-#mean 
-aa1&lt;-median(a1$daily.do.range, na.rm=TRUE)
-aa2&lt;-median(a2$daily.do.range, na.rm=TRUE)
-aa3&lt;-median(a3$daily.do.range, na.rm=TRUE)
-aa4&lt;-median(a4$daily.do.range, na.rm=TRUE)
-aa5&lt;-median(a5$daily.do.range, na.rm=TRUE)
-aa6&lt;-median(a6$daily.do.range, na.rm=TRUE)
-aa7&lt;-median(a7$daily.do.range, na.rm=TRUE)
-aa8&lt;-median(a8$daily.do.range, na.rm=TRUE)
-aa9&lt;-median(a9$daily.do.range, na.rm=TRUE)
-aa10&lt;-median(a10$daily.do.range, na.rm=TRUE)
-aa11&lt;-median(a11$daily.do.range, na.rm=TRUE)
-aa12&lt;-median(a12$daily.do.range, na.rm=TRUE)
-aa13&lt;-median(a13$daily.do.range, na.rm=TRUE)
-aa14&lt;-median(a14$min.daily.do, na.rm=TRUE)
-aa15&lt;-median(a15$min.daily.do, na.rm=TRUE)
-
-
-#string these values to a data frame
-eos.daily.do.range&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.daily.do.range&lt;-as.data.frame(eos.daily.do.range)
-
-#change column names
-names(eos.daily.do.range)[1] &lt;- &quot;date&quot;
-names(eos.daily.do.range)[2] &lt;- &quot;daily.do.range&quot;
-eos.daily.do.range$date&lt;-as.Date(eos.daily.do.range$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.daily.do.range[,c(&quot;date&quot;, &quot;daily.do.range&quot;)], by=&quot;date&quot;)
-
-
-#daily median
-#mean of these doinity periods
-aa1&lt;-median(a1$daily.med.do, na.rm=TRUE)
-aa2&lt;-median(a2$daily.med.do, na.rm=TRUE)
-aa3&lt;-median(a3$daily.med.do, na.rm=TRUE)
-aa4&lt;-median(a4$daily.med.do, na.rm=TRUE)
-aa5&lt;-median(a5$daily.med.do, na.rm=TRUE)
-aa6&lt;-median(a6$daily.med.do, na.rm=TRUE)
-aa7&lt;-median(a7$daily.med.do, na.rm=TRUE)
-aa8&lt;-median(a8$daily.med.do, na.rm=TRUE)
-aa9&lt;-median(a9$daily.med.do, na.rm=TRUE)
-aa10&lt;-median(a10$daily.med.do, na.rm=TRUE)
-aa11&lt;-median(a11$daily.med.do, na.rm=TRUE)
-aa12&lt;-median(a12$daily.med.do, na.rm=TRUE)
-aa13&lt;-median(a13$daily.med.do, na.rm=TRUE)
-aa14&lt;-median(a14$min.daily.do, na.rm=TRUE)
-aa15&lt;-median(a15$min.daily.do, na.rm=TRUE)
-
-
-#string these values to a data frame
-eos.daily.med.do&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.daily.med.do&lt;-as.data.frame(eos.daily.med.do)
-
-#change column names
-names(eos.daily.med.do)[1] &lt;- &quot;date&quot;
-names(eos.daily.med.do)[2] &lt;- &quot;daily.med.do&quot;
-eos.daily.med.do$date&lt;-as.Date(eos.daily.med.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.daily.med.do[,c(&quot;date&quot;, &quot;daily.med.do&quot;)], by=&quot;date&quot;)</code></pre>
 <p>pH</p>
 <pre class="r"><code>#read in data
-eos_ph&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/eos_ph.csv&quot;,
+eos.ph.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/eos.ph.tide.csv&quot;,
     header = TRUE
   )
-eos_ph$date&lt;-as.Date(eos_ph$date, format=c(&quot;%Y-%m-%d&quot;))
+eos.ph.tide$date&lt;-as.Date(eos.ph.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
-a1&lt;- eos_ph[eos_ph$date &gt;= &quot;2018-05-14&quot; &amp; eos_ph$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos_ph[eos_ph$date &gt;= &quot;2018-06-14&quot; &amp; eos_ph$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos_ph[eos_ph$date &gt;= &quot;2018-07-17&quot; &amp; eos_ph$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos_ph[eos_ph$date &gt;= &quot;2018-08-07&quot; &amp; eos_ph$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos_ph[eos_ph$date &gt;= &quot;2018-09-11&quot; &amp; eos_ph$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos_ph[eos_ph$date &gt;= &quot;2018-10-10&quot; &amp; eos_ph$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos_ph[eos_ph$date &gt;= &quot;2018-12-05&quot; &amp; eos_ph$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos_ph[eos_ph$date &gt;= &quot;2019-01-30&quot; &amp; eos_ph$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos_ph[eos_ph$date &gt;= &quot;2019-02-20&quot; &amp; eos_ph$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos_ph[eos_ph$date &gt;= &quot;2019-03-15&quot; &amp; eos_ph$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos_ph[eos_ph$date &gt;= &quot;2019-04-11&quot; &amp; eos_ph$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos_ph[eos_ph$date &gt;= &quot;2019-05-09&quot; &amp; eos_ph$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos_ph[eos_ph$date &gt;= &quot;2019-06-09&quot; &amp; eos_ph$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos_ph[eos_ph$date &gt;= &quot;2019-07-21&quot; &amp; eos_ph$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos_ph[eos_ph$date &gt;= &quot;2019-08-04&quot; &amp; eos_ph$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-05-14&quot; &amp; eos.ph.tide$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-06-14&quot; &amp; eos.ph.tide$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-07-17&quot; &amp; eos.ph.tide$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-08-07&quot; &amp; eos.ph.tide$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-09-11&quot; &amp; eos.ph.tide$date &lt; &quot;2018-10-10&quot;,]
+a6&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-10-10&quot; &amp; eos.ph.tide$date &lt; &quot;2018-12-05&quot;,]
+a7&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-12-05&quot; &amp; eos.ph.tide$date &lt; &quot;2019-01-30&quot;,]
+a8&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-01-30&quot; &amp; eos.ph.tide$date &lt; &quot;2019-02-20&quot;,]
+a9&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-02-20&quot; &amp; eos.ph.tide$date &lt; &quot;2019-03-15&quot;,]
+a10&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-03-15&quot; &amp; eos.ph.tide$date &lt; &quot;2019-04-11&quot;,]
+a11&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-04-11&quot; &amp; eos.ph.tide$date &lt; &quot;2019-05-09&quot;,]
+a12&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-05-09&quot; &amp; eos.ph.tide$date &lt; &quot;2019-06-09&quot;,]
+a13&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-06-09&quot; &amp; eos.ph.tide$date &lt; &quot;2019-07-21&quot;,]
+a14&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-07-21&quot; &amp; eos.ph.tide$date &lt; &quot;2019-08-04&quot;,]
+a15&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-08-04&quot; &amp; eos.ph.tide$date &lt; &quot;2019-09-12&quot;,]
 
 #median 
 aa1&lt;-median(a1$ph, na.rm=TRUE)
@@ -2166,7 +1763,7 @@ eos.mon.ph$date&lt;-as.Date(eos.mon.ph$date, format=c(&quot;%Y-%m-%d&quot;))
 nd.eos&lt;-merge(nd.eos, eos.mon.ph[,c(&quot;date&quot;, &quot;ph&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Daily median, range, minimum, and maximum pH</p>
 <pre class="r"><code>#table summary for daily max and min
-eos.daily.sum.ph&lt;-as.data.frame(setDT(eos_ph)[, .(max.daily.ph = max(ph), min.daily.ph = min(ph), daily.med.ph=median(ph)), .(date)])
+eos.daily.sum.ph&lt;-as.data.frame(setDT(eos.ph.tide)[, .(max.daily.ph = max(ph), min.daily.ph = min(ph), daily.med.ph=median(ph)), .(date)])
 
 #daily range
 eos.daily.sum.ph$daily.ph.range&lt;-eos.daily.sum.ph$max.daily.ph - eos.daily.sum.ph$min.daily.ph
@@ -2317,28 +1914,28 @@ eos.daily.med.ph$date&lt;-as.Date(eos.daily.med.ph$date, format=c(&quot;%Y-%m-%d
 nd.eos&lt;-merge(nd.eos, eos.daily.med.ph[,c(&quot;date&quot;, &quot;daily.med.ph&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Water temperature</p>
 <pre class="r"><code>#read in data
-eos_wt&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/eos_watertemp.csv&quot;,
+eos.wtemp.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/eos.wtemp.tide.csv&quot;,
     header = TRUE
   )
-eos_wt$date&lt;-as.Date(eos_wt$date, format=c(&quot;%Y-%m-%d&quot;))
+eos.wtemp.tide$date&lt;-as.Date(eos.wtemp.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset data
-a1&lt;- eos_wt[eos_wt$date &gt;= &quot;2018-05-14&quot; &amp; eos_wt$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos_wt[eos_wt$date &gt;= &quot;2018-06-14&quot; &amp; eos_wt$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos_wt[eos_wt$date &gt;= &quot;2018-07-17&quot; &amp; eos_wt$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos_wt[eos_wt$date &gt;= &quot;2018-08-07&quot; &amp; eos_wt$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos_wt[eos_wt$date &gt;= &quot;2018-09-11&quot; &amp; eos_wt$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos_wt[eos_wt$date &gt;= &quot;2018-10-10&quot; &amp; eos_wt$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos_wt[eos_wt$date &gt;= &quot;2018-12-05&quot; &amp; eos_wt$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos_wt[eos_wt$date &gt;= &quot;2019-01-30&quot; &amp; eos_wt$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos_wt[eos_wt$date &gt;= &quot;2019-02-20&quot; &amp; eos_wt$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos_wt[eos_wt$date &gt;= &quot;2019-03-15&quot; &amp; eos_wt$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos_wt[eos_wt$date &gt;= &quot;2019-04-11&quot; &amp; eos_wt$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos_wt[eos_wt$date &gt;= &quot;2019-05-09&quot; &amp; eos_wt$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos_wt[eos_wt$date &gt;= &quot;2019-06-09&quot; &amp; eos_wt$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos_wt[eos_wt$date &gt;= &quot;2019-07-21&quot; &amp; eos_wt$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos_wt[eos_wt$date &gt;= &quot;2019-08-04&quot; &amp; eos_wt$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-05-14&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-06-14&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-07-17&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-08-07&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-09-11&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-10-10&quot;,]
+a6&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-10-10&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-12-05&quot;,]
+a7&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-12-05&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-01-30&quot;,]
+a8&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-01-30&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-02-20&quot;,]
+a9&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-02-20&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-03-15&quot;,]
+a10&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-03-15&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-04-11&quot;,]
+a11&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-04-11&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-05-09&quot;,]
+a12&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-05-09&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-06-09&quot;,]
+a13&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-06-09&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-07-21&quot;,]
+a14&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-07-21&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-08-04&quot;,]
+a15&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-08-04&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-09-12&quot;,]
 
 #median 
 aa1&lt;-median(a1$water_temp, na.rm=TRUE)
@@ -2371,7 +1968,7 @@ eos.mon.wt$date&lt;-as.Date(eos.mon.wt$date, format=c(&quot;%Y-%m-%d&quot;))
 nd.eos&lt;-merge(nd.eos, eos.mon.wt[,c(&quot;date&quot;, &quot;water.temp&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Daily median, range, minimum, and maximum water temperature</p>
 <pre class="r"><code>#table summary for daily max and min
-eos.daily.sum.wt&lt;-as.data.frame(setDT(eos_wt)[, .(max.daily.wt = max(water_temp), min.daily.wt = min(water_temp), daily.med.wt=median(water_temp)), .(date)])
+eos.daily.sum.wt&lt;-as.data.frame(setDT(eos.wtemp.tide)[, .(max.daily.wt = max(water_temp), min.daily.wt = min(water_temp), daily.med.wt=median(water_temp)), .(date)])
 
 #daily range
 eos.daily.sum.wt$daily.wt.range&lt;-eos.daily.sum.wt$max.daily.wt - eos.daily.sum.wt$min.daily.wt
@@ -2520,12 +2117,7 @@ eos.daily.med.wt$date&lt;-as.Date(eos.daily.med.wt$date, format=c(&quot;%Y-%m-%d
 
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.daily.med.wt[,c(&quot;date&quot;, &quot;daily.med.wt&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Save csv</p>
-<pre class="r"><code>write.csv(eos.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos.daily.sum.csv&quot;)</code></pre>
-<p>eos.daily.sum: <a href="https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/eos.daily.sum.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/eos.daily.sum.csv</a></p>
-<p>Daily summaries and “monthly” summaries done. Time for occurances of events</p>
-<pre class="r"><code>nd.eos$date&lt;-as.Date(nd.eos$date, format=c(&quot;%Y-%m-%d&quot;))</code></pre>
-<p>Subset by survey dates</p>
+<p>Daily summaries and “monthly” summaries done. Time for occurances of events Subset by survey dates</p>
 <pre class="r"><code>a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
 a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
 a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-17&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-07&quot;,]
@@ -2763,7 +2355,7 @@ eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;daily.sal.range.gt5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Skipping DO to do pH instead</p>
+<p>pH</p>
 <p>Number of days where min.daily.ph is &lt;7</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.ph&lt;7, ])
 aa2&lt;-nrow(a2[a2$min.daily.ph&lt;7, ])
@@ -2902,6 +2494,9 @@ eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&quot;)], by=&quot;date&quot;)</code></pre>
+<p>Save csv</p>
+<pre class="r"><code>write.csv(nd.eos, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos.daily.sum.csv&quot;)</code></pre>
+<p>eos.daily.sum: <a href="https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/eos.daily.sum.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/eos.daily.sum.csv</a></p>
 <p>####Brickyard Park and Richardson Bay#### Monthly summaries of the field data</p>
 <pre class="r"><code>#subset site
 by&lt;-subset(field, field$site.old == &quot;BY&quot;)
@@ -2974,11 +2569,11 @@ by.rb&lt;-merge(by.rb, by.r, by=&quot;date&quot;, all=TRUE)
 rm(by, by.r)</code></pre>
 <p>Salinity</p>
 <pre class="r"><code>#read in an format data
-rb_sal&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/rb_sal.csv&quot;,
+rb.sal.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/rb.sal.tide.csv&quot;,
     header = TRUE
   )
-rb_sal$date&lt;-as.Date(rb_sal$date, format=c(&quot;%Y-%m-%d&quot;))
+rb.sal.tide$date&lt;-as.Date(rb.sal.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #looking at survey dates
 print(by.rb$date)</code></pre>
@@ -2987,22 +2582,22 @@ print(by.rb$date)</code></pre>
 ## [11] &quot;2019-04-09&quot; &quot;2019-05-08&quot; &quot;2019-06-08&quot; &quot;2019-07-20&quot; &quot;2019-08-04&quot;
 ## [16] &quot;2019-09-12&quot;</code></pre>
 <pre class="r"><code>#subset the salinity data by dates 
-a1&lt;- rb_sal[rb_sal$date &gt;= &quot;2018-05-15&quot; &amp; rb_sal$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb_sal[rb_sal$date &gt;= &quot;2018-06-15&quot; &amp; rb_sal$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb_sal[rb_sal$date &gt;= &quot;2018-07-16&quot; &amp; rb_sal$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb_sal[rb_sal$date &gt;= &quot;2018-08-06&quot; &amp; rb_sal$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb_sal[rb_sal$date &gt;= &quot;2018-09-10&quot; &amp; rb_sal$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb_sal[rb_sal$date &gt;= &quot;2018-10-09&quot; &amp; rb_sal$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb_sal[rb_sal$date &gt;= &quot;2018-11-06&quot; &amp; rb_sal$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- rb_sal[rb_sal$date &gt;= &quot;2018-12-04&quot; &amp; rb_sal$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb_sal[rb_sal$date &gt;= &quot;2019-01-31&quot; &amp; rb_sal$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb_sal[rb_sal$date &gt;= &quot;2019-02-21&quot; &amp; rb_sal$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb_sal[rb_sal$date &gt;= &quot;2019-03-14&quot; &amp; rb_sal$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb_sal[rb_sal$date &gt;= &quot;2019-04-09&quot; &amp; rb_sal$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb_sal[rb_sal$date &gt;= &quot;2019-05-08&quot; &amp; rb_sal$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb_sal[rb_sal$date &gt;= &quot;2019-06-08&quot; &amp; rb_sal$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb_sal[rb_sal$date &gt;= &quot;2019-07-20&quot; &amp; rb_sal$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb_sal[rb_sal$date &gt;= &quot;2019-08-04&quot; &amp; rb_sal$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-05-15&quot; &amp; rb.sal.tide$date &lt; &quot;2018-06-15&quot;,]
+a2&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-06-15&quot; &amp; rb.sal.tide$date &lt; &quot;2018-07-16&quot;,]
+a3&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-07-16&quot; &amp; rb.sal.tide$date &lt; &quot;2018-08-06&quot;,]
+a4&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-08-06&quot; &amp; rb.sal.tide$date &lt; &quot;2018-09-10&quot;,]
+a5&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-09-10&quot; &amp; rb.sal.tide$date &lt; &quot;2018-10-09&quot;,]
+a6&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-10-09&quot; &amp; rb.sal.tide$date &lt; &quot;2018-11-06&quot;,]
+a7&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-11-06&quot; &amp; rb.sal.tide$date &lt; &quot;2018-12-04&quot;,]
+a8&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-12-04&quot; &amp; rb.sal.tide$date &lt; &quot;2019-01-31&quot;,]
+a9&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-01-31&quot; &amp; rb.sal.tide$date &lt; &quot;2019-02-21&quot;,]
+a10&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-02-21&quot; &amp; rb.sal.tide$date &lt; &quot;2019-03-14&quot;,]
+a11&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-03-14&quot; &amp; rb.sal.tide$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-04-09&quot; &amp; rb.sal.tide$date &lt; &quot;2019-05-08&quot;,]
+a13&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-05-08&quot; &amp; rb.sal.tide$date &lt; &quot;2019-06-08&quot;,]
+a14&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-06-08&quot; &amp; rb.sal.tide$date &lt; &quot;2019-07-20&quot;,]
+a15&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-07-20&quot; &amp; rb.sal.tide$date &lt; &quot;2019-08-04&quot;,]
+a16&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-08-04&quot; &amp; rb.sal.tide$date &lt; &quot;2019-09-12&quot;,]
 
 #median
 aa1&lt;-median(a1$salinity, na.rm=TRUE)
@@ -3035,7 +2630,7 @@ rb.mon.sal$date&lt;-as.Date(rb.mon.sal$date, format=c(&quot;%Y-%m-%d&quot;))
 by.rb&lt;-merge(by.rb, rb.mon.sal[,c(&quot;date&quot;, &quot;salinity&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Daily median, range, minimum, and maximum salinity. Need to check this step. The df looks off</p>
 <pre class="r"><code>#table summary for daily max aby min
-rb.daily.sum&lt;-as.data.frame(setDT(rb_sal)[, .(max.daily.sal = max(salinity), min.daily.sal = min(salinity), daily.med.sal=median(salinity)), .(date)])
+rb.daily.sum&lt;-as.data.frame(setDT(rb.sal.tide)[, .(max.daily.sal = max(salinity), min.daily.sal = min(salinity), daily.med.sal=median(salinity)), .(date)])
 
 #daily range
 rb.daily.sum$daily.sal.range&lt;-rb.daily.sum$max.daily.sal - rb.daily.sum$min.daily.sal
@@ -3184,242 +2779,33 @@ rb.daily.med.sal$date&lt;-as.Date(rb.daily.med.sal$date, format=c(&quot;%Y-%m-%d
 
 #merge dfs
 by.rb&lt;-merge(by.rb, rb.daily.med.sal[,c(&quot;date&quot;, &quot;daily.med.sal&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Dissolved oxygen</p>
-<pre class="r"><code>#read in data
-rb_do&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/rb_do.csv&quot;,
-    header = TRUE
-  )
-rb_do$date&lt;-as.Date(rb_do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#subset by date
-a1&lt;- rb_do[rb_do$date &gt;= &quot;2018-05-15&quot; &amp; rb_do$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb_do[rb_do$date &gt;= &quot;2018-06-15&quot; &amp; rb_do$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb_do[rb_do$date &gt;= &quot;2018-07-16&quot; &amp; rb_do$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb_do[rb_do$date &gt;= &quot;2018-08-06&quot; &amp; rb_do$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb_do[rb_do$date &gt;= &quot;2018-09-10&quot; &amp; rb_do$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb_do[rb_do$date &gt;= &quot;2018-10-09&quot; &amp; rb_do$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb_do[rb_do$date &gt;= &quot;2018-11-06&quot; &amp; rb_do$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- rb_do[rb_do$date &gt;= &quot;2018-12-04&quot; &amp; rb_do$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb_do[rb_do$date &gt;= &quot;2019-01-31&quot; &amp; rb_do$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb_do[rb_do$date &gt;= &quot;2019-02-21&quot; &amp; rb_do$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb_do[rb_do$date &gt;= &quot;2019-03-14&quot; &amp; rb_do$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb_do[rb_do$date &gt;= &quot;2019-04-09&quot; &amp; rb_do$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb_do[rb_do$date &gt;= &quot;2019-05-08&quot; &amp; rb_do$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb_do[rb_do$date &gt;= &quot;2019-06-08&quot; &amp; rb_do$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb_do[rb_do$date &gt;= &quot;2019-07-20&quot; &amp; rb_do$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb_do[rb_do$date &gt;= &quot;2019-08-04&quot; &amp; rb_do$date &lt; &quot;2019-09-12&quot;,]
-
-#median
-aa1&lt;-median(a1$do, na.rm=TRUE)
-aa2&lt;-median(a2$do, na.rm=TRUE)
-aa3&lt;-median(a3$do, na.rm=TRUE)
-aa4&lt;-median(a4$do, na.rm=TRUE)
-aa5&lt;-median(a5$do, na.rm=TRUE)
-aa6&lt;-median(a6$do, na.rm=TRUE)
-aa7&lt;-median(a7$do, na.rm=TRUE)
-aa8&lt;-median(a8$do, na.rm=TRUE)
-aa9&lt;-median(a9$do, na.rm=TRUE)
-aa10&lt;-median(a10$do, na.rm=TRUE)
-aa11&lt;-median(a11$do, na.rm=TRUE)
-aa12&lt;-median(a12$do, na.rm=TRUE)
-aa13&lt;-median(a13$do, na.rm=TRUE)
-aa14&lt;-median(a14$do, na.rm=TRUE)
-aa15&lt;-median(a15$do, na.rm=TRUE)
-aa16&lt;-median(a16$do, na.rm=TRUE)
-
-#string these values to a data frame
-rb.mon.do&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.mon.do&lt;-as.data.frame(rb.mon.do)
-
-#change column names
-names(rb.mon.do)[1] &lt;- &quot;date&quot;
-names(rb.mon.do)[2] &lt;- &quot;dissolved.oxygen&quot;
-rb.mon.do$date&lt;-as.Date(rb.mon.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.mon.do[,c(&quot;date&quot;, &quot;dissolved.oxygen&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Daily median, range, minimum, and maximum dissolved oxygen</p>
-<pre class="r"><code>#table summary for daily max, min, med
-rb.daily.sum.do&lt;-as.data.frame(setDT(rb_do)[, .(max.daily.do = max(do), min.daily.do = min(do), daily.med.do=median(do)), .(date)])
-
-#daily range
-rb.daily.sum.do$daily.do.range&lt;-rb.daily.sum.do$max.daily.do - rb.daily.sum.do$min.daily.do
-
-#merge
-rb.daily.sum&lt;-merge(rb.daily.sum, rb.daily.sum.do, by=&quot;date&quot;, all=TRUE)
-
-#Daily min 
-#subset dates 
-a1&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2018-05-15&quot; &amp; rb.daily.sum.do$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2018-06-15&quot; &amp; rb.daily.sum.do$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2018-07-16&quot; &amp; rb.daily.sum.do$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2018-08-06&quot; &amp; rb.daily.sum.do$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2018-09-10&quot; &amp; rb.daily.sum.do$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2018-10-09&quot; &amp; rb.daily.sum.do$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2018-11-06&quot; &amp; rb.daily.sum.do$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2018-12-04&quot; &amp; rb.daily.sum.do$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2019-01-31&quot; &amp; rb.daily.sum.do$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2019-02-21&quot; &amp; rb.daily.sum.do$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2019-03-14&quot; &amp; rb.daily.sum.do$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2019-04-09&quot; &amp; rb.daily.sum.do$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2019-05-08&quot; &amp; rb.daily.sum.do$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2019-06-08&quot; &amp; rb.daily.sum.do$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2019-07-20&quot; &amp; rb.daily.sum.do$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb.daily.sum.do[rb.daily.sum.do$date &gt;= &quot;2019-08-04&quot; &amp; rb.daily.sum.do$date &lt; &quot;2019-09-12&quot;,]
-
-#median
-aa1&lt;-median(a1$min.daily.do, na.rm=TRUE)
-aa2&lt;-median(a2$min.daily.do, na.rm=TRUE)
-aa3&lt;-median(a3$min.daily.do, na.rm=TRUE)
-aa4&lt;-median(a4$min.daily.do, na.rm=TRUE)
-aa5&lt;-median(a5$min.daily.do, na.rm=TRUE)
-aa6&lt;-median(a6$min.daily.do, na.rm=TRUE)
-aa7&lt;-median(a7$min.daily.do, na.rm=TRUE)
-aa8&lt;-median(a8$min.daily.do, na.rm=TRUE)
-aa9&lt;-median(a9$min.daily.do, na.rm=TRUE)
-aa10&lt;-median(a10$min.daily.do, na.rm=TRUE)
-aa11&lt;-median(a11$min.daily.do, na.rm=TRUE)
-aa12&lt;-median(a12$min.daily.do, na.rm=TRUE)
-aa13&lt;-median(a13$min.daily.do, na.rm=TRUE)
-aa14&lt;-median(a14$min.daily.do, na.rm=TRUE)
-aa15&lt;-median(a15$min.daily.do, na.rm=TRUE)
-aa16&lt;-median(a16$min.daily.do, na.rm=TRUE)
-
-#string these values to a data frame
-rb.daily.min.do&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.daily.min.do&lt;-as.data.frame(rb.daily.min.do)
-
-#change column names
-names(rb.daily.min.do)[1] &lt;- &quot;date&quot;
-names(rb.daily.min.do)[2] &lt;- &quot;daily.min.do&quot;
-rb.daily.min.do$date&lt;-as.Date(rb.daily.min.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.daily.min.do[,c(&quot;date&quot;, &quot;daily.min.do&quot;)], by=&quot;date&quot;)
-
-
-#daily maximum values
-#median 
-aa1&lt;-median(a1$max.daily.do, na.rm=TRUE)
-aa2&lt;-median(a2$max.daily.do, na.rm=TRUE)
-aa3&lt;-median(a3$max.daily.do, na.rm=TRUE)
-aa4&lt;-median(a4$max.daily.do, na.rm=TRUE)
-aa5&lt;-median(a5$max.daily.do, na.rm=TRUE)
-aa6&lt;-median(a6$max.daily.do, na.rm=TRUE)
-aa7&lt;-median(a7$max.daily.do, na.rm=TRUE)
-aa8&lt;-median(a8$max.daily.do, na.rm=TRUE)
-aa9&lt;-median(a9$max.daily.do, na.rm=TRUE)
-aa10&lt;-median(a10$max.daily.do, na.rm=TRUE)
-aa11&lt;-median(a11$max.daily.do, na.rm=TRUE)
-aa12&lt;-median(a12$max.daily.do, na.rm=TRUE)
-aa13&lt;-median(a13$max.daily.do, na.rm=TRUE)
-aa14&lt;-median(a14$max.daily.do, na.rm=TRUE)
-aa15&lt;-median(a15$max.daily.do, na.rm=TRUE)
-aa16&lt;-median(a16$max.daily.do, na.rm=TRUE)
-
-#string these values to a data frame
-rb.daily.max.do&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.daily.max.do&lt;-as.data.frame(rb.daily.max.do)
-
-#change column names
-names(rb.daily.max.do)[1] &lt;- &quot;date&quot;
-names(rb.daily.max.do)[2] &lt;- &quot;daily.max.do&quot;
-rb.daily.max.do$date&lt;-as.Date(rb.daily.max.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.daily.max.do[,c(&quot;date&quot;, &quot;daily.max.do&quot;)], by=&quot;date&quot;)
-
-
-#daily range
-#mean 
-aa1&lt;-median(a1$daily.do.range, na.rm=TRUE)
-aa2&lt;-median(a2$daily.do.range, na.rm=TRUE)
-aa3&lt;-median(a3$daily.do.range, na.rm=TRUE)
-aa4&lt;-median(a4$daily.do.range, na.rm=TRUE)
-aa5&lt;-median(a5$daily.do.range, na.rm=TRUE)
-aa6&lt;-median(a6$daily.do.range, na.rm=TRUE)
-aa7&lt;-median(a7$daily.do.range, na.rm=TRUE)
-aa8&lt;-median(a8$daily.do.range, na.rm=TRUE)
-aa9&lt;-median(a9$daily.do.range, na.rm=TRUE)
-aa10&lt;-median(a10$daily.do.range, na.rm=TRUE)
-aa11&lt;-median(a11$daily.do.range, na.rm=TRUE)
-aa12&lt;-median(a12$daily.do.range, na.rm=TRUE)
-aa13&lt;-median(a13$daily.do.range, na.rm=TRUE)
-aa14&lt;-median(a14$daily.do.range, na.rm=TRUE)
-aa15&lt;-median(a15$daily.do.range, na.rm=TRUE)
-aa16&lt;-median(a16$daily.do.range, na.rm=TRUE)
-
-#string these values to a data frame
-rb.daily.do.range&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.daily.do.range&lt;-as.data.frame(rb.daily.do.range)
-
-#change column names
-names(rb.daily.do.range)[1] &lt;- &quot;date&quot;
-names(rb.daily.do.range)[2] &lt;- &quot;daily.do.range&quot;
-rb.daily.do.range$date&lt;-as.Date(rb.daily.do.range$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.daily.do.range[,c(&quot;date&quot;, &quot;daily.do.range&quot;)], by=&quot;date&quot;)
-
-
-#daily median
-#mean of these doinity periods
-aa1&lt;-median(a1$daily.med.do, na.rm=TRUE)
-aa2&lt;-median(a2$daily.med.do, na.rm=TRUE)
-aa3&lt;-median(a3$daily.med.do, na.rm=TRUE)
-aa4&lt;-median(a4$daily.med.do, na.rm=TRUE)
-aa5&lt;-median(a5$daily.med.do, na.rm=TRUE)
-aa6&lt;-median(a6$daily.med.do, na.rm=TRUE)
-aa7&lt;-median(a7$daily.med.do, na.rm=TRUE)
-aa8&lt;-median(a8$daily.med.do, na.rm=TRUE)
-aa9&lt;-median(a9$daily.med.do, na.rm=TRUE)
-aa10&lt;-median(a10$daily.med.do, na.rm=TRUE)
-aa11&lt;-median(a11$daily.med.do, na.rm=TRUE)
-aa12&lt;-median(a12$daily.med.do, na.rm=TRUE)
-aa13&lt;-median(a13$daily.med.do, na.rm=TRUE)
-aa14&lt;-median(a14$daily.med.do, na.rm=TRUE)
-aa15&lt;-median(a15$daily.med.do, na.rm=TRUE)
-aa16&lt;-median(a16$daily.med.do, na.rm=TRUE)
-
-#string these values to a data frame
-rb.daily.med.do&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.daily.med.do&lt;-as.data.frame(rb.daily.med.do)
-
-#change column names
-names(rb.daily.med.do)[1] &lt;- &quot;date&quot;
-names(rb.daily.med.do)[2] &lt;- &quot;daily.med.do&quot;
-rb.daily.med.do$date&lt;-as.Date(rb.daily.med.do$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.daily.med.do[,c(&quot;date&quot;, &quot;daily.med.do&quot;)], by=&quot;date&quot;)</code></pre>
 <p>pH</p>
 <pre class="r"><code>#read in data
-rb_ph&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/rb_ph.csv&quot;,
+rb.ph.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/rb.ph.tide.csv&quot;,
     header = TRUE
   )
 
-rb_ph$date&lt;-as.Date(rb_ph$date, format=c(&quot;%Y-%m-%d&quot;))
+rb.ph.tide$date&lt;-as.Date(rb.ph.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
 #subset dates 
-a1&lt;- rb_ph[rb_ph$date &gt;= &quot;2018-05-15&quot; &amp; rb_ph$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb_ph[rb_ph$date &gt;= &quot;2018-06-15&quot; &amp; rb_ph$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb_ph[rb_ph$date &gt;= &quot;2018-07-16&quot; &amp; rb_ph$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb_ph[rb_ph$date &gt;= &quot;2018-08-06&quot; &amp; rb_ph$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb_ph[rb_ph$date &gt;= &quot;2018-09-10&quot; &amp; rb_ph$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb_ph[rb_ph$date &gt;= &quot;2018-10-09&quot; &amp; rb_ph$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb_ph[rb_ph$date &gt;= &quot;2018-11-06&quot; &amp; rb_ph$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- rb_ph[rb_ph$date &gt;= &quot;2018-12-04&quot; &amp; rb_ph$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb_ph[rb_ph$date &gt;= &quot;2019-01-31&quot; &amp; rb_ph$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb_ph[rb_ph$date &gt;= &quot;2019-02-21&quot; &amp; rb_ph$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb_ph[rb_ph$date &gt;= &quot;2019-03-14&quot; &amp; rb_ph$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb_ph[rb_ph$date &gt;= &quot;2019-04-09&quot; &amp; rb_ph$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb_ph[rb_ph$date &gt;= &quot;2019-05-08&quot; &amp; rb_ph$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb_ph[rb_ph$date &gt;= &quot;2019-06-08&quot; &amp; rb_ph$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb_ph[rb_ph$date &gt;= &quot;2019-07-20&quot; &amp; rb_ph$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb_ph[rb_ph$date &gt;= &quot;2019-08-04&quot; &amp; rb_ph$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-05-15&quot; &amp; rb.ph.tide$date &lt; &quot;2018-06-15&quot;,]
+a2&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-06-15&quot; &amp; rb.ph.tide$date &lt; &quot;2018-07-16&quot;,]
+a3&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-07-16&quot; &amp; rb.ph.tide$date &lt; &quot;2018-08-06&quot;,]
+a4&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-08-06&quot; &amp; rb.ph.tide$date &lt; &quot;2018-09-10&quot;,]
+a5&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-09-10&quot; &amp; rb.ph.tide$date &lt; &quot;2018-10-09&quot;,]
+a6&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-10-09&quot; &amp; rb.ph.tide$date &lt; &quot;2018-11-06&quot;,]
+a7&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-11-06&quot; &amp; rb.ph.tide$date &lt; &quot;2018-12-04&quot;,]
+a8&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-12-04&quot; &amp; rb.ph.tide$date &lt; &quot;2019-01-31&quot;,]
+a9&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-01-31&quot; &amp; rb.ph.tide$date &lt; &quot;2019-02-21&quot;,]
+a10&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-02-21&quot; &amp; rb.ph.tide$date &lt; &quot;2019-03-14&quot;,]
+a11&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-03-14&quot; &amp; rb.ph.tide$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-04-09&quot; &amp; rb.ph.tide$date &lt; &quot;2019-05-08&quot;,]
+a13&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-05-08&quot; &amp; rb.ph.tide$date &lt; &quot;2019-06-08&quot;,]
+a14&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-06-08&quot; &amp; rb.ph.tide$date &lt; &quot;2019-07-20&quot;,]
+a15&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-07-20&quot; &amp; rb.ph.tide$date &lt; &quot;2019-08-04&quot;,]
+a16&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-08-04&quot; &amp; rb.ph.tide$date &lt; &quot;2019-09-12&quot;,]
 
 #median
 aa1&lt;-median(a1$ph, na.rm=TRUE)
@@ -3452,7 +2838,7 @@ rb.mon.ph$date&lt;-as.Date(rb.mon.ph$date, format=c(&quot;%Y-%m-%d&quot;))
 by.rb&lt;-merge(by.rb, rb.mon.ph[,c(&quot;date&quot;, &quot;ph&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Daily median, range, minimum, and maximum pH</p>
 <pre class="r"><code>#table summary for daily max aby min
-rb.daily.sum.ph&lt;-as.data.frame(setDT(rb_ph)[, .(max.daily.ph = max(ph), min.daily.ph = min(ph), daily.med.ph=median(ph)), .(date)])
+rb.daily.sum.ph&lt;-as.data.frame(setDT(rb.ph.tide)[, .(max.daily.ph = max(ph), min.daily.ph = min(ph), daily.med.ph=median(ph)), .(date)])
 
 #daily range
 rb.daily.sum.ph$daily.ph.range&lt;-rb.daily.sum.ph$max.daily.ph - rb.daily.sum.ph$min.daily.ph
@@ -3607,29 +2993,29 @@ rb.daily.med.ph$date&lt;-as.Date(rb.daily.med.ph$date, format=c(&quot;%Y-%m-%d&q
 by.rb&lt;-merge(by.rb, rb.daily.med.ph[,c(&quot;date&quot;, &quot;daily.med.ph&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Water temperature</p>
 <pre class="r"><code>#read in data
-rb_wt&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/rb_watertemp.csv&quot;,
+rb.wtemp.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/rb.wtemp.tide.csv&quot;,
     header = TRUE
   )
-rb_wt$date&lt;-as.Date(rb_wt$date, format=c(&quot;%Y-%m-%d&quot;))
+rb.wtemp.tide$date&lt;-as.Date(rb.wtemp.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
-a1&lt;- rb_wt[rb_wt$date &gt;= &quot;2018-05-15&quot; &amp; rb_wt$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb_wt[rb_wt$date &gt;= &quot;2018-06-15&quot; &amp; rb_wt$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb_wt[rb_wt$date &gt;= &quot;2018-07-16&quot; &amp; rb_wt$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb_wt[rb_wt$date &gt;= &quot;2018-08-06&quot; &amp; rb_wt$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb_wt[rb_wt$date &gt;= &quot;2018-09-10&quot; &amp; rb_wt$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb_wt[rb_wt$date &gt;= &quot;2018-10-09&quot; &amp; rb_wt$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb_wt[rb_wt$date &gt;= &quot;2018-11-06&quot; &amp; rb_wt$date &lt; &quot;2019-12-04&quot;,]
-a8&lt;- rb_wt[rb_wt$date &gt;= &quot;2018-12-04&quot; &amp; rb_wt$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb_wt[rb_wt$date &gt;= &quot;2019-01-31&quot; &amp; rb_wt$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb_wt[rb_wt$date &gt;= &quot;2019-02-21&quot; &amp; rb_wt$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb_wt[rb_wt$date &gt;= &quot;2019-03-14&quot; &amp; rb_wt$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb_wt[rb_wt$date &gt;= &quot;2019-04-09&quot; &amp; rb_wt$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb_wt[rb_wt$date &gt;= &quot;2019-05-08&quot; &amp; rb_wt$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb_wt[rb_wt$date &gt;= &quot;2019-06-08&quot; &amp; rb_wt$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb_wt[rb_wt$date &gt;= &quot;2019-07-20&quot; &amp; rb_wt$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb_wt[rb_wt$date &gt;= &quot;2019-08-04&quot; &amp; rb_wt$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-05-15&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-06-15&quot;,]
+a2&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-06-15&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-07-16&quot;,]
+a3&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-07-16&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-08-06&quot;,]
+a4&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-08-06&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-09-10&quot;,]
+a5&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-09-10&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-10-09&quot;,]
+a6&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-10-09&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-11-06&quot;,]
+a7&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-11-06&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-12-04&quot;,]
+a8&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-12-04&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-01-31&quot;,]
+a9&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-01-31&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-02-21&quot;,]
+a10&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-02-21&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-03-14&quot;,]
+a11&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-03-14&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-04-09&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-05-08&quot;,]
+a13&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-05-08&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-06-08&quot;,]
+a14&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-06-08&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-07-20&quot;,]
+a15&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-07-20&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-08-04&quot;,]
+a16&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-08-04&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-09-12&quot;,]
 
 #median
 aa1&lt;-median(a1$water_temp, na.rm=TRUE)
@@ -3662,7 +3048,7 @@ rb.mon.wt$date&lt;-as.Date(rb.mon.wt$date, format=c(&quot;%Y-%m-%d&quot;))
 by.rb&lt;-merge(by.rb, rb.mon.wt[,c(&quot;date&quot;, &quot;water.temp&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Daily median, range, minimum, and maximum water temperature</p>
 <pre class="r"><code>#table summary for daily med, max, min
-rb.daily.sum.wt&lt;-as.data.frame(setDT(rb_wt)[, .(max.daily.wt = max(water_temp), min.daily.wt = min(water_temp), daily.med.wt=median(water_temp)), .(date)])
+rb.daily.sum.wt&lt;-as.data.frame(setDT(rb.wtemp.tide)[, .(max.daily.wt = max(water_temp), min.daily.wt = min(water_temp), daily.med.wt=median(water_temp)), .(date)])
 
 #daily range
 rb.daily.sum.wt$daily.wt.range&lt;-rb.daily.sum.wt$max.daily.wt - rb.daily.sum.wt$min.daily.wt
@@ -3815,7 +3201,6 @@ rb.daily.med.wt$date&lt;-as.Date(rb.daily.med.wt$date, format=c(&quot;%Y-%m-%d&q
 #merge dfs
 by.rb&lt;-merge(by.rb, rb.daily.med.wt[,c(&quot;date&quot;, &quot;daily.med.wt&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Daily summary</p>
-<pre class="r"><code>by.rb$date&lt;-as.Date(by.rb$date, format=c(&quot;%Y-%m-%d&quot;))</code></pre>
 <p>Subset by survey dates</p>
 <pre class="r"><code>a1&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-05-15&quot; &amp; rb.daily.sum$date &lt; &quot;2018-06-15&quot;,]
 a2&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-06-15&quot; &amp; rb.daily.sum$date &lt; &quot;2018-07-16&quot;,]
@@ -4058,7 +3443,7 @@ rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;daily.sal.range.gt5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Skipping DO to do pH instead</p>
+<p>pH</p>
 <p>Number of days where min.daily.ph is &lt;7</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.ph&lt;7, ])
 aa2&lt;-nrow(a2[a2$min.daily.ph&lt;7, ])
@@ -4200,7 +3585,7 @@ rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 #merge dfs
 by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Save csv</p>
-<pre class="r"><code>write.csv(rb.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb.daily.sum.csv&quot;)</code></pre>
+<pre class="r"><code>write.csv(by.rb, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb.daily.sum.csv&quot;)</code></pre>
 <p>rb.daily.sum: <a href="https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/rb.daily.sum.csv" class="uri">https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/rb.daily.sum.csv</a></p>
 <p>####<strong>Fort Point and Horseshoe Bay</strong></p>
 <p>Monthly summaries of the field data</p>
@@ -4274,11 +3659,11 @@ hs.fp&lt;-merge(hs.fp, hs.r, by=&quot;date&quot;, all=TRUE)
 rm(hs, hs.r)</code></pre>
 <p>Salinity</p>
 <pre class="r"><code>#read in data
-fp_sal&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/fp_sal.csv&quot;,
+fp.sal.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/fp.sal.tide.csv&quot;,
     header = TRUE
   )
-fp_sal$date&lt;-as.Date(fp_sal$date, format=c(&quot;%Y-%m-%d&quot;))
+fp.sal.tide$date&lt;-as.Date(fp.sal.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #looking at survey dates
 print(hs.fp$date)</code></pre>
@@ -4287,22 +3672,22 @@ print(hs.fp$date)</code></pre>
 ## [11] &quot;2019-04-09&quot; &quot;2019-05-08&quot; &quot;2019-06-08&quot; &quot;2019-07-20&quot; &quot;2019-08-04&quot;
 ## [16] &quot;2019-09-12&quot;</code></pre>
 <pre class="r"><code>#Subset the data by dates 
-a1&lt;-fp_sal[fp_sal$date &gt;= &quot;2018-05-15&quot; &amp; fp_sal$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- fp_sal[fp_sal$date &gt;= &quot;2018-06-15&quot; &amp; fp_sal$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- fp_sal[fp_sal$date &gt;= &quot;2018-07-16&quot; &amp; fp_sal$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- fp_sal[fp_sal$date &gt;= &quot;2018-08-06&quot; &amp; fp_sal$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- fp_sal[fp_sal$date &gt;= &quot;2018-09-10&quot; &amp; fp_sal$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- fp_sal[fp_sal$date &gt;= &quot;2018-10-09&quot; &amp; fp_sal$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- fp_sal[fp_sal$date &gt;= &quot;2018-11-06&quot; &amp; fp_sal$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- fp_sal[fp_sal$date &gt;= &quot;2018-12-04&quot; &amp; fp_sal$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- fp_sal[fp_sal$date &gt;= &quot;2019-01-31&quot; &amp; fp_sal$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- fp_sal[fp_sal$date &gt;= &quot;2019-02-21&quot; &amp; fp_sal$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- fp_sal[fp_sal$date &gt;= &quot;2019-03-14&quot; &amp; fp_sal$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- fp_sal[fp_sal$date &gt;= &quot;2019-04-09&quot; &amp; fp_sal$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- fp_sal[fp_sal$date &gt;= &quot;2019-05-08&quot; &amp; fp_sal$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- fp_sal[fp_sal$date &gt;= &quot;2019-06-08&quot; &amp; fp_sal$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- fp_sal[fp_sal$date &gt;= &quot;2019-07-20&quot; &amp; fp_sal$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;-fp_sal[fp_sal$date &gt;= &quot;2019-08-04&quot; &amp; fp_sal$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;-fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-05-15&quot; &amp; fp.sal.tide$date &lt; &quot;2018-06-15&quot;,]
+a2&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-06-15&quot; &amp; fp.sal.tide$date &lt; &quot;2018-07-16&quot;,]
+a3&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-07-16&quot; &amp; fp.sal.tide$date &lt; &quot;2018-08-06&quot;,]
+a4&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-08-06&quot; &amp; fp.sal.tide$date &lt; &quot;2018-09-10&quot;,]
+a5&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-09-10&quot; &amp; fp.sal.tide$date &lt; &quot;2018-10-09&quot;,]
+a6&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-10-09&quot; &amp; fp.sal.tide$date &lt; &quot;2018-11-06&quot;,]
+a7&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-11-06&quot; &amp; fp.sal.tide$date &lt; &quot;2018-12-04&quot;,]
+a8&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-12-04&quot; &amp; fp.sal.tide$date &lt; &quot;2019-01-31&quot;,]
+a9&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-01-31&quot; &amp; fp.sal.tide$date &lt; &quot;2019-02-21&quot;,]
+a10&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-02-21&quot; &amp; fp.sal.tide$date &lt; &quot;2019-03-14&quot;,]
+a11&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-03-14&quot; &amp; fp.sal.tide$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-04-09&quot; &amp; fp.sal.tide$date &lt; &quot;2019-05-08&quot;,]
+a13&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-05-08&quot; &amp; fp.sal.tide$date &lt; &quot;2019-06-08&quot;,]
+a14&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-06-08&quot; &amp; fp.sal.tide$date &lt; &quot;2019-07-20&quot;,]
+a15&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-07-20&quot; &amp; fp.sal.tide$date &lt; &quot;2019-08-04&quot;,]
+a16&lt;-fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-08-04&quot; &amp; fp.sal.tide$date &lt; &quot;2019-09-12&quot;,]
 
 #median 
 aa1&lt;-median(a1$salinity, na.rm=TRUE)
@@ -4336,7 +3721,7 @@ hs.fp&lt;-merge(hs.fp, fp.mon.sal[,c(&quot;date&quot;, &quot;salinity&quot;)], b
 <p>CHECK LAST DATE</p>
 <p>Daily median, range, minimum, and maximum salinity</p>
 <pre class="r"><code>#table summary for daily max, min, median
-fp.daily.sum&lt;-as.data.frame(setDT(fp_sal)[, .(max.daily.sal = max(salinity), min.daily.sal = min(salinity), daily.med.sal=median(salinity)), .(date)])
+fp.daily.sum&lt;-as.data.frame(setDT(fp.sal.tide)[, .(max.daily.sal = max(salinity), min.daily.sal = min(salinity), daily.med.sal=median(salinity)), .(date)])
 
 #daily range
 fp.daily.sum$daily.sal.range&lt;-fp.daily.sum$max.daily.sal - fp.daily.sum$min.daily.sal
@@ -4485,7 +3870,7 @@ fp.daily.med.sal$date&lt;-as.Date(fp.daily.med.sal$date, format=c(&quot;%Y-%m-%d
 
 #merge dfs
 hs.fp&lt;-merge(hs.fp, fp.daily.med.sal)</code></pre>
-<p><strong>No dissolved oxygen or ph data for Fort Point</strong> Making a NA/empty fillers so that it’s the same size as the other site dfs and will be easier to merge at the end</p>
+<p><strong>No ph data for Fort Point</strong> Making a NA/empty fillers so that it’s the same size as the other site dfs and will be easier to merge at the end</p>
 <pre class="r"><code>#string these values to a data frame
 fp.filler&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;))
 fp.filler&lt;-as.data.frame(fp.filler)
@@ -4495,11 +3880,6 @@ names(fp.filler)[1] &lt;- &quot;date&quot;
 fp.filler$date&lt;-as.Date(fp.filler$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #empty columns
-fp.filler$dissolved.oxygen&lt;-NA
-fp.filler$daily.min.do&lt;-NA
-fp.filler$daily.max.do&lt;-NA
-fp.filler$daily.med.do&lt;-NA
-fp.filler$daily.do.range&lt;-NA
 fp.filler$ph&lt;-NA
 fp.filler$daily.min.ph&lt;-NA
 fp.filler$daily.max.ph&lt;-NA
@@ -4511,29 +3891,29 @@ fp.filler$daily.ph.range&lt;-NA
 hs.fp&lt;-merge(hs.fp, fp.filler, by=&quot;date&quot;)</code></pre>
 <p>Water temperature</p>
 <pre class="r"><code>#read in data
-fp_wt&lt;-read.csv(
-      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/hourly_median/fp_watertemp.csv&quot;,
+fp.wtemp.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/fp.wtemp.tide.csv&quot;,
     header = TRUE
   )
-fp_wt$date&lt;-as.Date(fp_wt$date, format=c(&quot;%Y-%m-%d&quot;))
+fp.wtemp.tide$date&lt;-as.Date(fp.wtemp.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #Subset the data by dates 
-a1&lt;-fp_wt[fp_wt$date &gt;= &quot;2018-05-15&quot; &amp; fp_wt$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- fp_wt[fp_wt$date &gt;= &quot;2018-06-15&quot; &amp; fp_wt$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- fp_wt[fp_wt$date &gt;= &quot;2018-07-16&quot; &amp; fp_wt$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- fp_wt[fp_wt$date &gt;= &quot;2018-08-06&quot; &amp; fp_wt$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- fp_wt[fp_wt$date &gt;= &quot;2018-09-10&quot; &amp; fp_wt$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- fp_wt[fp_wt$date &gt;= &quot;2018-10-09&quot; &amp; fp_wt$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- fp_wt[fp_wt$date &gt;= &quot;2018-11-06&quot; &amp; fp_wt$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- fp_wt[fp_wt$date &gt;= &quot;2018-12-04&quot; &amp; fp_wt$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- fp_wt[fp_wt$date &gt;= &quot;2019-01-31&quot; &amp; fp_wt$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- fp_wt[fp_wt$date &gt;= &quot;2019-02-21&quot; &amp; fp_wt$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- fp_wt[fp_wt$date &gt;= &quot;2019-03-14&quot; &amp; fp_wt$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- fp_wt[fp_wt$date &gt;= &quot;2019-04-09&quot; &amp; fp_wt$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- fp_wt[fp_wt$date &gt;= &quot;2019-05-08&quot; &amp; fp_wt$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- fp_wt[fp_wt$date &gt;= &quot;2019-06-08&quot; &amp; fp_wt$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- fp_wt[fp_wt$date &gt;= &quot;2019-07-20&quot; &amp; fp_wt$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;-fp_wt[fp_wt$date &gt;= &quot;2019-08-04&quot; &amp; fp_wt$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;-fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-05-15&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-06-15&quot;,]
+a2&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-06-15&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-07-16&quot;,]
+a3&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-07-16&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-08-06&quot;,]
+a4&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-08-06&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-09-10&quot;,]
+a5&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-09-10&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-10-09&quot;,]
+a6&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-10-09&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-11-06&quot;,]
+a7&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-11-06&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-12-04&quot;,]
+a8&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-12-04&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-01-31&quot;,]
+a9&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-01-31&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-02-21&quot;,]
+a10&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-02-21&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-03-14&quot;,]
+a11&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-03-14&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-04-09&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-05-08&quot;,]
+a13&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-05-08&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-06-08&quot;,]
+a14&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-06-08&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-07-20&quot;,]
+a15&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-07-20&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-08-04&quot;,]
+a16&lt;-fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-08-04&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-09-12&quot;,]
 
 #median 
 aa1&lt;-median(a1$water_temp, na.rm=TRUE)
@@ -4566,7 +3946,7 @@ fp.mon.wt$date&lt;-as.Date(fp.mon.wt$date, format=c(&quot;%Y-%m-%d&quot;))
 hs.fp&lt;-merge(hs.fp, fp.mon.wt, by=&quot;date&quot;)</code></pre>
 <p>Daily median, range, minimum, and maximum water temperature</p>
 <pre class="r"><code>#table summary for daily max, min, median
-fp.daily.sum.wt&lt;-as.data.frame(setDT(fp_wt)[, .(max.daily.wt = max(water_temp), min.daily.wt = min(water_temp), daily.med.wt=median(water_temp)), .(date)])
+fp.daily.sum.wt&lt;-as.data.frame(setDT(fp.wtemp.tide)[, .(max.daily.wt = max(water_temp), min.daily.wt = min(water_temp), daily.med.wt=median(water_temp)), .(date)])
 
 #daily range
 fp.daily.sum.wt$daily.wt.range&lt;-fp.daily.sum.wt$max.daily.wt - fp.daily.sum.wt$min.daily.wt
@@ -4718,12 +4098,7 @@ fp.daily.med.wt$date&lt;-as.Date(fp.daily.med.wt$date, format=c(&quot;%Y-%m-%d&q
 
 #merge dfs
 hs.fp&lt;-merge(hs.fp, fp.daily.med.wt, hs=&quot;date&quot;)</code></pre>
-<p>Write csv</p>
-<pre class="r"><code>write.csv(fp.daily.sum, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/fp.daily.sum.csv&quot;)</code></pre>
-<p>fp.daily.sum: <a href="https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/fp.daily.sum.csv" class="uri">https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/fp.daily.sum.csv</a></p>
-<p>Daily summary</p>
-<pre class="r"><code>hs.fp$date&lt;-as.Date(hs.fp$date, format=c(&quot;%Y-%m-%d&quot;))</code></pre>
-<p>Subset hs survey dates</p>
+<p>Daily summary Subset hs survey dates</p>
 <pre class="r"><code>a1&lt;-fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-05-15&quot; &amp; fp.daily.sum$date &lt; &quot;2018-06-15&quot;,]
 a2&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-06-15&quot; &amp; fp.daily.sum$date &lt; &quot;2018-07-16&quot;,]
 a3&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-07-16&quot; &amp; fp.daily.sum$date &lt; &quot;2018-08-06&quot;,]
@@ -4909,7 +4284,7 @@ fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 hs.fp&lt;-merge(hs.fp, fp.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt15&quot;)], hs=&quot;date&quot;)</code></pre>
-<p>What should I do for range? Trying a range greater than 10 because that seems kihsa extreme but I’m not sure what to use here. Number of days with a daily salinity range &gt;10</p>
+<p>What should I do for range? Trying a range greater than 10 because that seems extreme but I’m not sure what to use here. Number of days with a daily salinity range &gt;10</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.sal.range&gt;10, ])
 aa2&lt;-nrow(a2[a2$daily.sal.range&gt;10, ])
 aa3&lt;-nrow(a3[a3$daily.sal.range&gt;10, ])
@@ -4965,7 +4340,7 @@ fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 hs.fp&lt;-merge(hs.fp, fp.dates, hs=&quot;date&quot;)</code></pre>
-<p>No ph or do data. Creating empty columns as fillers</p>
+<p>No ph or dissolved oxygen data. Creating empty columns as fillers</p>
 <pre class="r"><code>#string these values to a data frame
 fp.filler&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;))
 fp.filler&lt;-as.data.frame(fp.filler)
@@ -5011,19 +4386,887 @@ fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 hs.fp&lt;-merge(hs.fp, fp.dates, hs=&quot;date&quot;)</code></pre>
-<p>####Combine dfs####</p>
+<p>Write csv</p>
+<pre class="r"><code>write.csv(hs.fp, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/fp.daily.sum.csv&quot;)</code></pre>
+<p>fp.daily.sum: <a href="https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/fp.daily.sum.csv" class="uri">https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/fp.daily.sum.csv</a></p>
+<div id="air-temperature" class="section level4">
+<h4><strong>Air Temperature</strong></h4>
+<p>Linking air temperature to field work. Linking EOS air data with Paradise Cay and Point Chauncy field data and Golden Gate Bridge air data with Horseshoe Bay and Richardson Bay field data.</p>
+<p>Environment is getting messy so I’m going to merge and clean up the dfs I have now and then add air to this. Not neccessary but it’s feeling messy and I want to keep track of what I’m doing. ####Combine dfs####</p>
 <pre class="r"><code>#adding site name
-pc.cc$site&lt;-&quot;pc.cc&quot;
+pc.cc$site&lt;-&quot;pc.cc&quot; 
 nd.eos$site&lt;-&quot;nd.eos&quot;
 by.rb$site&lt;-&quot;by.rb&quot;
 hs.fp$site&lt;-&quot;hs.fp&quot;
 
 #combine
-all&lt;-dplyr::bind_rows(pc.cc,nd.eos,by.rb,hs.fp)
+field&lt;-dplyr::bind_rows(pc.cc,nd.eos,by.rb,hs.fp)
+
+#remove everything except for this merged df
+rm(list=setdiff(ls(), &quot;field&quot;))</code></pre>
+</div>
+<div id="eos-air-temp-and-paradise-cay-field" class="section level4">
+<h4>EOS air temp and Paradise Cay field</h4>
+<p>Median air temperature between field surveys</p>
+<pre class="r"><code>#read in eos air data
+eos.air.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/eos.air.tide.csv&quot;,
+    header = TRUE
+  )
+eos.air.tide$date&lt;-as.Date(eos.air.tide$date, format=c(&quot;%Y-%m-%d&quot;))
+
+
+#subset site
+pc&lt;-subset(field, field$site == &quot;pc.cc&quot;)
+pc$date&lt;-as.Date(pc$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#Subset air data by dates between surveys
+a1&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-05-14&quot; &amp; eos.air.tide$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-06-14&quot; &amp; eos.air.tide$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-07-17&quot; &amp; eos.air.tide$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-08-07&quot; &amp; eos.air.tide$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-09-11&quot; &amp; eos.air.tide$date &lt; &quot;2018-12-05&quot;,]
+a6&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-12-05&quot; &amp; eos.air.tide$date &lt; &quot;2019-01-30&quot;,]
+a7&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-01-30&quot; &amp; eos.air.tide$date &lt; &quot;2019-02-20&quot;,]
+a8&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-02-20&quot; &amp; eos.air.tide$date &lt; &quot;2019-03-15&quot;,]
+a9&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-03-15&quot; &amp; eos.air.tide$date &lt; &quot;2019-04-11&quot;,]
+a10&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-04-11&quot; &amp; eos.air.tide$date &lt; &quot;2019-05-09&quot;,]
+a11&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-05-09&quot; &amp; eos.air.tide$date &lt; &quot;2019-06-09&quot;,]
+a12&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-06-09&quot; &amp; eos.air.tide$date &lt; &quot;2019-07-21&quot;,]
+a13&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-07-21&quot; &amp; eos.air.tide$date &lt; &quot;2019-08-04&quot;,]
+a14&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-08-04&quot; &amp; eos.air.tide$date &lt; &quot;2019-09-12&quot;,]
+
+#median air temp between field surveys
+aa1&lt;-median(a1$air_temperature, na.rm=TRUE)
+aa2&lt;-median(a2$air_temperature, na.rm=TRUE)
+aa3&lt;-median(a3$air_temperature, na.rm=TRUE)
+aa4&lt;-median(a4$air_temperature, na.rm=TRUE)
+aa5&lt;-median(a5$air_temperature, na.rm=TRUE)
+aa6&lt;-median(a6$air_temperature, na.rm=TRUE)
+aa7&lt;-median(a7$air_temperature, na.rm=TRUE)
+aa8&lt;-median(a8$air_temperature, na.rm=TRUE)
+aa9&lt;-median(a9$air_temperature, na.rm=TRUE)
+aa10&lt;-median(a10$air_temperature, na.rm=TRUE)
+aa11&lt;-median(a11$air_temperature, na.rm=TRUE)
+aa12&lt;-median(a12$air_temperature, na.rm=TRUE)
+aa13&lt;-median(a13$air_temperature, na.rm=TRUE)
+aa14&lt;-median(a14$air_temperature, na.rm=TRUE)
+
+#string these values to a data frame
+pc.mon.air&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,            &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
+pc.mon.air&lt;-as.data.frame(pc.mon.air)
+
+#change column names
+names(pc.mon.air)[1] &lt;- &quot;date&quot;
+names(pc.mon.air)[2] &lt;- &quot;air.temp&quot;
+pc.mon.air$date&lt;-as.Date(pc.mon.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+pc.eos&lt;-merge(pc, pc.mon.air[,c(&quot;date&quot;, &quot;air.temp&quot;)], by=&quot;date&quot;)</code></pre>
+<p>Daily median, range, minimum, and maximum air temperaure</p>
+<pre class="r"><code>#table summary saved as a df. Finds the daily median and daily max and min values bases on date column
+#tried to do daily range here but it didn&#39;t seem to work. I&#39;ll just take the difference between the max and min columns
+eos.daily.sum&lt;-as.data.frame(setDT(eos.air.tide)[, .(max.daily.air = max(air_temperature), min.daily.air = min(air_temperature), daily.med.air=median(air_temperature)), .(date)])
+
+#daily range
+eos.daily.sum$daily.air.range&lt;-eos.daily.sum$max.daily.air - eos.daily.sum$min.daily.air
+
+#Daily min 
+#subset dates 
+a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-17&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-07&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-09-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-05&quot;,]
+a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-30&quot;,]
+a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-30&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-20&quot;,]
+a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-20&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-15&quot;,]
+a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-15&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-11&quot;,]
+a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-11&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-09&quot;,]
+a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-09&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-09&quot;,]
+a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-09&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-21&quot;,]
+a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-21&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-04&quot;,]
+a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; eos.daily.sum$date &lt; &quot;2019-09-12&quot;,]
+
+#median
+aa1&lt;-median(a1$min.daily.air, na.rm=TRUE)
+aa2&lt;-median(a2$min.daily.air, na.rm=TRUE)
+aa3&lt;-median(a3$min.daily.air, na.rm=TRUE)
+aa4&lt;-median(a4$min.daily.air, na.rm=TRUE)
+aa5&lt;-median(a5$min.daily.air, na.rm=TRUE)
+aa6&lt;-median(a6$min.daily.air, na.rm=TRUE)
+aa7&lt;-median(a7$min.daily.air, na.rm=TRUE)
+aa8&lt;-median(a8$min.daily.air, na.rm=TRUE)
+aa9&lt;-median(a9$min.daily.air, na.rm=TRUE)
+aa10&lt;-median(a10$min.daily.air, na.rm=TRUE)
+aa11&lt;-median(a11$min.daily.air, na.rm=TRUE)
+aa12&lt;-median(a12$min.daily.air, na.rm=TRUE)
+aa13&lt;-median(a13$min.daily.air, na.rm=TRUE)
+aa14&lt;-median(a14$min.daily.air, na.rm=TRUE)
+
+#string these values to a data frame
+eos.daily.min.air&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,             &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
+eos.daily.min.air&lt;-as.data.frame(eos.daily.min.air)
+
+#change column names
+names(eos.daily.min.air)[1] &lt;- &quot;date&quot;
+names(eos.daily.min.air)[2] &lt;- &quot;daily.min.air&quot;
+eos.daily.min.air$date&lt;-as.Date(eos.daily.min.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+pc.eos&lt;-merge(pc.eos, eos.daily.min.air[,c(&quot;date&quot;, &quot;daily.min.air&quot;)], by=&quot;date&quot;)
+
+
+#Same thing but for daily maximum values
+#median 
+aa1&lt;-median(a1$max.daily.air, na.rm=TRUE)
+aa2&lt;-median(a2$max.daily.air, na.rm=TRUE)
+aa3&lt;-median(a3$max.daily.air, na.rm=TRUE)
+aa4&lt;-median(a4$max.daily.air, na.rm=TRUE)
+aa5&lt;-median(a5$max.daily.air, na.rm=TRUE)
+aa6&lt;-median(a6$max.daily.air, na.rm=TRUE)
+aa7&lt;-median(a7$max.daily.air, na.rm=TRUE)
+aa8&lt;-median(a8$max.daily.air, na.rm=TRUE)
+aa9&lt;-median(a9$max.daily.air, na.rm=TRUE)
+aa10&lt;-median(a10$max.daily.air, na.rm=TRUE)
+aa11&lt;-median(a11$max.daily.air, na.rm=TRUE)
+aa12&lt;-median(a12$max.daily.air, na.rm=TRUE)
+aa13&lt;-median(a13$max.daily.air, na.rm=TRUE)
+aa14&lt;-median(a14$max.daily.air, na.rm=TRUE)
+
+#string these values to a data frame
+eos.daily.max.air&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,             &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
+eos.daily.max.air&lt;-as.data.frame(eos.daily.max.air)
+
+#change column names
+names(eos.daily.max.air)[1] &lt;- &quot;date&quot;
+names(eos.daily.max.air)[2] &lt;- &quot;daily.max.air&quot;
+eos.daily.max.air$date&lt;-as.Date(eos.daily.max.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+pc.eos&lt;-merge(pc.eos, eos.daily.max.air[,c(&quot;date&quot;, &quot;daily.max.air&quot;)], by=&quot;date&quot;)
+
+
+#daily range
+#mean 
+aa1&lt;-median(a1$daily.air.range, na.rm=TRUE)
+aa2&lt;-median(a2$daily.air.range, na.rm=TRUE)
+aa3&lt;-median(a3$daily.air.range, na.rm=TRUE)
+aa4&lt;-median(a4$daily.air.range, na.rm=TRUE)
+aa5&lt;-median(a5$daily.air.range, na.rm=TRUE)
+aa6&lt;-median(a6$daily.air.range, na.rm=TRUE)
+aa7&lt;-median(a7$daily.air.range, na.rm=TRUE)
+aa8&lt;-median(a8$daily.air.range, na.rm=TRUE)
+aa9&lt;-median(a9$daily.air.range, na.rm=TRUE)
+aa10&lt;-median(a10$daily.air.range, na.rm=TRUE)
+aa11&lt;-median(a11$daily.air.range, na.rm=TRUE)
+aa12&lt;-median(a12$daily.air.range, na.rm=TRUE)
+aa13&lt;-median(a13$daily.air.range, na.rm=TRUE)
+aa14&lt;-median(a14$daily.air.range, na.rm=TRUE)
+
+#string these values to a data frame
+eos.daily.air.range&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,           &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
+eos.daily.air.range&lt;-as.data.frame(eos.daily.air.range)
+
+#change column names
+names(eos.daily.air.range)[1] &lt;- &quot;date&quot;
+names(eos.daily.air.range)[2] &lt;- &quot;daily.air.range&quot;
+eos.daily.air.range$date&lt;-as.Date(eos.daily.air.range$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+pc.eos&lt;-merge(pc.eos, eos.daily.air.range[,c(&quot;date&quot;, &quot;daily.air.range&quot;)], by=&quot;date&quot;)
+
+
+#daily median
+#mean of these periods (mean of daily means)
+aa1&lt;-median(a1$daily.med.air, na.rm=TRUE)
+aa2&lt;-median(a2$daily.med.air, na.rm=TRUE)
+aa3&lt;-median(a3$daily.med.air, na.rm=TRUE)
+aa4&lt;-median(a4$daily.med.air, na.rm=TRUE)
+aa5&lt;-median(a5$daily.med.air, na.rm=TRUE)
+aa6&lt;-median(a6$daily.med.air, na.rm=TRUE)
+aa7&lt;-median(a7$daily.med.air, na.rm=TRUE)
+aa8&lt;-median(a8$daily.med.air, na.rm=TRUE)
+aa9&lt;-median(a9$daily.med.air, na.rm=TRUE)
+aa10&lt;-median(a10$daily.med.air, na.rm=TRUE)
+aa11&lt;-median(a11$daily.med.air, na.rm=TRUE)
+aa12&lt;-median(a12$daily.med.air, na.rm=TRUE)
+aa13&lt;-median(a13$daily.med.air, na.rm=TRUE)
+aa14&lt;-median(a14$daily.med.air, na.rm=TRUE)
+
+#string these values to a data frame
+eos.daily.med.air&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,             &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
+eos.daily.med.air&lt;-as.data.frame(eos.daily.med.air)
+
+
+#change column names
+names(eos.daily.med.air)[1] &lt;- &quot;date&quot;
+names(eos.daily.med.air)[2] &lt;- &quot;daily.med.air&quot;
+eos.daily.med.air$date&lt;-as.Date(eos.daily.med.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+pc.eos&lt;-merge(pc.eos, eos.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], by=&quot;date&quot;)</code></pre>
+</div>
+<div id="point-chauncy-field-data-and-eos-air-temp-data" class="section level4">
+<h4>Point Chauncy field data and EOS air temp data</h4>
+<p>Median air temperature between field surveys</p>
+<pre class="r"><code>#read in eos air data #this is redundant
+eos.air.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/eos.air.tide.csv&quot;,
+    header = TRUE
+  )
+eos.air.tide$date&lt;-as.Date(eos.air.tide$date, format=c(&quot;%Y-%m-%d&quot;))
+
+
+#subset site
+nd&lt;-subset(field, field$site == &quot;nd.eos&quot;)
+nd$date&lt;-as.Date(nd$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#Subset air data by dates between surveys
+a1&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-05-14&quot; &amp; eos.air.tide$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-06-14&quot; &amp; eos.air.tide$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-07-17&quot; &amp; eos.air.tide$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-08-07&quot; &amp; eos.air.tide$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-09-11&quot; &amp; eos.air.tide$date &lt; &quot;2018-10-10&quot;,]
+a6&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-10-10&quot; &amp; eos.air.tide$date &lt; &quot;2018-12-05&quot;,]
+a7&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-12-05&quot; &amp; eos.air.tide$date &lt; &quot;2019-01-30&quot;,]
+a8&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-01-30&quot; &amp; eos.air.tide$date &lt; &quot;2019-02-20&quot;,]
+a9&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-02-20&quot; &amp; eos.air.tide$date &lt; &quot;2019-03-15&quot;,]
+a10&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-03-15&quot; &amp; eos.air.tide$date &lt; &quot;2019-04-11&quot;,]
+a11&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-04-11&quot; &amp; eos.air.tide$date &lt; &quot;2019-05-09&quot;,]
+a12&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-05-09&quot; &amp; eos.air.tide$date &lt; &quot;2019-06-09&quot;,]
+a13&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-06-09&quot; &amp; eos.air.tide$date &lt; &quot;2019-07-21&quot;,]
+a14&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-07-21&quot; &amp; eos.air.tide$date &lt; &quot;2019-08-04&quot;,]
+a15&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-08-04&quot; &amp; eos.air.tide$date &lt; &quot;2019-09-12&quot;,]
+
+#median air temp between field surveys
+aa1&lt;-median(a1$air_temperature, na.rm=TRUE)
+aa2&lt;-median(a2$air_temperature, na.rm=TRUE)
+aa3&lt;-median(a3$air_temperature, na.rm=TRUE)
+aa4&lt;-median(a4$air_temperature, na.rm=TRUE)
+aa5&lt;-median(a5$air_temperature, na.rm=TRUE)
+aa6&lt;-median(a6$air_temperature, na.rm=TRUE)
+aa7&lt;-median(a7$air_temperature, na.rm=TRUE)
+aa8&lt;-median(a8$air_temperature, na.rm=TRUE)
+aa9&lt;-median(a9$air_temperature, na.rm=TRUE)
+aa10&lt;-median(a10$air_temperature, na.rm=TRUE)
+aa11&lt;-median(a11$air_temperature, na.rm=TRUE)
+aa12&lt;-median(a12$air_temperature, na.rm=TRUE)
+aa13&lt;-median(a13$air_temperature, na.rm=TRUE)
+aa14&lt;-median(a14$air_temperature, na.rm=TRUE)
+aa15&lt;-median(a15$air_temperature, na.rm=TRUE)
+
+
+#string these values to a data frame
+nd.mon.air&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
+nd.mon.air&lt;-as.data.frame(nd.mon.air)
+
+#change column names
+names(nd.mon.air)[1] &lt;- &quot;date&quot;
+names(nd.mon.air)[2] &lt;- &quot;air.temp&quot;
+nd.mon.air$date&lt;-as.Date(nd.mon.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+nd.eos&lt;-merge(nd, nd.mon.air[,c(&quot;date&quot;, &quot;air.temp&quot;)], by=&quot;date&quot;)</code></pre>
+<p>Daily median, range, minimum, and maximum air temperaure</p>
+<pre class="r"><code>#table summary saved as a df. Finds the daily median and daily max and min values bases on date column
+#tried to do daily range here but it didn&#39;t seem to work. I&#39;ll just take the difference between the max and min columns
+eos.daily.sum&lt;-as.data.frame(setDT(eos.air.tide)[, .(max.daily.air = max(air_temperature), min.daily.air = min(air_temperature), daily.med.air=median(air_temperature)), .(date)])
+
+#daily range
+eos.daily.sum$daily.air.range&lt;-eos.daily.sum$max.daily.air - eos.daily.sum$min.daily.air
+
+#Daily min 
+#subset dates 
+a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-17&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-07&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-09-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-10-10&quot;,]
+a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-10&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-05&quot;,]
+a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-30&quot;,]
+a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-30&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-20&quot;,]
+a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-20&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-15&quot;,]
+a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-15&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-11&quot;,]
+a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-11&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-09&quot;,]
+a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-09&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-09&quot;,]
+a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-09&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-21&quot;,]
+a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-21&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-04&quot;,]
+a15&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; eos.daily.sum$date &lt; &quot;2019-09-12&quot;,]
+
+#median
+aa1&lt;-median(a1$min.daily.air, na.rm=TRUE)
+aa2&lt;-median(a2$min.daily.air, na.rm=TRUE)
+aa3&lt;-median(a3$min.daily.air, na.rm=TRUE)
+aa4&lt;-median(a4$min.daily.air, na.rm=TRUE)
+aa5&lt;-median(a5$min.daily.air, na.rm=TRUE)
+aa6&lt;-median(a6$min.daily.air, na.rm=TRUE)
+aa7&lt;-median(a7$min.daily.air, na.rm=TRUE)
+aa8&lt;-median(a8$min.daily.air, na.rm=TRUE)
+aa9&lt;-median(a9$min.daily.air, na.rm=TRUE)
+aa10&lt;-median(a10$min.daily.air, na.rm=TRUE)
+aa11&lt;-median(a11$min.daily.air, na.rm=TRUE)
+aa12&lt;-median(a12$min.daily.air, na.rm=TRUE)
+aa13&lt;-median(a13$min.daily.air, na.rm=TRUE)
+aa14&lt;-median(a14$min.daily.air, na.rm=TRUE)
+aa15&lt;-median(a15$min.daily.air, na.rm=TRUE)
+
+#string these values to a data frame
+eos.daily.min.air&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
+eos.daily.min.air&lt;-as.data.frame(eos.daily.min.air)
+
+#change column names
+names(eos.daily.min.air)[1] &lt;- &quot;date&quot;
+names(eos.daily.min.air)[2] &lt;- &quot;daily.min.air&quot;
+eos.daily.min.air$date&lt;-as.Date(eos.daily.min.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+
+#merge dfs
+nd.eos&lt;-merge(nd.eos, eos.daily.min.air[,c(&quot;date&quot;, &quot;daily.min.air&quot;)], by=&quot;date&quot;)
+
+
+#Same thing but for daily maximum values
+#median 
+aa1&lt;-median(a1$max.daily.air, na.rm=TRUE)
+aa2&lt;-median(a2$max.daily.air, na.rm=TRUE)
+aa3&lt;-median(a3$max.daily.air, na.rm=TRUE)
+aa4&lt;-median(a4$max.daily.air, na.rm=TRUE)
+aa5&lt;-median(a5$max.daily.air, na.rm=TRUE)
+aa6&lt;-median(a6$max.daily.air, na.rm=TRUE)
+aa7&lt;-median(a7$max.daily.air, na.rm=TRUE)
+aa8&lt;-median(a8$max.daily.air, na.rm=TRUE)
+aa9&lt;-median(a9$max.daily.air, na.rm=TRUE)
+aa10&lt;-median(a10$max.daily.air, na.rm=TRUE)
+aa11&lt;-median(a11$max.daily.air, na.rm=TRUE)
+aa12&lt;-median(a12$max.daily.air, na.rm=TRUE)
+aa13&lt;-median(a13$max.daily.air, na.rm=TRUE)
+aa14&lt;-median(a14$max.daily.air, na.rm=TRUE)
+aa15&lt;-median(a15$max.daily.air, na.rm=TRUE)
+
+#string these values to a data frame
+eos.daily.max.air&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
+eos.daily.max.air&lt;-as.data.frame(eos.daily.max.air)
+
+#change column names
+names(eos.daily.max.air)[1] &lt;- &quot;date&quot;
+names(eos.daily.max.air)[2] &lt;- &quot;daily.max.air&quot;
+eos.daily.max.air$date&lt;-as.Date(eos.daily.max.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+nd.eos&lt;-merge(nd.eos, eos.daily.max.air[,c(&quot;date&quot;, &quot;daily.max.air&quot;)], by=&quot;date&quot;)
+
+
+#daily range
+#mean 
+aa1&lt;-median(a1$daily.air.range, na.rm=TRUE)
+aa2&lt;-median(a2$daily.air.range, na.rm=TRUE)
+aa3&lt;-median(a3$daily.air.range, na.rm=TRUE)
+aa4&lt;-median(a4$daily.air.range, na.rm=TRUE)
+aa5&lt;-median(a5$daily.air.range, na.rm=TRUE)
+aa6&lt;-median(a6$daily.air.range, na.rm=TRUE)
+aa7&lt;-median(a7$daily.air.range, na.rm=TRUE)
+aa8&lt;-median(a8$daily.air.range, na.rm=TRUE)
+aa9&lt;-median(a9$daily.air.range, na.rm=TRUE)
+aa10&lt;-median(a10$daily.air.range, na.rm=TRUE)
+aa11&lt;-median(a11$daily.air.range, na.rm=TRUE)
+aa12&lt;-median(a12$daily.air.range, na.rm=TRUE)
+aa13&lt;-median(a13$daily.air.range, na.rm=TRUE)
+aa14&lt;-median(a14$daily.air.range, na.rm=TRUE)
+aa15&lt;-median(a15$daily.air.range, na.rm=TRUE)
+
+#string these values to a data frame
+eos.daily.air.range&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
+eos.daily.air.range&lt;-as.data.frame(eos.daily.air.range)
+
+#change column names
+names(eos.daily.air.range)[1] &lt;- &quot;date&quot;
+names(eos.daily.air.range)[2] &lt;- &quot;daily.air.range&quot;
+eos.daily.air.range$date&lt;-as.Date(eos.daily.air.range$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+nd.eos&lt;-merge(nd.eos, eos.daily.air.range[,c(&quot;date&quot;, &quot;daily.air.range&quot;)], by=&quot;date&quot;)
+
+
+#daily median
+#mean of these periods (mean of daily means)
+aa1&lt;-median(a1$daily.med.air, na.rm=TRUE)
+aa2&lt;-median(a2$daily.med.air, na.rm=TRUE)
+aa3&lt;-median(a3$daily.med.air, na.rm=TRUE)
+aa4&lt;-median(a4$daily.med.air, na.rm=TRUE)
+aa5&lt;-median(a5$daily.med.air, na.rm=TRUE)
+aa6&lt;-median(a6$daily.med.air, na.rm=TRUE)
+aa7&lt;-median(a7$daily.med.air, na.rm=TRUE)
+aa8&lt;-median(a8$daily.med.air, na.rm=TRUE)
+aa9&lt;-median(a9$daily.med.air, na.rm=TRUE)
+aa10&lt;-median(a10$daily.med.air, na.rm=TRUE)
+aa11&lt;-median(a11$daily.med.air, na.rm=TRUE)
+aa12&lt;-median(a12$daily.med.air, na.rm=TRUE)
+aa13&lt;-median(a13$daily.med.air, na.rm=TRUE)
+aa14&lt;-median(a14$daily.med.air, na.rm=TRUE)
+aa15&lt;-median(a15$daily.air.range, na.rm=TRUE)
+
+
+#string these values to a data frame
+eos.daily.med.air&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
+eos.daily.med.air&lt;-as.data.frame(eos.daily.med.air)
+
+
+#change column names
+names(eos.daily.med.air)[1] &lt;- &quot;date&quot;
+names(eos.daily.med.air)[2] &lt;- &quot;daily.med.air&quot;
+eos.daily.med.air$date&lt;-as.Date(eos.daily.med.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+nd.eos&lt;-merge(nd.eos, eos.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], by=&quot;date&quot;)</code></pre>
+</div>
+<div id="brickyard-park-field-data-and-golden-gate-bridge-air" class="section level4">
+<h4>Brickyard Park field data and Golden Gate Bridge air</h4>
+<p>Median air temperature between field surveys</p>
+<pre class="r"><code>#read in golen gate air data
+gg.air.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/gg.air.tide.csv&quot;,
+    header = TRUE
+  )
+gg.air.tide$date&lt;-as.Date(gg.air.tide$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#subset site
+by&lt;-subset(field, field$site == &quot;by.rb&quot;)
+by$date&lt;-as.Date(by$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#Subset air data by dates between surveys
+a1&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-05-15&quot; &amp; gg.air.tide$date &lt; &quot;2018-06-15&quot;,]
+a2&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-06-15&quot; &amp; gg.air.tide$date &lt; &quot;2018-07-16&quot;,]
+a3&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-07-16&quot; &amp; gg.air.tide$date &lt; &quot;2018-08-06&quot;,]
+a4&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-08-06&quot; &amp; gg.air.tide$date &lt; &quot;2018-09-10&quot;,]
+a5&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-09-10&quot; &amp; gg.air.tide$date &lt; &quot;2018-10-09&quot;,]
+a6&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-10-09&quot; &amp; gg.air.tide$date &lt; &quot;2018-11-06&quot;,]
+a7&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-11-06&quot; &amp; gg.air.tide$date &lt; &quot;2018-12-04&quot;,]
+a8&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-04&quot; &amp; gg.air.tide$date &lt; &quot;2019-01-31&quot;,]
+a9&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-01-31&quot; &amp; gg.air.tide$date &lt; &quot;2019-02-21&quot;,]
+a10&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-02-21&quot; &amp; gg.air.tide$date &lt; &quot;2019-03-14&quot;,]
+a11&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-03-14&quot; &amp; gg.air.tide$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-04-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-05-08&quot;,]
+a13&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-05-08&quot; &amp; gg.air.tide$date &lt; &quot;2019-06-08&quot;,]
+a14&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-06-08&quot; &amp; gg.air.tide$date &lt; &quot;2019-07-20&quot;,]
+a15&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-07-20&quot; &amp; gg.air.tide$date &lt; &quot;2019-08-04&quot;,]
+a16&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-08-04&quot; &amp; gg.air.tide$date &lt; &quot;2019-09-12&quot;,]
+
+#median air temp between field surveys
+aa1&lt;-median(a1$air_temp, na.rm=TRUE)
+aa2&lt;-median(a2$air_temp, na.rm=TRUE)
+aa3&lt;-median(a3$air_temp, na.rm=TRUE)
+aa4&lt;-median(a4$air_temp, na.rm=TRUE)
+aa5&lt;-median(a5$air_temp, na.rm=TRUE)
+aa6&lt;-median(a6$air_temp, na.rm=TRUE)
+aa7&lt;-median(a7$air_temp, na.rm=TRUE)
+aa8&lt;-median(a8$air_temp, na.rm=TRUE)
+aa9&lt;-median(a9$air_temp, na.rm=TRUE)
+aa10&lt;-median(a10$air_temp, na.rm=TRUE)
+aa11&lt;-median(a11$air_temp, na.rm=TRUE)
+aa12&lt;-median(a12$air_temp, na.rm=TRUE)
+aa13&lt;-median(a13$air_temp, na.rm=TRUE)
+aa14&lt;-median(a14$air_temp, na.rm=TRUE)
+aa15&lt;-median(a15$air_temp, na.rm=TRUE)
+aa16&lt;-median(a16$air_temp, na.rm=TRUE)
+
+#string these values to a data frame
+by.mon.air&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+by.mon.air&lt;-as.data.frame(by.mon.air)
+
+#change column names
+names(by.mon.air)[1] &lt;- &quot;date&quot;
+names(by.mon.air)[2] &lt;- &quot;air.temp&quot;
+by.mon.air$date&lt;-as.Date(by.mon.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+by.gg&lt;-merge(by, by.mon.air[,c(&quot;date&quot;, &quot;air.temp&quot;)], by=&quot;date&quot;)</code></pre>
+<p>Daily median, range, minimum, aby maximum air temperaure</p>
+<pre class="r"><code>#table summary saved as a df. Fibys the daily median aby daily max aby min values bases on date column
+#tried to do daily range here but it didn&#39;t seem to work. I&#39;ll just take the difference between the max aby min columns
+gg.daily.sum&lt;-as.data.frame(setDT(gg.air.tide)[, .(max.daily.air = max(air_temp), min.daily.air = min(air_temp), daily.med.air=median(air_temp)), .(date)])
+
+#daily range
+gg.daily.sum$daily.air.range&lt;-gg.daily.sum$max.daily.air - gg.daily.sum$min.daily.air
+
+#Daily min 
+#subset dates 
+a1&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-05-15&quot; &amp; gg.daily.sum$date &lt; &quot;2018-06-15&quot;,]
+a2&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-06-15&quot; &amp; gg.daily.sum$date &lt; &quot;2018-07-16&quot;,]
+a3&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-07-16&quot; &amp; gg.daily.sum$date &lt; &quot;2018-08-06&quot;,]
+a4&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-08-06&quot; &amp; gg.daily.sum$date &lt; &quot;2018-09-10&quot;,]
+a5&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-09-10&quot; &amp; gg.daily.sum$date &lt; &quot;2018-10-09&quot;,]
+a6&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-10-09&quot; &amp; gg.daily.sum$date &lt; &quot;2018-11-06&quot;,]
+a7&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-11-06&quot; &amp; gg.daily.sum$date &lt; &quot;2018-12-04&quot;,]
+a8&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-04&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-31&quot;,]
+a9&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-01-31&quot; &amp; gg.daily.sum$date &lt; &quot;2019-02-21&quot;,]
+a10&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-02-21&quot; &amp; gg.daily.sum$date &lt; &quot;2019-03-14&quot;,]
+a11&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-03-14&quot; &amp; gg.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-05-08&quot;,]
+a13&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-05-08&quot; &amp; gg.daily.sum$date &lt; &quot;2019-06-08&quot;,]
+a14&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-06-08&quot; &amp; gg.daily.sum$date &lt; &quot;2019-07-20&quot;,]
+a15&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-07-20&quot; &amp; gg.daily.sum$date &lt; &quot;2019-08-04&quot;,]
+a16&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; gg.daily.sum$date &lt; &quot;2019-09-12&quot;,]
+
+#median
+aa1&lt;-median(a1$min.daily.air, na.rm=TRUE)
+aa2&lt;-median(a2$min.daily.air, na.rm=TRUE)
+aa3&lt;-median(a3$min.daily.air, na.rm=TRUE)
+aa4&lt;-median(a4$min.daily.air, na.rm=TRUE)
+aa5&lt;-median(a5$min.daily.air, na.rm=TRUE)
+aa6&lt;-median(a6$min.daily.air, na.rm=TRUE)
+aa7&lt;-median(a7$min.daily.air, na.rm=TRUE)
+aa8&lt;-median(a8$min.daily.air, na.rm=TRUE)
+aa9&lt;-median(a9$min.daily.air, na.rm=TRUE)
+aa10&lt;-median(a10$min.daily.air, na.rm=TRUE)
+aa11&lt;-median(a11$min.daily.air, na.rm=TRUE)
+aa12&lt;-median(a12$min.daily.air, na.rm=TRUE)
+aa13&lt;-median(a13$min.daily.air, na.rm=TRUE)
+aa14&lt;-median(a14$min.daily.air, na.rm=TRUE)
+aa15&lt;-median(a15$min.daily.air, na.rm=TRUE)
+aa16&lt;-median(a16$min.daily.air, na.rm=TRUE)
+
+
+#string these values to a data frame
+gg.daily.min.air&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+gg.daily.min.air&lt;-as.data.frame(gg.daily.min.air)
+
+#change column names
+names(gg.daily.min.air)[1] &lt;- &quot;date&quot;
+names(gg.daily.min.air)[2] &lt;- &quot;daily.min.air&quot;
+gg.daily.min.air$date&lt;-as.Date(gg.daily.min.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+
+#merge dfs
+by.gg&lt;-merge(by.gg, gg.daily.min.air[,c(&quot;date&quot;, &quot;daily.min.air&quot;)], by=&quot;date&quot;)
+
+
+#Same thing but for daily maximum values
+#median 
+aa1&lt;-median(a1$max.daily.air, na.rm=TRUE)
+aa2&lt;-median(a2$max.daily.air, na.rm=TRUE)
+aa3&lt;-median(a3$max.daily.air, na.rm=TRUE)
+aa4&lt;-median(a4$max.daily.air, na.rm=TRUE)
+aa5&lt;-median(a5$max.daily.air, na.rm=TRUE)
+aa6&lt;-median(a6$max.daily.air, na.rm=TRUE)
+aa7&lt;-median(a7$max.daily.air, na.rm=TRUE)
+aa8&lt;-median(a8$max.daily.air, na.rm=TRUE)
+aa9&lt;-median(a9$max.daily.air, na.rm=TRUE)
+aa10&lt;-median(a10$max.daily.air, na.rm=TRUE)
+aa11&lt;-median(a11$max.daily.air, na.rm=TRUE)
+aa12&lt;-median(a12$max.daily.air, na.rm=TRUE)
+aa13&lt;-median(a13$max.daily.air, na.rm=TRUE)
+aa14&lt;-median(a14$max.daily.air, na.rm=TRUE)
+aa15&lt;-median(a15$max.daily.air, na.rm=TRUE)
+aa16&lt;-median(a16$max.daily.air, na.rm=TRUE)
+
+#string these values to a data frame
+gg.daily.max.air&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+gg.daily.max.air&lt;-as.data.frame(gg.daily.max.air)
+
+#change column names
+names(gg.daily.max.air)[1] &lt;- &quot;date&quot;
+names(gg.daily.max.air)[2] &lt;- &quot;daily.max.air&quot;
+gg.daily.max.air$date&lt;-as.Date(gg.daily.max.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+by.gg&lt;-merge(by.gg, gg.daily.max.air[,c(&quot;date&quot;, &quot;daily.max.air&quot;)], by=&quot;date&quot;)
+
+
+#daily range
+#mean 
+aa1&lt;-median(a1$daily.air.range, na.rm=TRUE)
+aa2&lt;-median(a2$daily.air.range, na.rm=TRUE)
+aa3&lt;-median(a3$daily.air.range, na.rm=TRUE)
+aa4&lt;-median(a4$daily.air.range, na.rm=TRUE)
+aa5&lt;-median(a5$daily.air.range, na.rm=TRUE)
+aa6&lt;-median(a6$daily.air.range, na.rm=TRUE)
+aa7&lt;-median(a7$daily.air.range, na.rm=TRUE)
+aa8&lt;-median(a8$daily.air.range, na.rm=TRUE)
+aa9&lt;-median(a9$daily.air.range, na.rm=TRUE)
+aa10&lt;-median(a10$daily.air.range, na.rm=TRUE)
+aa11&lt;-median(a11$daily.air.range, na.rm=TRUE)
+aa12&lt;-median(a12$daily.air.range, na.rm=TRUE)
+aa13&lt;-median(a13$daily.air.range, na.rm=TRUE)
+aa14&lt;-median(a14$daily.air.range, na.rm=TRUE)
+aa15&lt;-median(a15$daily.air.range, na.rm=TRUE)
+aa16&lt;-median(a16$daily.air.range, na.rm=TRUE)
+
+#string these values to a data frame
+gg.daily.air.range&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+gg.daily.air.range&lt;-as.data.frame(gg.daily.air.range)
+
+#change column names
+names(gg.daily.air.range)[1] &lt;- &quot;date&quot;
+names(gg.daily.air.range)[2] &lt;- &quot;daily.air.range&quot;
+gg.daily.air.range$date&lt;-as.Date(gg.daily.air.range$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+by.gg&lt;-merge(by.gg, gg.daily.air.range[,c(&quot;date&quot;, &quot;daily.air.range&quot;)], by=&quot;date&quot;)
+
+
+#daily median
+#mean of these periods (mean of daily means)
+aa1&lt;-median(a1$daily.med.air, na.rm=TRUE)
+aa2&lt;-median(a2$daily.med.air, na.rm=TRUE)
+aa3&lt;-median(a3$daily.med.air, na.rm=TRUE)
+aa4&lt;-median(a4$daily.med.air, na.rm=TRUE)
+aa5&lt;-median(a5$daily.med.air, na.rm=TRUE)
+aa6&lt;-median(a6$daily.med.air, na.rm=TRUE)
+aa7&lt;-median(a7$daily.med.air, na.rm=TRUE)
+aa8&lt;-median(a8$daily.med.air, na.rm=TRUE)
+aa9&lt;-median(a9$daily.med.air, na.rm=TRUE)
+aa10&lt;-median(a10$daily.med.air, na.rm=TRUE)
+aa11&lt;-median(a11$daily.med.air, na.rm=TRUE)
+aa12&lt;-median(a12$daily.med.air, na.rm=TRUE)
+aa13&lt;-median(a13$daily.med.air, na.rm=TRUE)
+aa14&lt;-median(a14$daily.med.air, na.rm=TRUE)
+aa15&lt;-median(a15$daily.air.range, na.rm=TRUE)
+aa16&lt;-median(a16$daily.air.range, na.rm=TRUE)
+
+
+#string these values to a data frame
+gg.daily.med.air&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+gg.daily.med.air&lt;-as.data.frame(gg.daily.med.air)
+
+
+#change column names
+names(gg.daily.med.air)[1] &lt;- &quot;date&quot;
+names(gg.daily.med.air)[2] &lt;- &quot;daily.med.air&quot;
+gg.daily.med.air$date&lt;-as.Date(gg.daily.med.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+by.gg&lt;-merge(by.gg, gg.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], by=&quot;date&quot;)</code></pre>
+<p>####Horseshoe Bay field data and Golden Gate Bridge air #### Median air temperature between field surveys</p>
+<pre class="r"><code>#read in golen gate air data #redundant
+gg.air.tide&lt;-read.csv(
+      &quot;https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/filtered_for_tides/gg.air.tide.csv&quot;,
+    header = TRUE
+  )
+gg.air.tide$date&lt;-as.Date(gg.air.tide$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#subset site
+hs&lt;-subset(field, field$site == &quot;hs.fp&quot;)
+hs$date&lt;-as.Date(hs$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#Subset air data hs dates between surveys
+a1&lt;-gg.air.tide[gg.air.tide$date &gt;= &quot;2018-05-15&quot; &amp; gg.air.tide$date &lt; &quot;2018-06-15&quot;,]
+a2&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-06-15&quot; &amp; gg.air.tide$date &lt; &quot;2018-07-16&quot;,]
+a3&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-07-16&quot; &amp; gg.air.tide$date &lt; &quot;2018-08-06&quot;,]
+a4&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-08-06&quot; &amp; gg.air.tide$date &lt; &quot;2018-09-10&quot;,]
+a5&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-09-10&quot; &amp; gg.air.tide$date &lt; &quot;2018-10-09&quot;,]
+a6&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-10-09&quot; &amp; gg.air.tide$date &lt; &quot;2018-11-06&quot;,]
+a7&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-11-06&quot; &amp; gg.air.tide$date &lt; &quot;2018-12-04&quot;,]
+a8&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-04&quot; &amp; gg.air.tide$date &lt; &quot;2019-01-31&quot;,]
+a9&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-01-31&quot; &amp; gg.air.tide$date &lt; &quot;2019-02-21&quot;,]
+a10&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-02-21&quot; &amp; gg.air.tide$date &lt; &quot;2019-03-14&quot;,]
+a11&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-03-14&quot; &amp; gg.air.tide$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-04-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-05-08&quot;,]
+a13&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-05-08&quot; &amp; gg.air.tide$date &lt; &quot;2019-06-08&quot;,]
+a14&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-06-08&quot; &amp; gg.air.tide$date &lt; &quot;2019-07-20&quot;,]
+a15&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-07-20&quot; &amp; gg.air.tide$date &lt; &quot;2019-08-04&quot;,]
+a16&lt;-gg.air.tide[gg.air.tide$date &gt;= &quot;2019-08-04&quot; &amp; gg.air.tide$date &lt; &quot;2019-09-12&quot;,]
+
+
+#median air temp between field surveys
+aa1&lt;-median(a1$air_temp, na.rm=TRUE)
+aa2&lt;-median(a2$air_temp, na.rm=TRUE)
+aa3&lt;-median(a3$air_temp, na.rm=TRUE)
+aa4&lt;-median(a4$air_temp, na.rm=TRUE)
+aa5&lt;-median(a5$air_temp, na.rm=TRUE)
+aa6&lt;-median(a6$air_temp, na.rm=TRUE)
+aa7&lt;-median(a7$air_temp, na.rm=TRUE)
+aa8&lt;-median(a8$air_temp, na.rm=TRUE)
+aa9&lt;-median(a9$air_temp, na.rm=TRUE)
+aa10&lt;-median(a10$air_temp, na.rm=TRUE)
+aa11&lt;-median(a11$air_temp, na.rm=TRUE)
+aa12&lt;-median(a12$air_temp, na.rm=TRUE)
+aa13&lt;-median(a13$air_temp, na.rm=TRUE)
+aa14&lt;-median(a14$air_temp, na.rm=TRUE)
+aa15&lt;-median(a15$air_temp, na.rm=TRUE)
+aa16&lt;-median(a16$air_temp, na.rm=TRUE)
+
+#string these values to a data frame
+hs.mon.air&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+hs.mon.air&lt;-as.data.frame(hs.mon.air)
+
+#change column names
+names(hs.mon.air)[1] &lt;- &quot;date&quot;
+names(hs.mon.air)[2] &lt;- &quot;air.temp&quot;
+hs.mon.air$date&lt;-as.Date(hs.mon.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+hs.gg&lt;-merge(hs, hs.mon.air[,c(&quot;date&quot;, &quot;air.temp&quot;)], hs=&quot;date&quot;)</code></pre>
+<p>Daily median, range, minimum, ahs maximum air temperaure</p>
+<pre class="r"><code>#table summary saved as a df. Fihss the daily median ahs daily max ahs min values bases on date column
+#tried to do daily range here but it didn&#39;t seem to work. I&#39;ll just take the difference between the max ahs min columns
+gg.daily.sum&lt;-as.data.frame(setDT(gg.air.tide)[, .(max.daily.air = max(air_temp), min.daily.air = min(air_temp), daily.med.air=median(air_temp)), .(date)])
+
+#daily range
+gg.daily.sum$daily.air.range&lt;-gg.daily.sum$max.daily.air - gg.daily.sum$min.daily.air
+
+#Daily min 
+#subset dates 
+a1&lt;-gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-05-15&quot; &amp; gg.daily.sum$date &lt; &quot;2018-06-15&quot;,]
+a2&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-06-15&quot; &amp; gg.daily.sum$date &lt; &quot;2018-07-16&quot;,]
+a3&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-07-16&quot; &amp; gg.daily.sum$date &lt; &quot;2018-08-06&quot;,]
+a4&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-08-06&quot; &amp; gg.daily.sum$date &lt; &quot;2018-09-10&quot;,]
+a5&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-09-10&quot; &amp; gg.daily.sum$date &lt; &quot;2018-10-09&quot;,]
+a6&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-10-09&quot; &amp; gg.daily.sum$date &lt; &quot;2018-11-06&quot;,]
+a7&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-11-06&quot; &amp; gg.daily.sum$date &lt; &quot;2018-12-04&quot;,]
+a8&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-04&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-31&quot;,]
+a9&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-01-31&quot; &amp; gg.daily.sum$date &lt; &quot;2019-02-21&quot;,]
+a10&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-02-21&quot; &amp; gg.daily.sum$date &lt; &quot;2019-03-14&quot;,]
+a11&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-03-14&quot; &amp; gg.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-05-08&quot;,]
+a13&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-05-08&quot; &amp; gg.daily.sum$date &lt; &quot;2019-06-08&quot;,]
+a14&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-06-08&quot; &amp; gg.daily.sum$date &lt; &quot;2019-07-20&quot;,]
+a15&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-07-20&quot; &amp; gg.daily.sum$date &lt; &quot;2019-08-04&quot;,]
+a16&lt;-gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; gg.daily.sum$date &lt; &quot;2019-09-12&quot;,]
+
+#median
+aa1&lt;-median(a1$min.daily.air, na.rm=TRUE)
+aa2&lt;-median(a2$min.daily.air, na.rm=TRUE)
+aa3&lt;-median(a3$min.daily.air, na.rm=TRUE)
+aa4&lt;-median(a4$min.daily.air, na.rm=TRUE)
+aa5&lt;-median(a5$min.daily.air, na.rm=TRUE)
+aa6&lt;-median(a6$min.daily.air, na.rm=TRUE)
+aa7&lt;-median(a7$min.daily.air, na.rm=TRUE)
+aa8&lt;-median(a8$min.daily.air, na.rm=TRUE)
+aa9&lt;-median(a9$min.daily.air, na.rm=TRUE)
+aa10&lt;-median(a10$min.daily.air, na.rm=TRUE)
+aa11&lt;-median(a11$min.daily.air, na.rm=TRUE)
+aa12&lt;-median(a12$min.daily.air, na.rm=TRUE)
+aa13&lt;-median(a13$min.daily.air, na.rm=TRUE)
+aa14&lt;-median(a14$min.daily.air, na.rm=TRUE)
+aa15&lt;-median(a15$min.daily.air, na.rm=TRUE)
+aa16&lt;-median(a16$min.daily.air, na.rm=TRUE)
+
+
+#string these values to a data frame
+gg.daily.min.air&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+gg.daily.min.air&lt;-as.data.frame(gg.daily.min.air)
+
+#change column names
+names(gg.daily.min.air)[1] &lt;- &quot;date&quot;
+names(gg.daily.min.air)[2] &lt;- &quot;daily.min.air&quot;
+gg.daily.min.air$date&lt;-as.Date(gg.daily.min.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+
+#merge dfs
+hs.gg&lt;-merge(hs.gg, gg.daily.min.air[,c(&quot;date&quot;, &quot;daily.min.air&quot;)], hs=&quot;date&quot;)
+
+
+#Same thing but for daily maximum values
+#median 
+aa1&lt;-median(a1$max.daily.air, na.rm=TRUE)
+aa2&lt;-median(a2$max.daily.air, na.rm=TRUE)
+aa3&lt;-median(a3$max.daily.air, na.rm=TRUE)
+aa4&lt;-median(a4$max.daily.air, na.rm=TRUE)
+aa5&lt;-median(a5$max.daily.air, na.rm=TRUE)
+aa6&lt;-median(a6$max.daily.air, na.rm=TRUE)
+aa7&lt;-median(a7$max.daily.air, na.rm=TRUE)
+aa8&lt;-median(a8$max.daily.air, na.rm=TRUE)
+aa9&lt;-median(a9$max.daily.air, na.rm=TRUE)
+aa10&lt;-median(a10$max.daily.air, na.rm=TRUE)
+aa11&lt;-median(a11$max.daily.air, na.rm=TRUE)
+aa12&lt;-median(a12$max.daily.air, na.rm=TRUE)
+aa13&lt;-median(a13$max.daily.air, na.rm=TRUE)
+aa14&lt;-median(a14$max.daily.air, na.rm=TRUE)
+aa15&lt;-median(a15$max.daily.air, na.rm=TRUE)
+aa16&lt;-median(a16$max.daily.air, na.rm=TRUE)
+
+#string these values to a data frame
+gg.daily.max.air&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+gg.daily.max.air&lt;-as.data.frame(gg.daily.max.air)
+
+#change column names
+names(gg.daily.max.air)[1] &lt;- &quot;date&quot;
+names(gg.daily.max.air)[2] &lt;- &quot;daily.max.air&quot;
+gg.daily.max.air$date&lt;-as.Date(gg.daily.max.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+hs.gg&lt;-merge(hs.gg, gg.daily.max.air[,c(&quot;date&quot;, &quot;daily.max.air&quot;)], hs=&quot;date&quot;)
+
+
+#daily range
+#mean 
+aa1&lt;-median(a1$daily.air.range, na.rm=TRUE)
+aa2&lt;-median(a2$daily.air.range, na.rm=TRUE)
+aa3&lt;-median(a3$daily.air.range, na.rm=TRUE)
+aa4&lt;-median(a4$daily.air.range, na.rm=TRUE)
+aa5&lt;-median(a5$daily.air.range, na.rm=TRUE)
+aa6&lt;-median(a6$daily.air.range, na.rm=TRUE)
+aa7&lt;-median(a7$daily.air.range, na.rm=TRUE)
+aa8&lt;-median(a8$daily.air.range, na.rm=TRUE)
+aa9&lt;-median(a9$daily.air.range, na.rm=TRUE)
+aa10&lt;-median(a10$daily.air.range, na.rm=TRUE)
+aa11&lt;-median(a11$daily.air.range, na.rm=TRUE)
+aa12&lt;-median(a12$daily.air.range, na.rm=TRUE)
+aa13&lt;-median(a13$daily.air.range, na.rm=TRUE)
+aa14&lt;-median(a14$daily.air.range, na.rm=TRUE)
+aa15&lt;-median(a15$daily.air.range, na.rm=TRUE)
+aa16&lt;-median(a16$daily.air.range, na.rm=TRUE)
+
+#string these values to a data frame
+gg.daily.air.range&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+gg.daily.air.range&lt;-as.data.frame(gg.daily.air.range)
+
+#change column names
+names(gg.daily.air.range)[1] &lt;- &quot;date&quot;
+names(gg.daily.air.range)[2] &lt;- &quot;daily.air.range&quot;
+gg.daily.air.range$date&lt;-as.Date(gg.daily.air.range$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+hs.gg&lt;-merge(hs.gg, gg.daily.air.range[,c(&quot;date&quot;, &quot;daily.air.range&quot;)], hs=&quot;date&quot;)
+
+
+#daily median
+#mean of these periods (mean of daily means)
+aa1&lt;-median(a1$daily.med.air, na.rm=TRUE)
+aa2&lt;-median(a2$daily.med.air, na.rm=TRUE)
+aa3&lt;-median(a3$daily.med.air, na.rm=TRUE)
+aa4&lt;-median(a4$daily.med.air, na.rm=TRUE)
+aa5&lt;-median(a5$daily.med.air, na.rm=TRUE)
+aa6&lt;-median(a6$daily.med.air, na.rm=TRUE)
+aa7&lt;-median(a7$daily.med.air, na.rm=TRUE)
+aa8&lt;-median(a8$daily.med.air, na.rm=TRUE)
+aa9&lt;-median(a9$daily.med.air, na.rm=TRUE)
+aa10&lt;-median(a10$daily.med.air, na.rm=TRUE)
+aa11&lt;-median(a11$daily.med.air, na.rm=TRUE)
+aa12&lt;-median(a12$daily.med.air, na.rm=TRUE)
+aa13&lt;-median(a13$daily.med.air, na.rm=TRUE)
+aa14&lt;-median(a14$daily.med.air, na.rm=TRUE)
+aa15&lt;-median(a15$daily.air.range, na.rm=TRUE)
+aa16&lt;-median(a16$daily.air.range, na.rm=TRUE)
+
+
+#string these values to a data frame
+gg.daily.med.air&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+gg.daily.med.air&lt;-as.data.frame(gg.daily.med.air)
+
+
+#change column names
+names(gg.daily.med.air)[1] &lt;- &quot;date&quot;
+names(gg.daily.med.air)[2] &lt;- &quot;daily.med.air&quot;
+gg.daily.med.air$date&lt;-as.Date(gg.daily.med.air$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+hs.gg&lt;-merge(hs.gg, gg.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], hs=&quot;date&quot;)</code></pre>
+<p>####Combine dfs####</p>
+<pre class="r"><code>#adding site name for air df. Using the water station data names instead of the air data names to line them all up together. (ex. China Camp water data, EOS air data, and Paradise Cay field data will be on the same line)
+pc.eos$site&lt;-&quot;pc.cc&quot; 
+nd.eos$site&lt;-&quot;nd.eos&quot;
+by.gg$site&lt;-&quot;by.rb&quot; 
+hs.gg$site&lt;-&quot;hs.fp&quot;
+
+
+#combine
+all&lt;-dplyr::bind_rows(pc.eos, nd.eos, by.gg, hs.gg)
 
 #save csv
-write.csv(all, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/envi.field.noair.csv&quot;)</code></pre>
-<p>final combined df for analysis:<a href="https://github.com/Cmwegener/thesis/blob/master/data/environment_field/envi.field.noair.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environment_field/envi.field.noair.csv</a></p>
+write.csv(all, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/envi.field.all.csv&quot;)</code></pre>
+<p>final combined df for analysis:<a href="https://github.com/Cmwegener/thesis/blob/master/data/environment_field" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environment_field</a></p>
+</div>
 
 
 
