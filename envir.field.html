@@ -370,7 +370,14 @@ summary {
 
 
 <p><strong>Overview:</strong> Setting up my environmental and field data to run analysis. On the same row I’ll have monthly field variables (ex. mean density one month) and enviromental data since the last field survey or since 30 days prior. Field data will be linked with closest water station. China camp and paradise cay, EOS pier and point chauncy, Richardson Bay and brickyard park, and Horseshoe bay and fort point. I also have EOS air linked with Paradised Cay and Point Chauncy field data and Golden Gate air data with Horseshoe Bay and Richardson Bay field data. Possibly a cleaner way to do this but this works. I then merge all data to one large df that I will use for analysis.</p>
-<p>Steps for environmental data: The environmental data here has been cleaned and is the filtered for tide hourly median dfs. First I filter between survey dates, then take median. Next I did daily minimum, daily maximum, daily range, and daily median and saved these in a csv to explore more later. I then took the median of those values subseted between survey dates. I combine the data into one df per site/station. At the end I’ll export these as csvs which I could then use for analysis. UPDATE: 7/8/2021 I removed dissoloved oxygen from this markdown. I did not filter dissolved oxygen for tide. Not using dissolved oxygen in my analysis. I was orgionally interested in dissolved oxygen as a pH proxy.</p>
+<p>Steps for environmental data: The environmental data here has been cleaned and is the filtered for tide hourly median dfs. First I filter between survey dates, then take median. Next I did daily minimum, daily maximum, daily range, and daily median and saved these in a csv to explore more later. I then took the median of those values subseted between survey dates. I combine the data into one df per site/station. At the end I’ll export these as csvs which I could then use for analysis.</p>
+<p>Events I’m interested in as define by my research questions and that will be used for model analysis (need to talk to Karina):<br />
+- daily maximum salinity less than 10<br />
+- daily minimum salinity greater than 28<br />
+- daily maximum air temperature great than 26C (~80F)<br />
+- daily maximum pH less than 7</p>
+<p>UPDATE: 7/8/2021 - I removed dissoloved oxygen from this markdown. I did not filter dissolved oxygen for tide. Not using dissolved oxygen in my analysis. I was orgionally interested in dissolved oxygen as a pH proxy.<br />
+- I also focused “extreme” events for my analysis (I had too many random ones before I wasn’t using)</p>
 <p>Notes:<br />
 -another code that works for counting rows: length(which(a1$max.daily.sal &lt; 10))</p>
 <p>Field data: <a href="https://github.com/Cmwegener/thesis/tree/master/data/field" class="uri">https://github.com/Cmwegener/thesis/tree/master/data/field</a><br />
@@ -1085,112 +1092,7 @@ a11&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-05-09&quot; &amp; cc.da
 a12&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-06-09&quot; &amp; cc.daily.sum$date &lt; &quot;2019-07-21&quot;,]
 a13&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-07-21&quot; &amp; cc.daily.sum$date &lt; &quot;2019-08-04&quot;,]
 a14&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; cc.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
-<p>Maybe I can just count how many days had a salinity under 5? To see if the number of days affects it</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.sal&lt;5, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;5, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;5, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;5, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;5, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;5, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;5, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;5, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;5, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;5, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;5, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;5, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;5, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;5, ])
-
-cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.dates&lt;-as.data.frame(cc.dates)
-
-#change column names
-names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;min.daily.sal.lt5&quot;
-cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a min daily salinity below 10</p>
-<pre class="r"><code>#counts the number of rows with a min.daily.sal less than 10, already subsetted for between survey days
-aa1&lt;-nrow(a1[a1$min.daily.sal&lt;10, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;10, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;10, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;10, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;10, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;10, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;10, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;10, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;10, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;10, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;10, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;10, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;10, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;10, ])
-
-cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.dates&lt;-as.data.frame(cc.dates)
-
-#change column names
-names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;min.daily.sal.lt10&quot;
-cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt10&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a min daily salinity below 15</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.sal&lt;15, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;15, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;15, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;15, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;15, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;15, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;15, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;15, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;15, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;15, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;15, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;15, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;15, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;15, ])
-
-cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.dates&lt;-as.data.frame(cc.dates)
-
-#change column names
-names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;min.daily.sal.lt15&quot;
-cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt15&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;5, ])
-aa2&lt;-nrow(a2[a2$max.daily.sal&lt;5, ])
-aa3&lt;-nrow(a3[a3$max.daily.sal&lt;5, ])
-aa4&lt;-nrow(a4[a4$max.daily.sal&lt;5, ])
-aa5&lt;-nrow(a5[a5$max.daily.sal&lt;5, ])
-aa6&lt;-nrow(a6[a6$max.daily.sal&lt;5, ])
-aa7&lt;-nrow(a7[a7$max.daily.sal&lt;5, ])
-aa8&lt;-nrow(a8[a8$max.daily.sal&lt;5, ])
-aa9&lt;-nrow(a9[a9$max.daily.sal&lt;5, ])
-aa10&lt;-nrow(a10[a10$max.daily.sal&lt;5, ])
-aa11&lt;-nrow(a11[a11$max.daily.sal&lt;5, ])
-aa12&lt;-nrow(a12[a12$max.daily.sal&lt;5, ])
-aa13&lt;-nrow(a13[a13$max.daily.sal&lt;5, ])
-aa14&lt;-nrow(a14[a14$max.daily.sal&lt;5, ])
-
-cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.dates&lt;-as.data.frame(cc.dates)
-
-#change column names
-names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;max.daily.sal.lt5&quot;
-cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 10</p>
+<p>Number of days with daily maximum salinity less than 10</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;10, ])
 aa2&lt;-nrow(a2[a2$max.daily.sal&lt;10, ])
 aa3&lt;-nrow(a3[a3$max.daily.sal&lt;10, ])
@@ -1216,215 +1118,59 @@ cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt10&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 15</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;15, ])
-aa2&lt;-nrow(a2[a2$max.daily.sal&lt;15, ])
-aa3&lt;-nrow(a3[a3$max.daily.sal&lt;15, ])
-aa4&lt;-nrow(a4[a4$max.daily.sal&lt;15, ])
-aa5&lt;-nrow(a5[a5$max.daily.sal&lt;15, ])
-aa6&lt;-nrow(a6[a6$max.daily.sal&lt;15, ])
-aa7&lt;-nrow(a7[a7$max.daily.sal&lt;15, ])
-aa8&lt;-nrow(a8[a8$max.daily.sal&lt;15, ])
-aa9&lt;-nrow(a9[a9$max.daily.sal&lt;15, ])
-aa10&lt;-nrow(a10[a10$max.daily.sal&lt;15, ])
-aa11&lt;-nrow(a11[a11$max.daily.sal&lt;15, ])
-aa12&lt;-nrow(a12[a12$max.daily.sal&lt;15, ])
-aa13&lt;-nrow(a13[a13$max.daily.sal&lt;15, ])
-aa14&lt;-nrow(a14[a14$max.daily.sal&lt;15, ])
+<p>Number of days with daily minimum salinity greater than 28</p>
+<pre class="r"><code>#already subsetted for between survey days so skipping to filtering
+aa1&lt;-nrow(a1[a1$min.daily.sal&gt;28, ])
+aa2&lt;-nrow(a2[a2$min.daily.sal&gt;28, ])
+aa3&lt;-nrow(a3[a3$min.daily.sal&gt;28, ])
+aa4&lt;-nrow(a4[a4$min.daily.sal&gt;28, ])
+aa5&lt;-nrow(a5[a5$min.daily.sal&gt;28, ])
+aa6&lt;-nrow(a6[a6$min.daily.sal&gt;28, ])
+aa7&lt;-nrow(a7[a7$min.daily.sal&gt;28, ])
+aa8&lt;-nrow(a8[a8$min.daily.sal&gt;28, ])
+aa9&lt;-nrow(a9[a9$min.daily.sal&gt;28, ])
+aa10&lt;-nrow(a10[a10$min.daily.sal&gt;28, ])
+aa11&lt;-nrow(a11[a11$min.daily.sal&gt;28, ])
+aa12&lt;-nrow(a12[a12$min.daily.sal&gt;28, ])
+aa13&lt;-nrow(a13[a13$min.daily.sal&gt;28, ])
+aa14&lt;-nrow(a14[a14$min.daily.sal&gt;28, ])
 
 cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
 cc.dates&lt;-as.data.frame(cc.dates)
 
 #change column names
 names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;max.daily.sal.lt15&quot;
+names(cc.dates)[2] &lt;- &quot;min.daily.sal.gt28&quot;
 cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt15&quot;)], by=&quot;date&quot;)</code></pre>
-<p>What should I do for range? Trying a range greater than 10 because that seems kinda extreme but I’m not sure what to use here.<br />
-Number of days with a daily salinity range &gt;10</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.sal.range&gt;10, ])
-aa2&lt;-nrow(a2[a2$daily.sal.range&gt;10, ])
-aa3&lt;-nrow(a3[a3$daily.sal.range&gt;10, ])
-aa4&lt;-nrow(a4[a4$daily.sal.range&gt;10, ])
-aa5&lt;-nrow(a5[a5$daily.sal.range&gt;10, ])
-aa6&lt;-nrow(a6[a6$daily.sal.range&gt;10, ])
-aa7&lt;-nrow(a7[a7$daily.sal.range&gt;10, ])
-aa8&lt;-nrow(a8[a8$daily.sal.range&gt;10, ])
-aa9&lt;-nrow(a9[a9$daily.sal.range&gt;10, ])
-aa10&lt;-nrow(a10[a10$daily.sal.range&gt;10, ])
-aa11&lt;-nrow(a11[a11$daily.sal.range&gt;10, ])
-aa12&lt;-nrow(a12[a12$daily.sal.range&gt;10, ])
-aa13&lt;-nrow(a13[a13$daily.sal.range&gt;10, ])
-aa14&lt;-nrow(a14[a14$daily.sal.range&gt;10, ])
+pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;min.daily.sal.gt28&quot;)], by=&quot;date&quot;)</code></pre>
+<p>pH Number of days where max.daily.ph is &lt;8</p>
+<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&lt;8, ])
+aa2&lt;-nrow(a2[a2$max.daily.ph&lt;8, ])
+aa3&lt;-nrow(a3[a3$max.daily.ph&lt;8, ])
+aa4&lt;-nrow(a4[a4$max.daily.ph&lt;8, ])
+aa5&lt;-nrow(a5[a5$max.daily.ph&lt;8, ])
+aa6&lt;-nrow(a6[a6$max.daily.ph&lt;8, ])
+aa7&lt;-nrow(a7[a7$max.daily.ph&lt;8, ])
+aa8&lt;-nrow(a8[a8$max.daily.ph&lt;8, ])
+aa9&lt;-nrow(a9[a9$max.daily.ph&lt;8, ])
+aa10&lt;-nrow(a10[a10$max.daily.ph&lt;8, ])
+aa11&lt;-nrow(a11[a11$max.daily.ph&lt;8, ])
+aa12&lt;-nrow(a12[a12$max.daily.ph&lt;8, ])
+aa13&lt;-nrow(a13[a13$max.daily.ph&lt;8, ])
+aa14&lt;-nrow(a14[a14$max.daily.ph&lt;8, ])
 
 cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
 cc.dates&lt;-as.data.frame(cc.dates)
 
 #change column names
 names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;daily.sal.range.gt10&quot;
+names(cc.dates)[2] &lt;- &quot;max.daily.ph.lt8&quot;
 cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;daily.sal.range.gt10&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a daily salinity range &gt;5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.sal.range&gt;5, ])
-aa2&lt;-nrow(a2[a2$daily.sal.range&gt;5, ])
-aa3&lt;-nrow(a3[a3$daily.sal.range&gt;5, ])
-aa4&lt;-nrow(a4[a4$daily.sal.range&gt;5, ])
-aa5&lt;-nrow(a5[a5$daily.sal.range&gt;5, ])
-aa6&lt;-nrow(a6[a6$daily.sal.range&gt;5, ])
-aa7&lt;-nrow(a7[a7$daily.sal.range&gt;5, ])
-aa8&lt;-nrow(a8[a8$daily.sal.range&gt;5, ])
-aa9&lt;-nrow(a9[a9$daily.sal.range&gt;5, ])
-aa10&lt;-nrow(a10[a10$daily.sal.range&gt;5, ])
-aa11&lt;-nrow(a11[a11$daily.sal.range&gt;5, ])
-aa12&lt;-nrow(a12[a12$daily.sal.range&gt;5, ])
-aa13&lt;-nrow(a13[a13$daily.sal.range&gt;5, ])
-aa14&lt;-nrow(a14[a14$daily.sal.range&gt;5, ])
-
-cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.dates&lt;-as.data.frame(cc.dates)
-
-#change column names
-names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;daily.sal.range.gt5&quot;
-cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;daily.sal.range.gt5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>pH Number of days where min.daily.ph is &lt;7</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.ph&lt;7, ])
-aa2&lt;-nrow(a2[a2$min.daily.ph&lt;7, ])
-aa3&lt;-nrow(a3[a3$min.daily.ph&lt;7, ])
-aa4&lt;-nrow(a4[a4$min.daily.ph&lt;7, ])
-aa5&lt;-nrow(a5[a5$min.daily.ph&lt;7, ])
-aa6&lt;-nrow(a6[a6$min.daily.ph&lt;7, ])
-aa7&lt;-nrow(a7[a7$min.daily.ph&lt;7, ])
-aa8&lt;-nrow(a8[a8$min.daily.ph&lt;7, ])
-aa9&lt;-nrow(a9[a9$min.daily.ph&lt;7, ])
-aa10&lt;-nrow(a10[a10$min.daily.ph&lt;7, ])
-aa11&lt;-nrow(a11[a11$min.daily.ph&lt;7, ])
-aa12&lt;-nrow(a12[a12$min.daily.ph&lt;7, ])
-aa13&lt;-nrow(a13[a13$min.daily.ph&lt;7, ])
-aa14&lt;-nrow(a14[a14$min.daily.ph&lt;7, ])
-
-cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.dates&lt;-as.data.frame(cc.dates)
-
-#change column names
-names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;min.daily.ph.lt7&quot;
-cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;min.daily.ph.lt7&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days where min.daily.ph is &lt;8. They’re almost all &lt;8 so I’m not sure if this is worth doing</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.ph&lt;8, ])
-aa2&lt;-nrow(a2[a2$min.daily.ph&lt;8, ])
-aa3&lt;-nrow(a3[a3$min.daily.ph&lt;8, ])
-aa4&lt;-nrow(a4[a4$min.daily.ph&lt;8, ])
-aa5&lt;-nrow(a5[a5$min.daily.ph&lt;8, ])
-aa6&lt;-nrow(a6[a6$min.daily.ph&lt;8, ])
-aa7&lt;-nrow(a7[a7$min.daily.ph&lt;8, ])
-aa8&lt;-nrow(a8[a8$min.daily.ph&lt;8, ])
-aa9&lt;-nrow(a9[a9$min.daily.ph&lt;8, ])
-aa10&lt;-nrow(a10[a10$min.daily.ph&lt;8, ])
-aa11&lt;-nrow(a11[a11$min.daily.ph&lt;8, ])
-aa12&lt;-nrow(a12[a12$min.daily.ph&lt;8, ])
-aa13&lt;-nrow(a13[a13$min.daily.ph&lt;8, ])
-aa14&lt;-nrow(a14[a14$min.daily.ph&lt;8, ])
-
-cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.dates&lt;-as.data.frame(cc.dates)
-
-#change column names
-names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;min.daily.ph.lt8&quot;
-cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;min.daily.ph.lt8&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days where max.daily.ph is &lt;7 –&gt; looks the same as min.daily.ph, may have to do 7.5 or something like that</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&lt;7, ])
-aa2&lt;-nrow(a2[a2$max.daily.ph&lt;7, ])
-aa3&lt;-nrow(a3[a3$max.daily.ph&lt;7, ])
-aa4&lt;-nrow(a4[a4$max.daily.ph&lt;7, ])
-aa5&lt;-nrow(a5[a5$max.daily.ph&lt;7, ])
-aa6&lt;-nrow(a6[a6$max.daily.ph&lt;7, ])
-aa7&lt;-nrow(a7[a7$max.daily.ph&lt;7, ])
-aa8&lt;-nrow(a8[a8$max.daily.ph&lt;7, ])
-aa9&lt;-nrow(a9[a9$max.daily.ph&lt;7, ])
-aa10&lt;-nrow(a10[a10$max.daily.ph&lt;7, ])
-aa11&lt;-nrow(a11[a11$max.daily.ph&lt;7, ])
-aa12&lt;-nrow(a12[a12$max.daily.ph&lt;7, ])
-aa13&lt;-nrow(a13[a13$max.daily.ph&lt;7, ])
-aa14&lt;-nrow(a14[a14$max.daily.ph&lt;7, ])
-
-cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.dates&lt;-as.data.frame(cc.dates)
-
-#change column names
-names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;max.daily.ph.lt7&quot;
-cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;max.daily.ph.lt7&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days where daily.ph.range is &gt;.5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.ph.range&gt;.5, ])
-aa2&lt;-nrow(a2[a2$daily.ph.range&gt;.5, ])
-aa3&lt;-nrow(a3[a3$daily.ph.range&gt;.5, ])
-aa4&lt;-nrow(a4[a4$daily.ph.range&gt;.5, ])
-aa5&lt;-nrow(a5[a5$daily.ph.range&gt;.5, ])
-aa6&lt;-nrow(a6[a6$daily.ph.range&gt;.5, ])
-aa7&lt;-nrow(a7[a7$daily.ph.range&gt;.5, ])
-aa8&lt;-nrow(a8[a8$daily.ph.range&gt;.5, ])
-aa9&lt;-nrow(a9[a9$daily.ph.range&gt;.5, ])
-aa10&lt;-nrow(a10[a10$daily.ph.range&gt;.5, ])
-aa11&lt;-nrow(a11[a11$daily.ph.range&gt;.5, ])
-aa12&lt;-nrow(a12[a12$daily.ph.range&gt;.5, ])
-aa13&lt;-nrow(a13[a13$daily.ph.range&gt;.5, ])
-aa14&lt;-nrow(a14[a14$daily.ph.range&gt;.5, ])
-
-cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.dates&lt;-as.data.frame(cc.dates)
-
-#change column names
-names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;daily.ph.range.gt0.5&quot;
-cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;daily.ph.range.gt0.5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Water temperature none, not sure if this is worth going into more. More interested in air temperature anyway</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.max.wt&lt;20, ])
-aa2&lt;-nrow(a2[a2$daily.max.wt&lt;20, ])
-aa3&lt;-nrow(a3[a3$daily.max.wt&lt;20, ])
-aa4&lt;-nrow(a4[a4$daily.max.wt&lt;20, ])
-aa5&lt;-nrow(a5[a5$daily.max.wt&lt;20, ])
-aa6&lt;-nrow(a6[a6$daily.max.wt&lt;20, ])
-aa7&lt;-nrow(a7[a7$daily.max.wt&lt;20, ])
-aa8&lt;-nrow(a8[a8$daily.max.wt&lt;20, ])
-aa9&lt;-nrow(a9[a9$daily.max.wt&lt;20, ])
-aa10&lt;-nrow(a10[a10$daily.max.wt&lt;20, ])
-aa11&lt;-nrow(a11[a11$daily.max.wt&lt;20, ])
-aa12&lt;-nrow(a12[a12$daily.max.wt&lt;20, ])
-aa13&lt;-nrow(a13[a13$daily.max.wt&lt;20, ])
-aa14&lt;-nrow(a14[a14$daily.max.wt&lt;20, ])
-
-cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
-cc.dates&lt;-as.data.frame(cc.dates)
-
-#change column names
-names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;daily.max.wt.gt20&quot;
-cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&quot;)], by=&quot;date&quot;)</code></pre>
+pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;max.daily.ph.lt8&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Save csvs</p>
 <pre class="r"><code>write.csv(pc.cc, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/cc.daily.sum.csv&quot;)</code></pre>
 <p>cc.daily sum: <a href="https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/cc.daily.sum.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/cc.daily.sum.csv</a></p>
@@ -2133,118 +1879,7 @@ a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-09&quot; &amp; eos
 a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-09&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-21&quot;,]
 a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-21&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-04&quot;,]
 a15&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; eos.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
-<p>Daily min salinity &lt;5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.sal&lt;5, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;5, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;5, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;5, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;5, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;5, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;5, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;5, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;5, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;5, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;5, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;5, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;5, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;5, ])
-aa15&lt;-nrow(a15[a15$min.daily.sal&lt;5, ])
-
-eos.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.dates&lt;-as.data.frame(eos.dates)
-
-#change column names
-names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;min.daily.sal.lt5&quot;
-eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a min daily salinity below 10</p>
-<pre class="r"><code>#counts the number of rows with a min.daily.sal less than 10, already subsetted for between survey days
-aa1&lt;-nrow(a1[a1$min.daily.sal&lt;10, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;10, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;10, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;10, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;10, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;10, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;10, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;10, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;10, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;10, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;10, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;10, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;10, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;10, ])
-aa15&lt;-nrow(a15[a15$min.daily.sal&lt;10, ])
-
-eos.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.dates&lt;-as.data.frame(eos.dates)
-
-#change column names
-names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;min.daily.sal.lt10&quot;
-eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt10&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a min daily salinity below 15</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.sal&lt;15, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;15, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;15, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;15, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;15, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;15, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;15, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;15, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;15, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;15, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;15, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;15, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;15, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;15, ])
-aa15&lt;-nrow(a15[a15$min.daily.sal&lt;15, ])
-
-eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
-
-
-#change column names
-names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;min.daily.sal.lt15&quot;
-eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt15&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;5, ])
-aa2&lt;-nrow(a2[a2$max.daily.sal&lt;5, ])
-aa3&lt;-nrow(a3[a3$max.daily.sal&lt;5, ])
-aa4&lt;-nrow(a4[a4$max.daily.sal&lt;5, ])
-aa5&lt;-nrow(a5[a5$max.daily.sal&lt;5, ])
-aa6&lt;-nrow(a6[a6$max.daily.sal&lt;5, ])
-aa7&lt;-nrow(a7[a7$max.daily.sal&lt;5, ])
-aa8&lt;-nrow(a8[a8$max.daily.sal&lt;5, ])
-aa9&lt;-nrow(a9[a9$max.daily.sal&lt;5, ])
-aa10&lt;-nrow(a10[a10$max.daily.sal&lt;5, ])
-aa11&lt;-nrow(a11[a11$max.daily.sal&lt;5, ])
-aa12&lt;-nrow(a12[a12$max.daily.sal&lt;5, ])
-aa13&lt;-nrow(a13[a13$max.daily.sal&lt;5, ])
-aa14&lt;-nrow(a14[a14$max.daily.sal&lt;5, ])
-aa15&lt;-nrow(a15[a15$max.daily.sal&lt;5, ])
-
-eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
-
-
-#change column names
-names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;max.daily.sal.lt5&quot;
-eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 10</p>
+<p>Daily maximum salinity less than 10</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;10, ])
 aa2&lt;-nrow(a2[a2$max.daily.sal&lt;10, ])
 aa3&lt;-nrow(a3[a3$max.daily.sal&lt;10, ])
@@ -2261,9 +1896,8 @@ aa13&lt;-nrow(a13[a13$max.daily.sal&lt;10, ])
 aa14&lt;-nrow(a14[a14$max.daily.sal&lt;10, ])
 aa15&lt;-nrow(a15[a15$max.daily.sal&lt;10, ])
 
-eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
-
+eos.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
+eos.dates&lt;-as.data.frame(eos.dates)
 
 #change column names
 names(eos.dates)[1] &lt;- &quot;date&quot;
@@ -2272,106 +1906,51 @@ eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt10&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 15</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;15, ])
-aa2&lt;-nrow(a2[a2$max.daily.sal&lt;15, ])
-aa3&lt;-nrow(a3[a3$max.daily.sal&lt;15, ])
-aa4&lt;-nrow(a4[a4$max.daily.sal&lt;15, ])
-aa5&lt;-nrow(a5[a5$max.daily.sal&lt;15, ])
-aa6&lt;-nrow(a6[a6$max.daily.sal&lt;15, ])
-aa7&lt;-nrow(a7[a7$max.daily.sal&lt;15, ])
-aa8&lt;-nrow(a8[a8$max.daily.sal&lt;15, ])
-aa9&lt;-nrow(a9[a9$max.daily.sal&lt;15, ])
-aa10&lt;-nrow(a10[a10$max.daily.sal&lt;15, ])
-aa11&lt;-nrow(a11[a11$max.daily.sal&lt;15, ])
-aa12&lt;-nrow(a12[a12$max.daily.sal&lt;15, ])
-aa13&lt;-nrow(a13[a13$max.daily.sal&lt;15, ])
-aa14&lt;-nrow(a14[a14$max.daily.sal&lt;15, ])
-aa15&lt;-nrow(a15[a15$max.daily.sal&lt;15, ])
+<p>Number of days with a daily minimum salinity greater than 28</p>
+<pre class="r"><code>#count
+aa1&lt;-nrow(a1[a1$min.daily.sal&gt;28, ])
+aa2&lt;-nrow(a2[a2$min.daily.sal&gt;28, ])
+aa3&lt;-nrow(a3[a3$min.daily.sal&gt;28, ])
+aa4&lt;-nrow(a4[a4$min.daily.sal&gt;28, ])
+aa5&lt;-nrow(a5[a5$min.daily.sal&gt;28, ])
+aa6&lt;-nrow(a6[a6$min.daily.sal&gt;28, ])
+aa7&lt;-nrow(a7[a7$min.daily.sal&gt;28, ])
+aa8&lt;-nrow(a8[a8$min.daily.sal&gt;28, ])
+aa9&lt;-nrow(a9[a9$min.daily.sal&gt;28, ])
+aa10&lt;-nrow(a10[a10$min.daily.sal&gt;28, ])
+aa11&lt;-nrow(a11[a11$min.daily.sal&gt;28, ])
+aa12&lt;-nrow(a12[a12$min.daily.sal&gt;28, ])
+aa13&lt;-nrow(a13[a13$min.daily.sal&gt;28, ])
+aa14&lt;-nrow(a14[a14$min.daily.sal&gt;28, ])
+aa15&lt;-nrow(a15[a15$min.daily.sal&gt;28, ])
 
-eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
-
-
-#change column names
-names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;max.daily.sal.lt15&quot;
-eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt15&quot;)], by=&quot;date&quot;)</code></pre>
-<p>What should I do for range? Trying a range greater than 10 because that seems kinda extreme but I’m not sure what to use here. Number of days with a daily salinity range &gt;10</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.sal.range&gt;10, ])
-aa2&lt;-nrow(a2[a2$daily.sal.range&gt;10, ])
-aa3&lt;-nrow(a3[a3$daily.sal.range&gt;10, ])
-aa4&lt;-nrow(a4[a4$daily.sal.range&gt;10, ])
-aa5&lt;-nrow(a5[a5$daily.sal.range&gt;10, ])
-aa6&lt;-nrow(a6[a6$daily.sal.range&gt;10, ])
-aa7&lt;-nrow(a7[a7$daily.sal.range&gt;10, ])
-aa8&lt;-nrow(a8[a8$daily.sal.range&gt;10, ])
-aa9&lt;-nrow(a9[a9$daily.sal.range&gt;10, ])
-aa10&lt;-nrow(a10[a10$daily.sal.range&gt;10, ])
-aa11&lt;-nrow(a11[a11$daily.sal.range&gt;10, ])
-aa12&lt;-nrow(a12[a12$daily.sal.range&gt;10, ])
-aa13&lt;-nrow(a13[a13$daily.sal.range&gt;10, ])
-aa14&lt;-nrow(a14[a14$daily.sal.range&gt;10, ])
-aa15&lt;-nrow(a15[a15$daily.sal.range&gt;10, ])
-
-eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
-
+eos.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
+eos.dates&lt;-as.data.frame(eos.dates)
 
 #change column names
 names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;daily.sal.range.gt10&quot;
+names(eos.dates)[2] &lt;- &quot;min.daily.sal.gt28&quot;
 eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;daily.sal.range.gt10&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a daily salinity range &gt;5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.sal.range&gt;5, ])
-aa2&lt;-nrow(a2[a2$daily.sal.range&gt;5, ])
-aa3&lt;-nrow(a3[a3$daily.sal.range&gt;5, ])
-aa4&lt;-nrow(a4[a4$daily.sal.range&gt;5, ])
-aa5&lt;-nrow(a5[a5$daily.sal.range&gt;5, ])
-aa6&lt;-nrow(a6[a6$daily.sal.range&gt;5, ])
-aa7&lt;-nrow(a7[a7$daily.sal.range&gt;5, ])
-aa8&lt;-nrow(a8[a8$daily.sal.range&gt;5, ])
-aa9&lt;-nrow(a9[a9$daily.sal.range&gt;5, ])
-aa10&lt;-nrow(a10[a10$daily.sal.range&gt;5, ])
-aa11&lt;-nrow(a11[a11$daily.sal.range&gt;5, ])
-aa12&lt;-nrow(a12[a12$daily.sal.range&gt;5, ])
-aa13&lt;-nrow(a13[a13$daily.sal.range&gt;5, ])
-aa14&lt;-nrow(a14[a14$daily.sal.range&gt;5, ])
-aa15&lt;-nrow(a15[a15$daily.sal.range&gt;5, ])
-
-eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
-
-#change column names
-names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;daily.sal.range.gt5&quot;
-eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;daily.sal.range.gt5&quot;)], by=&quot;date&quot;)</code></pre>
+nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;min.daily.sal.gt28&quot;)], by=&quot;date&quot;)</code></pre>
 <p>pH</p>
-<p>Number of days where min.daily.ph is &lt;7</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.ph&lt;7, ])
-aa2&lt;-nrow(a2[a2$min.daily.ph&lt;7, ])
-aa3&lt;-nrow(a3[a3$min.daily.ph&lt;7, ])
-aa4&lt;-nrow(a4[a4$min.daily.ph&lt;7, ])
-aa5&lt;-nrow(a5[a5$min.daily.ph&lt;7, ])
-aa6&lt;-nrow(a6[a6$min.daily.ph&lt;7, ])
-aa7&lt;-nrow(a7[a7$min.daily.ph&lt;7, ])
-aa8&lt;-nrow(a8[a8$min.daily.ph&lt;7, ])
-aa9&lt;-nrow(a9[a9$min.daily.ph&lt;7, ])
-aa10&lt;-nrow(a10[a10$min.daily.ph&lt;7, ])
-aa11&lt;-nrow(a11[a11$min.daily.ph&lt;7, ])
-aa12&lt;-nrow(a12[a12$min.daily.ph&lt;7, ])
-aa13&lt;-nrow(a13[a13$min.daily.ph&lt;7, ])
-aa14&lt;-nrow(a14[a14$min.daily.ph&lt;7, ])
-aa15&lt;-nrow(a15[a15$min.daily.ph&lt;7, ])
+<p>Number of days where max.daily.ph is &lt;8</p>
+<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&lt;8, ])
+aa2&lt;-nrow(a2[a2$max.daily.ph&lt;8, ])
+aa3&lt;-nrow(a3[a3$max.daily.ph&lt;8, ])
+aa4&lt;-nrow(a4[a4$max.daily.ph&lt;8, ])
+aa5&lt;-nrow(a5[a5$max.daily.ph&lt;8, ])
+aa6&lt;-nrow(a6[a6$max.daily.ph&lt;8, ])
+aa7&lt;-nrow(a7[a7$max.daily.ph&lt;8, ])
+aa8&lt;-nrow(a8[a8$max.daily.ph&lt;8, ])
+aa9&lt;-nrow(a9[a9$max.daily.ph&lt;8, ])
+aa10&lt;-nrow(a10[a10$max.daily.ph&lt;8, ])
+aa11&lt;-nrow(a11[a11$max.daily.ph&lt;8, ])
+aa12&lt;-nrow(a12[a12$max.daily.ph&lt;8, ])
+aa13&lt;-nrow(a13[a13$max.daily.ph&lt;8, ])
+aa14&lt;-nrow(a14[a14$max.daily.ph&lt;8, ])
+aa15&lt;-nrow(a15[a15$max.daily.ph&lt;8, ])
 
 eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
 eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
@@ -2379,121 +1958,11 @@ eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
 
 #change column names
 names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;min.daily.ph.lt7&quot;
+names(eos.dates)[2] &lt;- &quot;max.daily.ph.lt8&quot;
 eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;min.daily.ph.lt7&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days where min.daily.ph is &lt;8. They’re almost all &lt;8 so I’m not sure if this is worth doing</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.ph&lt;8, ])
-aa2&lt;-nrow(a2[a2$min.daily.ph&lt;8, ])
-aa3&lt;-nrow(a3[a3$min.daily.ph&lt;8, ])
-aa4&lt;-nrow(a4[a4$min.daily.ph&lt;8, ])
-aa5&lt;-nrow(a5[a5$min.daily.ph&lt;8, ])
-aa6&lt;-nrow(a6[a6$min.daily.ph&lt;8, ])
-aa7&lt;-nrow(a7[a7$min.daily.ph&lt;8, ])
-aa8&lt;-nrow(a8[a8$min.daily.ph&lt;8, ])
-aa9&lt;-nrow(a9[a9$min.daily.ph&lt;8, ])
-aa10&lt;-nrow(a10[a10$min.daily.ph&lt;8, ])
-aa11&lt;-nrow(a11[a11$min.daily.ph&lt;8, ])
-aa12&lt;-nrow(a12[a12$min.daily.ph&lt;8, ])
-aa13&lt;-nrow(a13[a13$min.daily.ph&lt;8, ])
-aa14&lt;-nrow(a14[a14$min.daily.ph&lt;8, ])
-aa15&lt;-nrow(a15[a15$min.daily.ph&lt;8, ])
-
-eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
-
-
-#change column names
-names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;min.daily.ph.lt8&quot;
-eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;min.daily.ph.lt8&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days where max.daily.ph is &lt;7 –&gt; looks the same as min.daily.ph, may have to do 7.5 or something like that</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&lt;7, ])
-aa2&lt;-nrow(a2[a2$max.daily.ph&lt;7, ])
-aa3&lt;-nrow(a3[a3$max.daily.ph&lt;7, ])
-aa4&lt;-nrow(a4[a4$max.daily.ph&lt;7, ])
-aa5&lt;-nrow(a5[a5$max.daily.ph&lt;7, ])
-aa6&lt;-nrow(a6[a6$max.daily.ph&lt;7, ])
-aa7&lt;-nrow(a7[a7$max.daily.ph&lt;7, ])
-aa8&lt;-nrow(a8[a8$max.daily.ph&lt;7, ])
-aa9&lt;-nrow(a9[a9$max.daily.ph&lt;7, ])
-aa10&lt;-nrow(a10[a10$max.daily.ph&lt;7, ])
-aa11&lt;-nrow(a11[a11$max.daily.ph&lt;7, ])
-aa12&lt;-nrow(a12[a12$max.daily.ph&lt;7, ])
-aa13&lt;-nrow(a13[a13$max.daily.ph&lt;7, ])
-aa14&lt;-nrow(a14[a14$max.daily.ph&lt;7, ])
-aa15&lt;-nrow(a15[a15$max.daily.ph&lt;7, ])
-
-eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
-
-#change column names
-names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;max.daily.ph.lt7&quot;
-eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;max.daily.ph.lt7&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days where daily.ph.range is &gt;.5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.ph.range&gt;.5, ])
-aa2&lt;-nrow(a2[a2$daily.ph.range&gt;.5, ])
-aa3&lt;-nrow(a3[a3$daily.ph.range&gt;.5, ])
-aa4&lt;-nrow(a4[a4$daily.ph.range&gt;.5, ])
-aa5&lt;-nrow(a5[a5$daily.ph.range&gt;.5, ])
-aa6&lt;-nrow(a6[a6$daily.ph.range&gt;.5, ])
-aa7&lt;-nrow(a7[a7$daily.ph.range&gt;.5, ])
-aa8&lt;-nrow(a8[a8$daily.ph.range&gt;.5, ])
-aa9&lt;-nrow(a9[a9$daily.ph.range&gt;.5, ])
-aa10&lt;-nrow(a10[a10$daily.ph.range&gt;.5, ])
-aa11&lt;-nrow(a11[a11$daily.ph.range&gt;.5, ])
-aa12&lt;-nrow(a12[a12$daily.ph.range&gt;.5, ])
-aa13&lt;-nrow(a13[a13$daily.ph.range&gt;.5, ])
-aa14&lt;-nrow(a14[a14$daily.ph.range&gt;.5, ])
-aa15&lt;-nrow(a15[a15$daily.ph.range&gt;.5, ])
-
-eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
-
-
-#change column names
-names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;daily.ph.range.gt0.5&quot;
-eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;daily.ph.range.gt0.5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Water temperature none, not sure if this is worth going into more for now. More interested in air temperature anyway</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.max.wt&lt;20, ])
-aa2&lt;-nrow(a2[a2$daily.max.wt&lt;20, ])
-aa3&lt;-nrow(a3[a3$daily.max.wt&lt;20, ])
-aa4&lt;-nrow(a4[a4$daily.max.wt&lt;20, ])
-aa5&lt;-nrow(a5[a5$daily.max.wt&lt;20, ])
-aa6&lt;-nrow(a6[a6$daily.max.wt&lt;20, ])
-aa7&lt;-nrow(a7[a7$daily.max.wt&lt;20, ])
-aa8&lt;-nrow(a8[a8$daily.max.wt&lt;20, ])
-aa9&lt;-nrow(a9[a9$daily.max.wt&lt;20, ])
-aa10&lt;-nrow(a10[a10$daily.max.wt&lt;20, ])
-aa11&lt;-nrow(a11[a11$daily.max.wt&lt;20, ])
-aa12&lt;-nrow(a12[a12$daily.max.wt&lt;20, ])
-aa13&lt;-nrow(a13[a13$daily.max.wt&lt;20, ])
-aa14&lt;-nrow(a14[a14$daily.max.wt&lt;20, ])
-aa15&lt;-nrow(a15[a15$daily.max.wt&lt;20, ])
-
-eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
-eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
-
-#change column names
-names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;daily.max.wt.gt20&quot;
-eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&quot;)], by=&quot;date&quot;)</code></pre>
+nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;max.daily.ph.lt8&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Save csv</p>
 <pre class="r"><code>write.csv(nd.eos, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos.daily.sum.csv&quot;)</code></pre>
 <p>eos.daily.sum: <a href="https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/eos.daily.sum.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/eos.daily.sum.csv</a></p>
@@ -3218,120 +2687,7 @@ a13&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-05-08&quot; &amp; rb.da
 a14&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-06-08&quot; &amp; rb.daily.sum$date &lt; &quot;2019-07-20&quot;,]
 a15&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-07-20&quot; &amp; rb.daily.sum$date &lt; &quot;2019-08-04&quot;,]
 a16&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; rb.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
-<p>Daily min salinity &lt;5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.sal&lt;5, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;5, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;5, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;5, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;5, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;5, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;5, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;5, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;5, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;5, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;5, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;5, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;5, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;5, ])
-aa15&lt;-nrow(a15[a15$min.daily.sal&lt;5, ])
-aa16&lt;-nrow(a16[a16$min.daily.sal&lt;5, ])
-
-rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.dates&lt;-as.data.frame(rb.dates)
-
-#change column names
-names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;min.daily.sal.lt5&quot;
-rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a min daily salinity below 10</p>
-<pre class="r"><code>#counts the number of rows with a min.daily.sal less than 10, already subsetted for between survey days
-aa1&lt;-nrow(a1[a1$min.daily.sal&lt;10, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;10, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;10, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;10, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;10, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;10, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;10, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;10, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;10, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;10, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;10, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;10, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;10, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;10, ])
-aa15&lt;-nrow(a15[a15$min.daily.sal&lt;10, ])
-aa16&lt;-nrow(a16[a16$min.daily.sal&lt;10, ])
-
-rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.dates&lt;-as.data.frame(rb.dates)
-
-#change column names
-names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;min.daily.sal.lt10&quot;
-rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt10&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a min daily salinity below 15</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.sal&lt;15, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;15, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;15, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;15, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;15, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;15, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;15, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;15, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;15, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;15, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;15, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;15, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;15, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;15, ])
-aa15&lt;-nrow(a15[a15$min.daily.sal&lt;15, ])
-aa16&lt;-nrow(a16[a16$min.daily.sal&lt;15, ])
-
-rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.dates&lt;-as.data.frame(rb.dates)
-
-#change column names
-names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;min.daily.sal.lt15&quot;
-rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt15&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;5, ])
-aa2&lt;-nrow(a2[a2$max.daily.sal&lt;5, ])
-aa3&lt;-nrow(a3[a3$max.daily.sal&lt;5, ])
-aa4&lt;-nrow(a4[a4$max.daily.sal&lt;5, ])
-aa5&lt;-nrow(a5[a5$max.daily.sal&lt;5, ])
-aa6&lt;-nrow(a6[a6$max.daily.sal&lt;5, ])
-aa7&lt;-nrow(a7[a7$max.daily.sal&lt;5, ])
-aa8&lt;-nrow(a8[a8$max.daily.sal&lt;5, ])
-aa9&lt;-nrow(a9[a9$max.daily.sal&lt;5, ])
-aa10&lt;-nrow(a10[a10$max.daily.sal&lt;5, ])
-aa11&lt;-nrow(a11[a11$max.daily.sal&lt;5, ])
-aa12&lt;-nrow(a12[a12$max.daily.sal&lt;5, ])
-aa13&lt;-nrow(a13[a13$max.daily.sal&lt;5, ])
-aa14&lt;-nrow(a14[a14$max.daily.sal&lt;5, ])
-aa15&lt;-nrow(a15[a15$max.daily.sal&lt;5, ])
-aa16&lt;-nrow(a16[a16$max.daily.sal&lt;5, ])
-
-rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.dates&lt;-as.data.frame(rb.dates)
-
-#change column names
-names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;max.daily.sal.lt5&quot;
-rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 10</p>
+<p>Daily maximum salinity less than 10</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;10, ])
 aa2&lt;-nrow(a2[a2$max.daily.sal&lt;10, ])
 aa3&lt;-nrow(a3[a3$max.daily.sal&lt;10, ])
@@ -3359,231 +2715,64 @@ rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt10&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 15</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;15, ])
-aa2&lt;-nrow(a2[a2$max.daily.sal&lt;15, ])
-aa3&lt;-nrow(a3[a3$max.daily.sal&lt;15, ])
-aa4&lt;-nrow(a4[a4$max.daily.sal&lt;15, ])
-aa5&lt;-nrow(a5[a5$max.daily.sal&lt;15, ])
-aa6&lt;-nrow(a6[a6$max.daily.sal&lt;15, ])
-aa7&lt;-nrow(a7[a7$max.daily.sal&lt;15, ])
-aa8&lt;-nrow(a8[a8$max.daily.sal&lt;15, ])
-aa9&lt;-nrow(a9[a9$max.daily.sal&lt;15, ])
-aa10&lt;-nrow(a10[a10$max.daily.sal&lt;15, ])
-aa11&lt;-nrow(a11[a11$max.daily.sal&lt;15, ])
-aa12&lt;-nrow(a12[a12$max.daily.sal&lt;15, ])
-aa13&lt;-nrow(a13[a13$max.daily.sal&lt;15, ])
-aa14&lt;-nrow(a14[a14$max.daily.sal&lt;15, ])
-aa15&lt;-nrow(a15[a15$max.daily.sal&lt;15, ])
-aa16&lt;-nrow(a16[a16$max.daily.sal&lt;15, ])
+<p>Daily min salinity greater than 28</p>
+<pre class="r"><code>#count
+aa1&lt;-nrow(a1[a1$min.daily.sal&gt;28, ])
+aa2&lt;-nrow(a2[a2$min.daily.sal&gt;28, ])
+aa3&lt;-nrow(a3[a3$min.daily.sal&gt;28, ])
+aa4&lt;-nrow(a4[a4$min.daily.sal&gt;28, ])
+aa5&lt;-nrow(a5[a5$min.daily.sal&gt;28, ])
+aa6&lt;-nrow(a6[a6$min.daily.sal&gt;28, ])
+aa7&lt;-nrow(a7[a7$min.daily.sal&gt;28, ])
+aa8&lt;-nrow(a8[a8$min.daily.sal&gt;28, ])
+aa9&lt;-nrow(a9[a9$min.daily.sal&gt;28, ])
+aa10&lt;-nrow(a10[a10$min.daily.sal&gt;28, ])
+aa11&lt;-nrow(a11[a11$min.daily.sal&gt;28, ])
+aa12&lt;-nrow(a12[a12$min.daily.sal&gt;28, ])
+aa13&lt;-nrow(a13[a13$min.daily.sal&gt;28, ])
+aa14&lt;-nrow(a14[a14$min.daily.sal&gt;28, ])
+aa15&lt;-nrow(a15[a15$min.daily.sal&gt;28, ])
+aa16&lt;-nrow(a16[a16$min.daily.sal&gt;28, ])
 
 rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
 rb.dates&lt;-as.data.frame(rb.dates)
 
 #change column names
 names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;max.daily.sal.lt15&quot;
+names(rb.dates)[2] &lt;- &quot;min.daily.sal.gt28&quot;
 rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt15&quot;)], by=&quot;date&quot;)</code></pre>
-<p>What should I do for range? Trying a range greater than 10 because that seems extreme but I’m not sure what to use here. Number of days with a daily salinity range &gt;10</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.sal.range&gt;10, ])
-aa2&lt;-nrow(a2[a2$daily.sal.range&gt;10, ])
-aa3&lt;-nrow(a3[a3$daily.sal.range&gt;10, ])
-aa4&lt;-nrow(a4[a4$daily.sal.range&gt;10, ])
-aa5&lt;-nrow(a5[a5$daily.sal.range&gt;10, ])
-aa6&lt;-nrow(a6[a6$daily.sal.range&gt;10, ])
-aa7&lt;-nrow(a7[a7$daily.sal.range&gt;10, ])
-aa8&lt;-nrow(a8[a8$daily.sal.range&gt;10, ])
-aa9&lt;-nrow(a9[a9$daily.sal.range&gt;10, ])
-aa10&lt;-nrow(a10[a10$daily.sal.range&gt;10, ])
-aa11&lt;-nrow(a11[a11$daily.sal.range&gt;10, ])
-aa12&lt;-nrow(a12[a12$daily.sal.range&gt;10, ])
-aa13&lt;-nrow(a13[a13$daily.sal.range&gt;10, ])
-aa14&lt;-nrow(a14[a14$daily.sal.range&gt;10, ])
-aa15&lt;-nrow(a15[a15$daily.sal.range&gt;10, ])
-aa16&lt;-nrow(a16[a16$daily.sal.range&gt;10, ])
-
-rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.dates&lt;-as.data.frame(rb.dates)
-
-#change column names
-names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;daily.sal.range.gt10&quot;
-rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;daily.sal.range.gt10&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days with a daily salinity range &gt;5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.sal.range&gt;5, ])
-aa2&lt;-nrow(a2[a2$daily.sal.range&gt;5, ])
-aa3&lt;-nrow(a3[a3$daily.sal.range&gt;5, ])
-aa4&lt;-nrow(a4[a4$daily.sal.range&gt;5, ])
-aa5&lt;-nrow(a5[a5$daily.sal.range&gt;5, ])
-aa6&lt;-nrow(a6[a6$daily.sal.range&gt;5, ])
-aa7&lt;-nrow(a7[a7$daily.sal.range&gt;5, ])
-aa8&lt;-nrow(a8[a8$daily.sal.range&gt;5, ])
-aa9&lt;-nrow(a9[a9$daily.sal.range&gt;5, ])
-aa10&lt;-nrow(a10[a10$daily.sal.range&gt;5, ])
-aa11&lt;-nrow(a11[a11$daily.sal.range&gt;5, ])
-aa12&lt;-nrow(a12[a12$daily.sal.range&gt;5, ])
-aa13&lt;-nrow(a13[a13$daily.sal.range&gt;5, ])
-aa14&lt;-nrow(a14[a14$daily.sal.range&gt;5, ])
-aa15&lt;-nrow(a15[a15$daily.sal.range&gt;5, ])
-aa16&lt;-nrow(a16[a16$daily.sal.range&gt;5, ])
-
-rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.dates&lt;-as.data.frame(rb.dates)
-
-#change column names
-names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;daily.sal.range.gt5&quot;
-rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;daily.sal.range.gt5&quot;)], by=&quot;date&quot;)</code></pre>
+by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;min.daily.sal.gt28&quot;)], by=&quot;date&quot;)</code></pre>
 <p>pH</p>
-<p>Number of days where min.daily.ph is &lt;7</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.ph&lt;7, ])
-aa2&lt;-nrow(a2[a2$min.daily.ph&lt;7, ])
-aa3&lt;-nrow(a3[a3$min.daily.ph&lt;7, ])
-aa4&lt;-nrow(a4[a4$min.daily.ph&lt;7, ])
-aa5&lt;-nrow(a5[a5$min.daily.ph&lt;7, ])
-aa6&lt;-nrow(a6[a6$min.daily.ph&lt;7, ])
-aa7&lt;-nrow(a7[a7$min.daily.ph&lt;7, ])
-aa8&lt;-nrow(a8[a8$min.daily.ph&lt;7, ])
-aa9&lt;-nrow(a9[a9$min.daily.ph&lt;7, ])
-aa10&lt;-nrow(a10[a10$min.daily.ph&lt;7, ])
-aa11&lt;-nrow(a11[a11$min.daily.ph&lt;7, ])
-aa12&lt;-nrow(a12[a12$min.daily.ph&lt;7, ])
-aa13&lt;-nrow(a13[a13$min.daily.ph&lt;7, ])
-aa14&lt;-nrow(a14[a14$min.daily.ph&lt;7, ])
-aa15&lt;-nrow(a15[a15$min.daily.ph&lt;7, ])
-aa16&lt;-nrow(a16[a16$min.daily.ph&lt;7, ])
+<p>Number of days where max.daily.ph is &lt;8</p>
+<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&lt;8, ])
+aa2&lt;-nrow(a2[a2$max.daily.ph&lt;8, ])
+aa3&lt;-nrow(a3[a3$max.daily.ph&lt;8, ])
+aa4&lt;-nrow(a4[a4$max.daily.ph&lt;8, ])
+aa5&lt;-nrow(a5[a5$max.daily.ph&lt;8, ])
+aa6&lt;-nrow(a6[a6$max.daily.ph&lt;8, ])
+aa7&lt;-nrow(a7[a7$max.daily.ph&lt;8, ])
+aa8&lt;-nrow(a8[a8$max.daily.ph&lt;8, ])
+aa9&lt;-nrow(a9[a9$max.daily.ph&lt;8, ])
+aa10&lt;-nrow(a10[a10$max.daily.ph&lt;8, ])
+aa11&lt;-nrow(a11[a11$max.daily.ph&lt;8, ])
+aa12&lt;-nrow(a12[a12$max.daily.ph&lt;8, ])
+aa13&lt;-nrow(a13[a13$max.daily.ph&lt;8, ])
+aa14&lt;-nrow(a14[a14$max.daily.ph&lt;8, ])
+aa15&lt;-nrow(a15[a15$max.daily.ph&lt;8, ])
+aa16&lt;-nrow(a16[a16$max.daily.ph&lt;8, ])
 
 rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
 rb.dates&lt;-as.data.frame(rb.dates)
 
 #change column names
 names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;min.daily.ph.lt7&quot;
+names(rb.dates)[2] &lt;- &quot;max.daily.ph.lt8&quot;
 rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;min.daily.ph.lt7&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days where min.daily.ph is &lt;8. They’re almost all &lt;8 so I’m not sure if this is worth doing</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.ph&lt;8, ])
-aa2&lt;-nrow(a2[a2$min.daily.ph&lt;8, ])
-aa3&lt;-nrow(a3[a3$min.daily.ph&lt;8, ])
-aa4&lt;-nrow(a4[a4$min.daily.ph&lt;8, ])
-aa5&lt;-nrow(a5[a5$min.daily.ph&lt;8, ])
-aa6&lt;-nrow(a6[a6$min.daily.ph&lt;8, ])
-aa7&lt;-nrow(a7[a7$min.daily.ph&lt;8, ])
-aa8&lt;-nrow(a8[a8$min.daily.ph&lt;8, ])
-aa9&lt;-nrow(a9[a9$min.daily.ph&lt;8, ])
-aa10&lt;-nrow(a10[a10$min.daily.ph&lt;8, ])
-aa11&lt;-nrow(a11[a11$min.daily.ph&lt;8, ])
-aa12&lt;-nrow(a12[a12$min.daily.ph&lt;8, ])
-aa13&lt;-nrow(a13[a13$min.daily.ph&lt;8, ])
-aa14&lt;-nrow(a14[a14$min.daily.ph&lt;8, ])
-aa15&lt;-nrow(a15[a15$min.daily.ph&lt;8, ])
-aa16&lt;-nrow(a16[a16$min.daily.ph&lt;8, ])
-
-rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.dates&lt;-as.data.frame(rb.dates)
-
-#change column names
-names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;min.daily.ph.lt8&quot;
-rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;min.daily.ph.lt8&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days where max.daily.ph is &lt;7 –&gt; looks the same as min.daily.ph, may have to do 7.5 or something like that</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&lt;7, ])
-aa2&lt;-nrow(a2[a2$max.daily.ph&lt;7, ])
-aa3&lt;-nrow(a3[a3$max.daily.ph&lt;7, ])
-aa4&lt;-nrow(a4[a4$max.daily.ph&lt;7, ])
-aa5&lt;-nrow(a5[a5$max.daily.ph&lt;7, ])
-aa6&lt;-nrow(a6[a6$max.daily.ph&lt;7, ])
-aa7&lt;-nrow(a7[a7$max.daily.ph&lt;7, ])
-aa8&lt;-nrow(a8[a8$max.daily.ph&lt;7, ])
-aa9&lt;-nrow(a9[a9$max.daily.ph&lt;7, ])
-aa10&lt;-nrow(a10[a10$max.daily.ph&lt;7, ])
-aa11&lt;-nrow(a11[a11$max.daily.ph&lt;7, ])
-aa12&lt;-nrow(a12[a12$max.daily.ph&lt;7, ])
-aa13&lt;-nrow(a13[a13$max.daily.ph&lt;7, ])
-aa14&lt;-nrow(a14[a14$max.daily.ph&lt;7, ])
-aa15&lt;-nrow(a15[a15$max.daily.ph&lt;7, ])
-aa16&lt;-nrow(a16[a16$max.daily.ph&lt;7, ])
-
-rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.dates&lt;-as.data.frame(rb.dates)
-
-#change column names
-names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;max.daily.ph.lt7&quot;
-rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;max.daily.ph.lt7&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Number of days where daily.ph.range is &gt;.5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.ph.range&gt;.5, ])
-aa2&lt;-nrow(a2[a2$daily.ph.range&gt;.5, ])
-aa3&lt;-nrow(a3[a3$daily.ph.range&gt;.5, ])
-aa4&lt;-nrow(a4[a4$daily.ph.range&gt;.5, ])
-aa5&lt;-nrow(a5[a5$daily.ph.range&gt;.5, ])
-aa6&lt;-nrow(a6[a6$daily.ph.range&gt;.5, ])
-aa7&lt;-nrow(a7[a7$daily.ph.range&gt;.5, ])
-aa8&lt;-nrow(a8[a8$daily.ph.range&gt;.5, ])
-aa9&lt;-nrow(a9[a9$daily.ph.range&gt;.5, ])
-aa10&lt;-nrow(a10[a10$daily.ph.range&gt;.5, ])
-aa11&lt;-nrow(a11[a11$daily.ph.range&gt;.5, ])
-aa12&lt;-nrow(a12[a12$daily.ph.range&gt;.5, ])
-aa13&lt;-nrow(a13[a13$daily.ph.range&gt;.5, ])
-aa14&lt;-nrow(a14[a14$daily.ph.range&gt;.5, ])
-aa15&lt;-nrow(a15[a15$daily.ph.range&gt;.5, ])
-aa16&lt;-nrow(a16[a16$daily.ph.range&gt;.5, ])
-
-rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.dates&lt;-as.data.frame(rb.dates)
-
-#change column names
-names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;daily.ph.range.gt0.5&quot;
-rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;daily.ph.range.gt0.5&quot;)], by=&quot;date&quot;)</code></pre>
-<p>Water temperature none, not sure if this is worth going into more. More interested in air temperature anyway</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.max.wt&lt;20, ])
-aa2&lt;-nrow(a2[a2$daily.max.wt&lt;20, ])
-aa3&lt;-nrow(a3[a3$daily.max.wt&lt;20, ])
-aa4&lt;-nrow(a4[a4$daily.max.wt&lt;20, ])
-aa5&lt;-nrow(a5[a5$daily.max.wt&lt;20, ])
-aa6&lt;-nrow(a6[a6$daily.max.wt&lt;20, ])
-aa7&lt;-nrow(a7[a7$daily.max.wt&lt;20, ])
-aa8&lt;-nrow(a8[a8$daily.max.wt&lt;20, ])
-aa9&lt;-nrow(a9[a9$daily.max.wt&lt;20, ])
-aa10&lt;-nrow(a10[a10$daily.max.wt&lt;20, ])
-aa11&lt;-nrow(a11[a11$daily.max.wt&lt;20, ])
-aa12&lt;-nrow(a12[a12$daily.max.wt&lt;20, ])
-aa13&lt;-nrow(a13[a13$daily.max.wt&lt;20, ])
-aa14&lt;-nrow(a14[a14$daily.max.wt&lt;20, ])
-aa15&lt;-nrow(a15[a15$daily.max.wt&lt;20, ])
-aa16&lt;-nrow(a16[a16$daily.max.wt&lt;20, ])
-
-rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-rb.dates&lt;-as.data.frame(rb.dates)
-
-#change column names
-names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;daily.max.wt.gt20&quot;
-rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;daily.max.wt.gt20&quot;)], by=&quot;date&quot;)</code></pre>
+by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;max.daily.ph.lt8&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Save csv</p>
 <pre class="r"><code>write.csv(by.rb, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb.daily.sum.csv&quot;)</code></pre>
 <p>rb.daily.sum: <a href="https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/rb.daily.sum.csv" class="uri">https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/rb.daily.sum.csv</a></p>
@@ -4115,120 +3304,7 @@ a13&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-05-08&quot; &amp; fp.da
 a14&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-06-08&quot; &amp; fp.daily.sum$date &lt; &quot;2019-07-20&quot;,]
 a15&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-07-20&quot; &amp; fp.daily.sum$date &lt; &quot;2019-08-04&quot;,]
 a16&lt;-fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; fp.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
-<p>Daily min salinity &lt;5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.sal&lt;5, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;5, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;5, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;5, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;5, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;5, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;5, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;5, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;5, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;5, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;5, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;5, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;5, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;5, ])
-aa15&lt;-nrow(a15[a15$min.daily.sal&lt;5, ])
-aa16&lt;-nrow(a16[a16$min.daily.sal&lt;5, ])
-
-fp.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-fp.dates&lt;-as.data.frame(fp.dates)
-
-#change column names
-names(fp.dates)[1] &lt;- &quot;date&quot;
-names(fp.dates)[2] &lt;- &quot;min.daily.sal.lt5&quot;
-fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-hs.fp&lt;-merge(hs.fp, fp.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt5&quot;)], hs=&quot;date&quot;)</code></pre>
-<p>Number of days with a min daily salinity below 10</p>
-<pre class="r"><code>#counts the number of rows with a min.daily.sal less than 10, already subsetted for between survey days
-aa1&lt;-nrow(a1[a1$min.daily.sal&lt;10, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;10, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;10, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;10, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;10, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;10, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;10, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;10, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;10, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;10, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;10, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;10, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;10, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;10, ])
-aa15&lt;-nrow(a15[a15$min.daily.sal&lt;10, ])
-aa16&lt;-nrow(a16[a16$min.daily.sal&lt;10, ])
-
-fp.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-fp.dates&lt;-as.data.frame(fp.dates)
-
-#change column names
-names(fp.dates)[1] &lt;- &quot;date&quot;
-names(fp.dates)[2] &lt;- &quot;min.daily.sal.lt10&quot;
-fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-hs.fp&lt;-merge(hs.fp, fp.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt10&quot;)], hs=&quot;date&quot;)</code></pre>
-<p>Number of days with a min daily salinity below 15</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$min.daily.sal&lt;15, ])
-aa2&lt;-nrow(a2[a2$min.daily.sal&lt;15, ])
-aa3&lt;-nrow(a3[a3$min.daily.sal&lt;15, ])
-aa4&lt;-nrow(a4[a4$min.daily.sal&lt;15, ])
-aa5&lt;-nrow(a5[a5$min.daily.sal&lt;15, ])
-aa6&lt;-nrow(a6[a6$min.daily.sal&lt;15, ])
-aa7&lt;-nrow(a7[a7$min.daily.sal&lt;15, ])
-aa8&lt;-nrow(a8[a8$min.daily.sal&lt;15, ])
-aa9&lt;-nrow(a9[a9$min.daily.sal&lt;15, ])
-aa10&lt;-nrow(a10[a10$min.daily.sal&lt;15, ])
-aa11&lt;-nrow(a11[a11$min.daily.sal&lt;15, ])
-aa12&lt;-nrow(a12[a12$min.daily.sal&lt;15, ])
-aa13&lt;-nrow(a13[a13$min.daily.sal&lt;15, ])
-aa14&lt;-nrow(a14[a14$min.daily.sal&lt;15, ])
-aa15&lt;-nrow(a15[a15$min.daily.sal&lt;15, ])
-aa16&lt;-nrow(a16[a16$min.daily.sal&lt;15, ])
-
-fp.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-fp.dates&lt;-as.data.frame(fp.dates)
-
-#change column names
-names(fp.dates)[1] &lt;- &quot;date&quot;
-names(fp.dates)[2] &lt;- &quot;min.daily.sal.lt15&quot;
-fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-hs.fp&lt;-merge(hs.fp, fp.dates[,c(&quot;date&quot;, &quot;min.daily.sal.lt15&quot;)], hs=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;5, ])
-aa2&lt;-nrow(a2[a2$max.daily.sal&lt;5, ])
-aa3&lt;-nrow(a3[a3$max.daily.sal&lt;5, ])
-aa4&lt;-nrow(a4[a4$max.daily.sal&lt;5, ])
-aa5&lt;-nrow(a5[a5$max.daily.sal&lt;5, ])
-aa6&lt;-nrow(a6[a6$max.daily.sal&lt;5, ])
-aa7&lt;-nrow(a7[a7$max.daily.sal&lt;5, ])
-aa8&lt;-nrow(a8[a8$max.daily.sal&lt;5, ])
-aa9&lt;-nrow(a9[a9$max.daily.sal&lt;5, ])
-aa10&lt;-nrow(a10[a10$max.daily.sal&lt;5, ])
-aa11&lt;-nrow(a11[a11$max.daily.sal&lt;5, ])
-aa12&lt;-nrow(a12[a12$max.daily.sal&lt;5, ])
-aa13&lt;-nrow(a13[a13$max.daily.sal&lt;5, ])
-aa14&lt;-nrow(a14[a14$max.daily.sal&lt;5, ])
-aa15&lt;-nrow(a15[a15$max.daily.sal&lt;5, ])
-aa16&lt;-nrow(a16[a16$max.daily.sal&lt;5, ])
-
-fp.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-fp.dates&lt;-as.data.frame(fp.dates)
-
-#change column names
-names(fp.dates)[1] &lt;- &quot;date&quot;
-names(fp.dates)[2] &lt;- &quot;max.daily.sal.lt5&quot;
-fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-hs.fp&lt;-merge(hs.fp, fp.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt5&quot;)], hs=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 10</p>
+<p>Daily maximum salinity less than 10</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;10, ])
 aa2&lt;-nrow(a2[a2$max.daily.sal&lt;10, ])
 aa3&lt;-nrow(a3[a3$max.daily.sal&lt;10, ])
@@ -4256,136 +3332,35 @@ fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 hs.fp&lt;-merge(hs.fp, fp.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt10&quot;)], hs=&quot;date&quot;)</code></pre>
-<p>Number of days with a maximun daily salinity below 15</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;15, ])
-aa2&lt;-nrow(a2[a2$max.daily.sal&lt;15, ])
-aa3&lt;-nrow(a3[a3$max.daily.sal&lt;15, ])
-aa4&lt;-nrow(a4[a4$max.daily.sal&lt;15, ])
-aa5&lt;-nrow(a5[a5$max.daily.sal&lt;15, ])
-aa6&lt;-nrow(a6[a6$max.daily.sal&lt;15, ])
-aa7&lt;-nrow(a7[a7$max.daily.sal&lt;15, ])
-aa8&lt;-nrow(a8[a8$max.daily.sal&lt;15, ])
-aa9&lt;-nrow(a9[a9$max.daily.sal&lt;15, ])
-aa10&lt;-nrow(a10[a10$max.daily.sal&lt;15, ])
-aa11&lt;-nrow(a11[a11$max.daily.sal&lt;15, ])
-aa12&lt;-nrow(a12[a12$max.daily.sal&lt;15, ])
-aa13&lt;-nrow(a13[a13$max.daily.sal&lt;15, ])
-aa14&lt;-nrow(a14[a14$max.daily.sal&lt;15, ])
-aa15&lt;-nrow(a15[a15$max.daily.sal&lt;15, ])
-aa16&lt;-nrow(a16[a16$max.daily.sal&lt;15, ])
+<p>daily min salinity greater than 28</p>
+<pre class="r"><code>#counts the number of rows with a min.daily.sal less than 10, already subsetted for between survey days
+aa1&lt;-nrow(a1[a1$min.daily.sal&gt;28, ])
+aa2&lt;-nrow(a2[a2$min.daily.sal&gt;28, ])
+aa3&lt;-nrow(a3[a3$min.daily.sal&gt;28, ])
+aa4&lt;-nrow(a4[a4$min.daily.sal&gt;28, ])
+aa5&lt;-nrow(a5[a5$min.daily.sal&gt;28, ])
+aa6&lt;-nrow(a6[a6$min.daily.sal&gt;28, ])
+aa7&lt;-nrow(a7[a7$min.daily.sal&gt;28, ])
+aa8&lt;-nrow(a8[a8$min.daily.sal&gt;28, ])
+aa9&lt;-nrow(a9[a9$min.daily.sal&gt;28, ])
+aa10&lt;-nrow(a10[a10$min.daily.sal&gt;28, ])
+aa11&lt;-nrow(a11[a11$min.daily.sal&gt;28, ])
+aa12&lt;-nrow(a12[a12$min.daily.sal&gt;28, ])
+aa13&lt;-nrow(a13[a13$min.daily.sal&gt;28, ])
+aa14&lt;-nrow(a14[a14$min.daily.sal&gt;28, ])
+aa15&lt;-nrow(a15[a15$min.daily.sal&gt;28, ])
+aa16&lt;-nrow(a16[a16$min.daily.sal&gt;28, ])
 
 fp.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
 fp.dates&lt;-as.data.frame(fp.dates)
 
 #change column names
 names(fp.dates)[1] &lt;- &quot;date&quot;
-names(fp.dates)[2] &lt;- &quot;max.daily.sal.lt15&quot;
+names(fp.dates)[2] &lt;- &quot;min.daily.sal.gt28&quot;
 fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
-hs.fp&lt;-merge(hs.fp, fp.dates[,c(&quot;date&quot;, &quot;max.daily.sal.lt15&quot;)], hs=&quot;date&quot;)</code></pre>
-<p>What should I do for range? Trying a range greater than 10 because that seems extreme but I’m not sure what to use here. Number of days with a daily salinity range &gt;10</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.sal.range&gt;10, ])
-aa2&lt;-nrow(a2[a2$daily.sal.range&gt;10, ])
-aa3&lt;-nrow(a3[a3$daily.sal.range&gt;10, ])
-aa4&lt;-nrow(a4[a4$daily.sal.range&gt;10, ])
-aa5&lt;-nrow(a5[a5$daily.sal.range&gt;10, ])
-aa6&lt;-nrow(a6[a6$daily.sal.range&gt;10, ])
-aa7&lt;-nrow(a7[a7$daily.sal.range&gt;10, ])
-aa8&lt;-nrow(a8[a8$daily.sal.range&gt;10, ])
-aa9&lt;-nrow(a9[a9$daily.sal.range&gt;10, ])
-aa10&lt;-nrow(a10[a10$daily.sal.range&gt;10, ])
-aa11&lt;-nrow(a11[a11$daily.sal.range&gt;10, ])
-aa12&lt;-nrow(a12[a12$daily.sal.range&gt;10, ])
-aa13&lt;-nrow(a13[a13$daily.sal.range&gt;10, ])
-aa14&lt;-nrow(a14[a14$daily.sal.range&gt;10, ])
-aa15&lt;-nrow(a15[a15$daily.sal.range&gt;10, ])
-aa16&lt;-nrow(a16[a16$daily.sal.range&gt;10, ])
-
-fp.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-fp.dates&lt;-as.data.frame(fp.dates)
-
-#change column names
-names(fp.dates)[1] &lt;- &quot;date&quot;
-names(fp.dates)[2] &lt;- &quot;daily.sal.range.gt10&quot;
-fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-hs.fp&lt;-merge(hs.fp, fp.dates[,c(&quot;date&quot;, &quot;daily.sal.range.gt10&quot;)], hs=&quot;date&quot;)</code></pre>
-<p>Number of days with a daily salinity range &gt;5</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.sal.range&gt;5, ])
-aa2&lt;-nrow(a2[a2$daily.sal.range&gt;5, ])
-aa3&lt;-nrow(a3[a3$daily.sal.range&gt;5, ])
-aa4&lt;-nrow(a4[a4$daily.sal.range&gt;5, ])
-aa5&lt;-nrow(a5[a5$daily.sal.range&gt;5, ])
-aa6&lt;-nrow(a6[a6$daily.sal.range&gt;5, ])
-aa7&lt;-nrow(a7[a7$daily.sal.range&gt;5, ])
-aa8&lt;-nrow(a8[a8$daily.sal.range&gt;5, ])
-aa9&lt;-nrow(a9[a9$daily.sal.range&gt;5, ])
-aa10&lt;-nrow(a10[a10$daily.sal.range&gt;5, ])
-aa11&lt;-nrow(a11[a11$daily.sal.range&gt;5, ])
-aa12&lt;-nrow(a12[a12$daily.sal.range&gt;5, ])
-aa13&lt;-nrow(a13[a13$daily.sal.range&gt;5, ])
-aa14&lt;-nrow(a14[a14$daily.sal.range&gt;5, ])
-aa15&lt;-nrow(a15[a15$daily.sal.range&gt;5, ])
-aa16&lt;-nrow(a16[a16$daily.sal.range&gt;5, ])
-
-fp.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-fp.dates&lt;-as.data.frame(fp.dates)
-
-#change column names
-names(fp.dates)[1] &lt;- &quot;date&quot;
-names(fp.dates)[2] &lt;- &quot;daily.sal.range.gt5&quot;
-fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-hs.fp&lt;-merge(hs.fp, fp.dates, hs=&quot;date&quot;)</code></pre>
-<p>No ph or dissolved oxygen data. Creating empty columns as fillers</p>
-<pre class="r"><code>#string these values to a data frame
-fp.filler&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;))
-fp.filler&lt;-as.data.frame(fp.filler)
-
-#change column names
-names(fp.filler)[1] &lt;- &quot;date&quot;
-fp.filler$date&lt;-as.Date(fp.filler$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#empty columns
-fp.filler$min.daily.ph.lt7&lt;-NA
-fp.filler$min.daily.ph.lt8&lt;-NA
-fp.filler$max.daily.ph.lt7&lt;-NA
-fp.filler$daily.ph.range.gt0.5&lt;-NA
-
-
-#merge dfs
-hs.fp&lt;-merge(hs.fp, fp.filler, by=&quot;date&quot;)</code></pre>
-<p>Water temperature none, not sure if this is worth going into more. More interested in air temperature anyway</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$daily.max.wt&lt;20, ])
-aa2&lt;-nrow(a2[a2$daily.max.wt&lt;20, ])
-aa3&lt;-nrow(a3[a3$daily.max.wt&lt;20, ])
-aa4&lt;-nrow(a4[a4$daily.max.wt&lt;20, ])
-aa5&lt;-nrow(a5[a5$daily.max.wt&lt;20, ])
-aa6&lt;-nrow(a6[a6$daily.max.wt&lt;20, ])
-aa7&lt;-nrow(a7[a7$daily.max.wt&lt;20, ])
-aa8&lt;-nrow(a8[a8$daily.max.wt&lt;20, ])
-aa9&lt;-nrow(a9[a9$daily.max.wt&lt;20, ])
-aa10&lt;-nrow(a10[a10$daily.max.wt&lt;20, ])
-aa11&lt;-nrow(a11[a11$daily.max.wt&lt;20, ])
-aa12&lt;-nrow(a12[a12$daily.max.wt&lt;20, ])
-aa13&lt;-nrow(a13[a13$daily.max.wt&lt;20, ])
-aa14&lt;-nrow(a14[a14$daily.max.wt&lt;20, ])
-aa15&lt;-nrow(a15[a15$daily.max.wt&lt;20, ])
-aa16&lt;-nrow(a16[a16$daily.max.wt&lt;20, ])
-
-fp.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
-fp.dates&lt;-as.data.frame(fp.dates)
-
-#change column names
-names(fp.dates)[1] &lt;- &quot;date&quot;
-names(fp.dates)[2] &lt;- &quot;daily.max.wt.gt20&quot;
-fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
-
-#merge dfs
-hs.fp&lt;-merge(hs.fp, fp.dates, hs=&quot;date&quot;)</code></pre>
+hs.fp&lt;-merge(hs.fp, fp.dates[,c(&quot;date&quot;, &quot;min.daily.sal.gt28&quot;)], hs=&quot;date&quot;)</code></pre>
 <p>Write csv</p>
 <pre class="r"><code>write.csv(hs.fp, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/fp.daily.sum.csv&quot;)</code></pre>
 <p>fp.daily.sum: <a href="https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/fp.daily.sum.csv" class="uri">https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/fp.daily.sum.csv</a></p>
@@ -4606,6 +3581,47 @@ eos.daily.med.air$date&lt;-as.Date(eos.daily.med.air$date, format=c(&quot;%Y-%m-
 
 #merge dfs
 pc.eos&lt;-merge(pc.eos, eos.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], by=&quot;date&quot;)</code></pre>
+<p>Subset by survey dates</p>
+<pre class="r"><code>a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-17&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-07&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-09-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-05&quot;,]
+a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-30&quot;,]
+a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-30&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-20&quot;,]
+a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-20&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-15&quot;,]
+a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-15&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-11&quot;,]
+a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-11&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-09&quot;,]
+a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-09&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-09&quot;,]
+a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-09&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-21&quot;,]
+a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-21&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-04&quot;,]
+a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; eos.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<p>Number of days with daily maximum air temperature greater than 26C</p>
+<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.air&gt;26, ])
+aa2&lt;-nrow(a2[a2$max.daily.air&gt;26, ])
+aa3&lt;-nrow(a3[a3$max.daily.air&gt;26, ])
+aa4&lt;-nrow(a4[a4$max.daily.air&gt;26, ])
+aa5&lt;-nrow(a5[a5$max.daily.air&gt;26, ])
+aa6&lt;-nrow(a6[a6$max.daily.air&gt;26, ])
+aa7&lt;-nrow(a7[a7$max.daily.air&gt;26, ])
+aa8&lt;-nrow(a8[a8$max.daily.air&gt;26, ])
+aa9&lt;-nrow(a9[a9$max.daily.air&gt;26, ])
+aa10&lt;-nrow(a10[a10$max.daily.air&gt;26, ])
+aa11&lt;-nrow(a11[a11$max.daily.air&gt;26, ])
+aa12&lt;-nrow(a12[a12$max.daily.air&gt;26, ])
+aa13&lt;-nrow(a13[a13$max.daily.air&gt;26, ])
+aa14&lt;-nrow(a14[a14$max.daily.air&gt;26, ])
+
+cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
+cc.dates&lt;-as.data.frame(cc.dates)
+
+#change column names
+names(cc.dates)[1] &lt;- &quot;date&quot;
+names(cc.dates)[2] &lt;- &quot;max.daily.air.gt26&quot;
+cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+pc.eos&lt;-merge(pc.eos, cc.dates[,c(&quot;date&quot;, &quot;max.daily.air.gt26&quot;)], by=&quot;date&quot;)</code></pre>
 </div>
 <div id="point-chauncy-field-data-and-eos-air-temp-data" class="section level4">
 <h4>Point Chauncy field data and EOS air temp data</h4>
@@ -4818,6 +3834,49 @@ eos.daily.med.air$date&lt;-as.Date(eos.daily.med.air$date, format=c(&quot;%Y-%m-
 
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], by=&quot;date&quot;)</code></pre>
+<p>Subset by survey dates</p>
+<pre class="r"><code>a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
+a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-14&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
+a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-17&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-07&quot;,]
+a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-07&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-11&quot;,]
+a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-09-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-10-10&quot;,]
+a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-10&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-05&quot;,]
+a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-30&quot;,]
+a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-30&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-20&quot;,]
+a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-20&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-15&quot;,]
+a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-15&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-11&quot;,]
+a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-11&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-09&quot;,]
+a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-09&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-09&quot;,]
+a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-09&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-21&quot;,]
+a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-21&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-04&quot;,]
+a15&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; eos.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<p>Daily maximum air temperature greater than 26C</p>
+<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.air&gt;26, ])
+aa2&lt;-nrow(a2[a2$max.daily.air&gt;26, ])
+aa3&lt;-nrow(a3[a3$max.daily.air&gt;26, ])
+aa4&lt;-nrow(a4[a4$max.daily.air&gt;26, ])
+aa5&lt;-nrow(a5[a5$max.daily.air&gt;26, ])
+aa6&lt;-nrow(a6[a6$max.daily.air&gt;26, ])
+aa7&lt;-nrow(a7[a7$max.daily.air&gt;26, ])
+aa8&lt;-nrow(a8[a8$max.daily.air&gt;26, ])
+aa9&lt;-nrow(a9[a9$max.daily.air&gt;26, ])
+aa10&lt;-nrow(a10[a10$max.daily.air&gt;26, ])
+aa11&lt;-nrow(a11[a11$max.daily.air&gt;26, ])
+aa12&lt;-nrow(a12[a12$max.daily.air&gt;26, ])
+aa13&lt;-nrow(a13[a13$max.daily.air&gt;26, ])
+aa14&lt;-nrow(a14[a14$max.daily.air&gt;26, ])
+aa15&lt;-nrow(a15[a15$max.daily.air&gt;26, ])
+
+eos.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
+eos.dates&lt;-as.data.frame(eos.dates)
+
+#change column names
+names(eos.dates)[1] &lt;- &quot;date&quot;
+names(eos.dates)[2] &lt;- &quot;max.daily.air.gt26&quot;
+eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;max.daily.air.gt26&quot;)], by=&quot;date&quot;)</code></pre>
 </div>
 <div id="brickyard-park-field-data-and-golden-gate-bridge-air" class="section level4">
 <h4>Brickyard Park field data and Golden Gate Bridge air</h4>
@@ -5036,6 +4095,51 @@ gg.daily.med.air$date&lt;-as.Date(gg.daily.med.air$date, format=c(&quot;%Y-%m-%d
 
 #merge dfs
 by.gg&lt;-merge(by.gg, gg.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], by=&quot;date&quot;)</code></pre>
+<p>Subset by survey dates</p>
+<pre class="r"><code>a1&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-05-15&quot; &amp; gg.daily.sum$date &lt; &quot;2018-06-15&quot;,]
+a2&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-06-15&quot; &amp; gg.daily.sum$date &lt; &quot;2018-07-16&quot;,]
+a3&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-07-16&quot; &amp; gg.daily.sum$date &lt; &quot;2018-08-06&quot;,]
+a4&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-08-06&quot; &amp; gg.daily.sum$date &lt; &quot;2018-09-10&quot;,]
+a5&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-09-10&quot; &amp; gg.daily.sum$date &lt; &quot;2018-10-09&quot;,]
+a6&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-10-09&quot; &amp; gg.daily.sum$date &lt; &quot;2018-11-06&quot;,]
+a7&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-11-06&quot; &amp; gg.daily.sum$date &lt; &quot;2018-12-04&quot;,]
+a8&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-04&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-31&quot;,]
+a9&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-01-31&quot; &amp; gg.daily.sum$date &lt; &quot;2019-02-21&quot;,]
+a10&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-02-21&quot; &amp; gg.daily.sum$date &lt; &quot;2019-03-14&quot;,]
+a11&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-03-14&quot; &amp; gg.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-05-08&quot;,]
+a13&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-05-08&quot; &amp; gg.daily.sum$date &lt; &quot;2019-06-08&quot;,]
+a14&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-06-08&quot; &amp; gg.daily.sum$date &lt; &quot;2019-07-20&quot;,]
+a15&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-07-20&quot; &amp; gg.daily.sum$date &lt; &quot;2019-08-04&quot;,]
+a16&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; gg.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<p>Number of days with daily maximum air temperature greater than 26C</p>
+<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.air&gt;26, ])
+aa2&lt;-nrow(a2[a2$max.daily.air&gt;26, ])
+aa3&lt;-nrow(a3[a3$max.daily.air&gt;26, ])
+aa4&lt;-nrow(a4[a4$max.daily.air&gt;26, ])
+aa5&lt;-nrow(a5[a5$max.daily.air&gt;26, ])
+aa6&lt;-nrow(a6[a6$max.daily.air&gt;26, ])
+aa7&lt;-nrow(a7[a7$max.daily.air&gt;26, ])
+aa8&lt;-nrow(a8[a8$max.daily.air&gt;26, ])
+aa9&lt;-nrow(a9[a9$max.daily.air&gt;26, ])
+aa10&lt;-nrow(a10[a10$max.daily.air&gt;26, ])
+aa11&lt;-nrow(a11[a11$max.daily.air&gt;26, ])
+aa12&lt;-nrow(a12[a12$max.daily.air&gt;26, ])
+aa13&lt;-nrow(a13[a13$max.daily.air&gt;26, ])
+aa14&lt;-nrow(a14[a14$max.daily.air&gt;26, ])
+aa15&lt;-nrow(a15[a15$max.daily.air&gt;26, ])
+aa16&lt;-nrow(a16[a16$max.daily.air&gt;26, ])
+
+rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+rb.dates&lt;-as.data.frame(rb.dates)
+
+#change column names
+names(rb.dates)[1] &lt;- &quot;date&quot;
+names(rb.dates)[2] &lt;- &quot;max.daily.air.gt26&quot;
+rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+by.gg&lt;-merge(by.gg, rb.dates[,c(&quot;date&quot;, &quot;max.daily.air.gt26&quot;)], by=&quot;date&quot;)</code></pre>
 <p>####Horseshoe Bay field data and Golden Gate Bridge air #### Median air temperature between field surveys</p>
 <pre class="r"><code>#read in golen gate air data #redundant
 gg.air.tide&lt;-read.csv(
@@ -5096,7 +4200,7 @@ hs.mon.air$date&lt;-as.Date(hs.mon.air$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 hs.gg&lt;-merge(hs, hs.mon.air[,c(&quot;date&quot;, &quot;air.temp&quot;)], hs=&quot;date&quot;)</code></pre>
-<p>Daily median, range, minimum, ahs maximum air temperaure</p>
+<p>Daily median, range, minimum, and maximum air temperaure</p>
 <pre class="r"><code>#table summary saved as a df. Fihss the daily median ahs daily max ahs min values bases on date column
 #tried to do daily range here but it didn&#39;t seem to work. I&#39;ll just take the difference between the max ahs min columns
 gg.daily.sum&lt;-as.data.frame(setDT(gg.air.tide)[, .(max.daily.air = max(air_temp), min.daily.air = min(air_temp), daily.med.air=median(air_temp)), .(date)])
@@ -5252,6 +4356,51 @@ gg.daily.med.air$date&lt;-as.Date(gg.daily.med.air$date, format=c(&quot;%Y-%m-%d
 
 #merge dfs
 hs.gg&lt;-merge(hs.gg, gg.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], hs=&quot;date&quot;)</code></pre>
+<p>Subset hs survey dates</p>
+<pre class="r"><code>a1&lt;-gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-05-15&quot; &amp; gg.daily.sum$date &lt; &quot;2018-06-15&quot;,]
+a2&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-06-15&quot; &amp; gg.daily.sum$date &lt; &quot;2018-07-16&quot;,]
+a3&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-07-16&quot; &amp; gg.daily.sum$date &lt; &quot;2018-08-06&quot;,]
+a4&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-08-06&quot; &amp; gg.daily.sum$date &lt; &quot;2018-09-10&quot;,]
+a5&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-09-10&quot; &amp; gg.daily.sum$date &lt; &quot;2018-10-09&quot;,]
+a6&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-10-09&quot; &amp; gg.daily.sum$date &lt; &quot;2018-11-06&quot;,]
+a7&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-11-06&quot; &amp; gg.daily.sum$date &lt; &quot;2018-12-04&quot;,]
+a8&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-04&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-31&quot;,]
+a9&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-01-31&quot; &amp; gg.daily.sum$date &lt; &quot;2019-02-21&quot;,]
+a10&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-02-21&quot; &amp; gg.daily.sum$date &lt; &quot;2019-03-14&quot;,]
+a11&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-03-14&quot; &amp; gg.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-05-08&quot;,]
+a13&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-05-08&quot; &amp; gg.daily.sum$date &lt; &quot;2019-06-08&quot;,]
+a14&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-06-08&quot; &amp; gg.daily.sum$date &lt; &quot;2019-07-20&quot;,]
+a15&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-07-20&quot; &amp; gg.daily.sum$date &lt; &quot;2019-08-04&quot;,]
+a16&lt;-gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-08-04&quot; &amp; gg.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<p>Daily maximum air temperature greater than 26C</p>
+<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.air&gt;26, ])
+aa2&lt;-nrow(a2[a2$max.daily.air&gt;26, ])
+aa3&lt;-nrow(a3[a3$max.daily.air&gt;26, ])
+aa4&lt;-nrow(a4[a4$max.daily.air&gt;26, ])
+aa5&lt;-nrow(a5[a5$max.daily.air&gt;26, ])
+aa6&lt;-nrow(a6[a6$max.daily.air&gt;26, ])
+aa7&lt;-nrow(a7[a7$max.daily.air&gt;26, ])
+aa8&lt;-nrow(a8[a8$max.daily.air&gt;26, ])
+aa9&lt;-nrow(a9[a9$max.daily.air&gt;26, ])
+aa10&lt;-nrow(a10[a10$max.daily.air&gt;26, ])
+aa11&lt;-nrow(a11[a11$max.daily.air&gt;26, ])
+aa12&lt;-nrow(a12[a12$max.daily.air&gt;26, ])
+aa13&lt;-nrow(a13[a13$max.daily.air&gt;26, ])
+aa14&lt;-nrow(a14[a14$max.daily.air&gt;26, ])
+aa15&lt;-nrow(a15[a15$max.daily.air&gt;26, ])
+aa16&lt;-nrow(a16[a16$max.daily.air&gt;26, ])
+
+fp.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+fp.dates&lt;-as.data.frame(fp.dates)
+
+#change column names
+names(fp.dates)[1] &lt;- &quot;date&quot;
+names(fp.dates)[2] &lt;- &quot;max.daily.air.gt26&quot;
+fp.dates$date&lt;-as.Date(fp.dates$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+hs.gg&lt;-merge(hs.gg, fp.dates[,c(&quot;date&quot;, &quot;max.daily.air.gt26&quot;)], hs=&quot;date&quot;)</code></pre>
 <p>####Combine dfs####</p>
 <pre class="r"><code>#adding site name for air df. Using the water station data names instead of the air data names to line them all up together. (ex. China Camp water data, EOS air data, and Paradise Cay field data will be on the same line)
 pc.eos$site&lt;-&quot;pc.cc&quot; 
