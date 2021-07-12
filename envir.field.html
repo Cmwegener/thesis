@@ -364,7 +364,7 @@ summary {
 
 <h1 class="title toc-ignore">Environmental and field data</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">08 July, 2021</h4>
+<h4 class="date">12 July, 2021</h4>
 
 </div>
 
@@ -375,7 +375,7 @@ summary {
 - daily maximum salinity less than 10<br />
 - daily minimum salinity greater than 28<br />
 - daily maximum air temperature great than 26C (~80F)<br />
-- daily maximum pH less than 7</p>
+- daily maximum pH less than 7 - Adult density from the month prior. The first two values for this column will be “NA” since we didn’t count adult density the first month (first NA) and then there’s an NA for the adult density before surveys started. Doing this at the very end.</p>
 <p>UPDATE: 7/8/2021 - I removed dissoloved oxygen from this markdown. I did not filter dissolved oxygen for tide. Not using dissolved oxygen in my analysis. I was orgionally interested in dissolved oxygen as a pH proxy.<br />
 - I also focused “extreme” events for my analysis (I had too many random ones before I wasn’t using)</p>
 <p>Notes:<br />
@@ -4410,7 +4410,170 @@ hs.gg$site&lt;-&quot;hs.fp&quot;
 
 
 #combine
-all&lt;-dplyr::bind_rows(pc.eos, nd.eos, by.gg, hs.gg)
+all&lt;-dplyr::bind_rows(pc.eos, nd.eos, by.gg, hs.gg)</code></pre>
+<p>final combined df for analysis:<a href="https://github.com/Cmwegener/thesis/blob/master/data/environment_field" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environment_field</a></p>
+</div>
+<div id="adding-adult-density-from-prior-month" class="section level4">
+<h4>Adding adult density from prior month</h4>
+<p>Probably a cleaner way of doing this but this works. It’s not a large data set so this is doable.</p>
+<pre class="r"><code>#remove everthing except for &quot;all&quot; df
+rm(list=setdiff(ls(), &quot;all&quot;))
+
+#subset by site
+pc&lt;-subset(all, all$site == &quot;pc.cc&quot;)
+nd&lt;-subset(all, all$site == &quot;nd.eos&quot;)
+by&lt;-subset(all, all$site == &quot;by.rb&quot;)
+hs&lt;-subset(all, all$site == &quot;hs.fp&quot;)</code></pre>
+<p>Paradise Cay</p>
+<pre class="r"><code>#print adult density 
+print(pc$no.large.fuc.q)</code></pre>
+<pre><code>##  [1]   NA  3.2 15.4  4.3 13.5  8.8 15.0 13.2 11.4  8.9  2.9  1.7  4.4  3.1</code></pre>
+<pre class="r"><code>#Copy and list printed values lagging the values by one month
+aa1&lt;-&quot;NA&quot;
+aa2&lt;-&quot;NA&quot;
+aa3&lt;-&quot;3.2&quot;
+aa4&lt;-&quot;15.4&quot;
+aa5&lt;-&quot;4.3&quot;
+aa6&lt;-&quot;13.5&quot;
+aa7&lt;-&quot;8.8&quot;
+aa8&lt;-&quot;15.0&quot;
+aa9&lt;-&quot;13.2&quot;
+aa10&lt;-&quot;11.4&quot;
+aa11&lt;-&quot;8.9&quot;
+aa12&lt;-&quot;2.9&quot;
+aa13&lt;-&quot;1.7&quot;
+aa14&lt;-&quot;4.4&quot;
+
+#string these values to a data frame. Using field surveys dates for this site
+pc.den&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,            &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
+pc.den&lt;-as.data.frame(pc.den)
+
+#change column names
+names(pc.den)[1] &lt;- &quot;date&quot;
+names(pc.den)[2] &lt;- &quot;lag.no.large.fuc.q&quot;
+pc.den$date&lt;-as.Date(pc.den$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+pc&lt;-merge(pc, pc.den[,c(&quot;date&quot;, &quot;lag.no.large.fuc.q&quot;)], by=&quot;date&quot;)
+
+#checking that it worked before doing the same for the other field sites
+check&lt;-pc %&gt;% select(date, no.large.fuc.q, lag.no.large.fuc.q)</code></pre>
+<p>Perfect! Now doing the same for all other sites.</p>
+<p>Point Chauncy</p>
+<pre class="r"><code>#print adult density 
+print(nd$no.large.fuc.q)</code></pre>
+<pre><code>##  [1]   NA 12.4 22.9  5.2  3.0  5.2 12.1  2.7  4.6  7.9  8.9  5.2  2.6  2.7  1.9</code></pre>
+<pre class="r"><code>#Copy and list printed values lagging the values by one month
+aa1&lt;-&quot;NA&quot;
+aa2&lt;-&quot;NA&quot;
+aa3&lt;-&quot;12.4&quot;
+aa4&lt;-&quot;22.9&quot;
+aa5&lt;-&quot;5.2&quot;
+aa6&lt;-&quot;3.0&quot;
+aa7&lt;-&quot;5.2&quot;
+aa8&lt;-&quot;12.1&quot;
+aa9&lt;-&quot;2.7&quot;
+aa10&lt;-&quot;4.6&quot;
+aa11&lt;-&quot;7.9&quot;
+aa12&lt;-&quot;8.9&quot;
+aa13&lt;-&quot;5.2&quot;
+aa14&lt;-&quot;2.6&quot;
+aa15&lt;-&quot;2.7&quot;
+
+#string these values to a data frame. Using field surveys dates for this site
+nd.den&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
+nd.den&lt;-as.data.frame(nd.den)
+nd.den&lt;-as.data.frame(nd.den)
+
+#change column names
+names(nd.den)[1] &lt;- &quot;date&quot;
+names(nd.den)[2] &lt;- &quot;lag.no.large.fuc.q&quot;
+nd.den$date&lt;-as.Date(nd.den$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+nd&lt;-merge(nd, nd.den[,c(&quot;date&quot;, &quot;lag.no.large.fuc.q&quot;)], by=&quot;date&quot;)
+
+#check
+check&lt;-nd %&gt;% select(date, no.large.fuc.q, lag.no.large.fuc.q)</code></pre>
+<p>Brickyard Park</p>
+<pre class="r"><code>#print adult density 
+print(by$no.large.fuc.q)</code></pre>
+<pre><code>##  [1]   NA 10.9 12.9  4.8  8.9 10.2  8.1  4.0  7.2 10.3  7.9  6.2  3.4  0.7  0.6
+## [16]  1.2</code></pre>
+<pre class="r"><code>#Copy and list printed values lagging the values by one month
+aa1&lt;-&quot;NA&quot;
+aa2&lt;-&quot;NA&quot;
+aa3&lt;-&quot;10.9&quot;
+aa4&lt;-&quot;12.9&quot;
+aa5&lt;-&quot;4.8&quot;
+aa6&lt;-&quot;8.9&quot;
+aa7&lt;-&quot;10.2&quot;
+aa8&lt;-&quot;8.1&quot;
+aa9&lt;-&quot;4.0&quot;
+aa10&lt;-&quot;7.2&quot;
+aa11&lt;-&quot;10.3&quot;
+aa12&lt;-&quot;7.9&quot;
+aa13&lt;-&quot;6.2&quot;
+aa14&lt;-&quot;3.4&quot;
+aa15&lt;-&quot;0.7&quot;
+aa16&lt;-&quot;0.6&quot;
+
+#string these values to a data frame. Using field surveys dates for this site
+by.den&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+by.den&lt;-as.data.frame(by.den)
+by.den&lt;-as.data.frame(by.den)
+
+#change column names
+names(by.den)[1] &lt;- &quot;date&quot;
+names(by.den)[2] &lt;- &quot;lag.no.large.fuc.q&quot;
+by.den$date&lt;-as.Date(by.den$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+by&lt;-merge(by, by.den[,c(&quot;date&quot;, &quot;lag.no.large.fuc.q&quot;)], by=&quot;date&quot;)
+
+#check
+check&lt;-by %&gt;% select(date, no.large.fuc.q, lag.no.large.fuc.q)</code></pre>
+<p>Horseshoe Bay</p>
+<pre class="r"><code>#print adult density 
+print(hs$no.large.fuc.q)</code></pre>
+<pre><code>##  [1]   NA  4.0 11.2  6.8  5.2  5.3  2.9 10.2  4.4  7.9  8.9 12.5  7.7  6.7  3.6
+## [16]  3.3</code></pre>
+<pre class="r"><code>#Copy and list printed values lagging the values by one month
+aa1&lt;-&quot;NA&quot;
+aa2&lt;-&quot;NA&quot;
+aa3&lt;-&quot;4.0&quot;
+aa4&lt;-&quot;11.2&quot;
+aa5&lt;-&quot;6.8&quot;
+aa6&lt;-&quot;5.2&quot;
+aa7&lt;-&quot;5.3&quot;
+aa8&lt;-&quot;2.9&quot;
+aa9&lt;-&quot;10.2&quot;
+aa10&lt;-&quot;4.4&quot;
+aa11&lt;-&quot;7.9&quot;
+aa12&lt;-&quot;8.9&quot;
+aa13&lt;-&quot;12.5&quot;
+aa14&lt;-&quot;7.7&quot;
+aa15&lt;-&quot;6.7&quot;
+aa16&lt;-&quot;3.6&quot;
+
+#string these values to a data frame. Using field surveys dates for this site
+hs.den&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
+hs.den&lt;-as.data.frame(hs.den)
+
+#change column names
+names(hs.den)[1] &lt;- &quot;date&quot;
+names(hs.den)[2] &lt;- &quot;lag.no.large.fuc.q&quot;
+hs.den$date&lt;-as.Date(hs.den$date, format=c(&quot;%Y-%m-%d&quot;))
+
+#merge dfs
+hs&lt;-merge(hs, hs.den[,c(&quot;date&quot;, &quot;lag.no.large.fuc.q&quot;)], by=&quot;date&quot;)
+
+#check
+check&lt;-hs %&gt;% select(date, no.large.fuc.q, lag.no.large.fuc.q)</code></pre>
+<p>####Merge and save####</p>
+<pre class="r"><code>#merge
+all&lt;-dplyr::bind_rows(pc, nd, by, hs)
+
 
 #save csv
 write.csv(all, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/envi.field.all.csv&quot;)</code></pre>
