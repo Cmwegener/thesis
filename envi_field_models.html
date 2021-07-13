@@ -578,6 +578,302 @@ plot(m2) </code></pre>
 ## lag.no.large.fuc.q                    -1.0201630  3.5057533
 ## max.daily.air.gt26                    -1.6105876  0.5334842
 ## lag.no.large.fuc.q:max.daily.air.gt26 -0.1486986  0.1072311</code></pre>
+<p>Making a table</p>
+<pre class="r"><code># load required packages
+library(sjPlot) # table functions</code></pre>
+<pre><code>## Warning: package &#39;sjPlot&#39; was built under R version 4.0.5</code></pre>
+<pre><code>## #refugeeswelcome</code></pre>
+<pre class="r"><code>library(sjmisc)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;sjmisc&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     is_empty</code></pre>
+<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
+## 
+##     replace_na</code></pre>
+<pre><code>## The following object is masked from &#39;package:tibble&#39;:
+## 
+##     add_case</code></pre>
+<pre class="r"><code>library(sjlabelled)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;sjlabelled&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:forcats&#39;:
+## 
+##     as_factor</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     as_label</code></pre>
+<pre class="r"><code>library(insight)
+library(tibble)
+
+#simple table
+tab_model(m2)</code></pre>
+<table style="border-collapse:collapse; border:none;">
+<tr>
+<th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">
+ 
+</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">
+no.small.fuc.q
+</th>
+</tr>
+<tr>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">
+Predictors
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+Estimates
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+CI
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+p
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+(Intercept)
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+45.42
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+17.19 – 73.65
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>0.002</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+daily.sal.range
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-3.42
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-5.88 – -0.96
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>0.007</strong>
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+lag.no.large.fuc.q
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+1.24
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-1.02 – 3.51
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.275
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+max.daily.air.gt26
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.54
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-1.61 – 0.53
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.317
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+lag.no.large.fuc.q *<br>max.daily.air.gt26
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.02
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.15 – 0.11
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.746
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
+Observations
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
+52
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+R<sup>2</sup> / R<sup>2</sup> adjusted
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.178 / 0.108
+</td>
+</tr>
+</table>
+<pre class="r"><code>#modified table         
+tab_model(m2,
+  show.ci = 0.95,
+  show.se = TRUE,
+  show.stat = FALSE,
+  emph.p = TRUE,
+  df.method = &quot;kr&quot;,
+  p.style = &quot;numeric_stars&quot;,
+  title = &quot;Linear Model for Juvenile Abundance&quot;,
+  linebreak = TRUE,
+  dv.labels = c(
+    &quot;Juvenile Density (0.25m^2)&quot;
+      ),
+  pred.labels = c(&quot;(Intercept)&quot;, &quot;daily salinity range&quot;, &quot;large thalli density month prior&quot;, &quot;number of days with a max daily air temperature &gt; 26C&quot;, &quot;large thalli density month prior:number of days with a max daily air temperature&quot;),
+  CSS = css_theme(&quot;cells&quot;)
+  )</code></pre>
+<table style="border-collapse:collapse; border:none;">
+<caption style="font-weight: bold; text-align:left;">
+Linear Model for Juvenile Abundance
+</caption>
+<tr>
+<th style="border:1px solid black; border-bottom:1px solid black; text-align:left; ">
+ 
+</th>
+<th colspan="4" style="border:1px solid black; border-bottom:1px solid black;">
+Juvenile Density (0.25m^2)
+</th>
+</tr>
+<tr>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; text-align:left; ">
+Predictors
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+Estimates
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+std. Error
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+CI
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+p
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+(Intercept)
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+45.42 <sup>**</sup>
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+14.03
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+17.19 – 73.65
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>0.002</strong>
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+daily salinity range
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-3.42 <sup>**</sup>
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+1.22
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-5.88 – -0.96
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>0.007</strong>
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+large thalli density month prior
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+1.24 <sup></sup>
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+1.12
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-1.02 – 3.51
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.275
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+number of days with a max daily air temperature &gt; 26C
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.54 <sup></sup>
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.53
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-1.61 – 0.53
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.317
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+large thalli density month prior:number of days with a max daily air temperature
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.02 <sup></sup>
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.06
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.15 – 0.11
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.746
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
+Observations
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="4">
+52
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+R<sup>2</sup> / R<sup>2</sup> adjusted
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center;" colspan="4">
+0.178 / 0.108
+</td>
+</tr>
+<tr>
+<td colspan="5" style="font-style:italic; border-top:double black; text-align:right;">
+<ul>
+<li>p&lt;0.05   ** p&lt;0.01   *** p&lt;0.001
+</td>
+</tr></li>
+</ul>
+</table>
+<p>Should I look at salinity range solely?</p>
 <p>Doing the same thing but with with square root transformation of juvenile density</p>
 <pre class="r"><code>#square root transform total density
 all$sqrt.no.small.fuc.q&lt;-sqrt(all$no.small.fuc.q)
@@ -712,6 +1008,110 @@ plot(m5) #ok fit</code></pre>
 <pre><code>##                      2.5 %     97.5 %
 ## (Intercept)      45197.951 207435.479
 ## max.daily.ph.lt8 -3622.826   5385.737</code></pre>
+<p>Table</p>
+<pre class="r"><code>tab_model(m5,
+  show.ci = 0.95,
+  show.se = TRUE,
+  show.stat = FALSE,
+  emph.p = TRUE,
+  df.method = &quot;kr&quot;,
+  p.style = &quot;numeric_stars&quot;,
+  title = &quot;Linear Model for oogonia per thalli&quot;,
+  linebreak = TRUE,
+  dv.labels = c(
+    &quot;Oogonia per thalli&quot;
+      ),
+  pred.labels = c(&quot;(Intercept)&quot;, &quot;number of days with a maximum daily pH &lt;8&quot;),
+  CSS = css_theme(&quot;cells&quot;)
+  )</code></pre>
+<table style="border-collapse:collapse; border:none;">
+<caption style="font-weight: bold; text-align:left;">
+Linear Model for oogonia per thalli
+</caption>
+<tr>
+<th style="border:1px solid black; border-bottom:1px solid black; text-align:left; ">
+ 
+</th>
+<th colspan="4" style="border:1px solid black; border-bottom:1px solid black;">
+Oogonia per thalli
+</th>
+</tr>
+<tr>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; text-align:left; ">
+Predictors
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+Estimates
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+std. Error
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+CI
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+p
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+(Intercept)
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+126316.72 <sup>**</sup>
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+40136.44
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+45197.95 – 207435.48
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>0.003</strong>
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+number of days with a maximum daily pH &lt;8
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+881.46 <sup></sup>
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+2228.66
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-3622.83 – 5385.74
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.695
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
+Observations
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="4">
+42
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+R<sup>2</sup> / R<sup>2</sup> adjusted
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center;" colspan="4">
+0.004 / -0.021
+</td>
+</tr>
+<tr>
+<td colspan="5" style="font-style:italic; border-top:double black; text-align:right;">
+<ul>
+<li>p&lt;0.05   ** p&lt;0.01   *** p&lt;0.001
+</td>
+</tr></li>
+</ul>
+</table>
+<p>This is the top ranked one but is it significant? Maybe not but it explains what’s happening more than the other models</p>
 </div>
 
 
