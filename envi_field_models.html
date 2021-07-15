@@ -364,7 +364,7 @@ summary {
 
 <h1 class="title toc-ignore">Envirnoment and field model analysis</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">12 July, 2021</h4>
+<h4 class="date">15 July, 2021</h4>
 
 </div>
 
@@ -387,10 +387,14 @@ Is variation in salinity, air temperature, or pH associated with changes in abun
 - Not sure how to add a directional aspect to my model. For oogonia per thalli I think low pH will result in less oogonia and this is the model I feel most confident about<br />
 - For the top ranked model I proceeded to fit and analyze the model but I’m not sure if that’s what I should do?<br />
 - Is there a visualzation I should work on for this? Like an AIC table?</p>
+<p>Next steps:<br />
+- Visualize data. Table?</p>
 <p>AIC link:<br />
 <a href="https://www.statology.org/aic-in-r/" class="uri">https://www.statology.org/aic-in-r/</a></p>
 <p><strong>Research Questions:</strong></p>
 <p>Juvenile abundance and environmental conditions think of story, not every combo –&gt; juv ~ low salinty + high adult cover + high air temp + adult cover:high temp –&gt; juv ~ sal range + high adult cover + high air temp + adult cover:high temp –&gt; juv ~ low salinty + high adult cover + high air temp –&gt; juv ~ sal range + high adult cover + high air temp –&gt; juv ~ high adult cover + high air temp + adult cover:high temp –&gt; juv ~ high adult cover + high air temp –&gt; juv ~ low salinity –&gt; juv ~ sal range –&gt; juv ~ adult cover –&gt; juv ~ high temp lag adult cover lag salinity an extra month? transform one, transform all –&gt; try both</p>
+<p>juv abundance ~ adult density (lagged)<br />
+more adults = more cover/protection = more juvenile ?</p>
 <p>Adult reproduction, pH, and salinity 1. Is adult reproduction affected by low salintiy and and low pH? For models:<br />
 1.1 Is oogonia per thalli affected by daily maximum salinity less than 10? 1.2 Is oogonia per thalli affected by daily maximum pH less than 8? –&gt; I think I should have both of these terms in one model –&gt; low pH from the month (or two) before results in LESS oog/thalli (directional hypothesis)<br />
 –&gt; water and air temperature (difference between two?)</p>
@@ -405,8 +409,6 @@ low cover and low density<br />
 density/cover = “bare space” for colonization<br />
 –&gt; look into methods<br />
 –&gt; normalize density to max density</p>
-<p>juv abundance ~ adult density (lagged)<br />
-more adults = more cover/protection = more juvenile</p>
 <p>(thinking through research questions, defined better above) 1. Juvenile abundance:<br />
 - j.abundance ~ salinity at high tide –&gt; interested in extreme events both high and low –&gt; daily max less than 10 and daily min greater than 28</p>
 <ul>
@@ -467,7 +469,16 @@ all&lt;-read.csv(
 all$date&lt;-as.Date(all$date, format = c(&quot;%Y-%m-%d&quot;))</code></pre>
 <div id="juvenile-abundance" class="section level4">
 <h4>Juvenile abundance</h4>
-<p>think of story, not every combo 1–&gt; juv ~ low salinty + high adult cover + high air temp + adult cover:high temp 2–&gt; juv ~ sal range + high adult cover + high air temp + adult cover:high temp 3–&gt; juv ~ low salinty + high adult cover + high air temp 4–&gt; juv ~ sal range + high adult cover + high air temp 5–&gt; juv ~ high adult cover + high air temp + adult cover:high temp 6–&gt; juv ~ high adult cover + high air temp 7–&gt; juv ~ low salinity 8–&gt; juv ~ sal range 9–&gt; juv ~ adult cover 10–&gt; juv ~ high temp</p>
+<p>think of story, not every combo 1–&gt; juv ~ low salinty + high adult cover + high air temp + adult cover:high temp<br />
+2–&gt; juv ~ sal range + high adult cover + high air temp + adult cover:high temp<br />
+3–&gt; juv ~ low salinty + high adult cover + high air temp<br />
+4–&gt; juv ~ sal range + high adult cover + high air temp<br />
+5–&gt; juv ~ high adult cover + high air temp + adult cover:high temp<br />
+6–&gt; juv ~ high adult cover + high air temp<br />
+7–&gt; juv ~ low salinity<br />
+8–&gt; juv ~ sal range<br />
+9–&gt; juv ~ adult cover<br />
+10–&gt; juv ~ high temp</p>
 <p>No transformations.</p>
 <pre class="r"><code>#models
 m1 &lt;- lm(no.small.fuc.q ~ max.daily.sal.lt10 + lag.no.large.fuc.q + max.daily.air.gt26 + lag.no.large.fuc.q:max.daily.air.gt26, data=all)
@@ -582,7 +593,7 @@ plot(m2) </code></pre>
 <pre class="r"><code># load required packages
 library(sjPlot) # table functions</code></pre>
 <pre><code>## Warning: package &#39;sjPlot&#39; was built under R version 4.0.5</code></pre>
-<pre><code>## #refugeeswelcome</code></pre>
+<pre><code>## Install package &quot;strengejacke&quot; from GitHub (`devtools::install_github(&quot;strengejacke/strengejacke&quot;)`) to load all sj-packages at once!</code></pre>
 <pre class="r"><code>library(sjmisc)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;sjmisc&#39;</code></pre>
@@ -924,6 +935,63 @@ aictab(cand.set = models, modnames = mod.names)</code></pre>
 ## m7  3 275.05      31.79   0.00   1.00 -134.30
 ## m10 3 275.55      32.28   0.00   1.00 -134.55</code></pre>
 <p>Same order so I don’t think transformations are neccessary</p>
+<p>I want to try basically the same models but instead of “number of days with max daily salinity &lt;10” I’m going to do just the max daily salinity values.</p>
+<p>1–&gt; juv ~ max salinty + high adult cover + high air temp + adult cover:high temp<br />
+2–&gt; juv ~ sal range + high adult cover + high air temp + adult cover:high temp<br />
+3–&gt; juv ~ max salinty + high adult cover + high air temp<br />
+4–&gt; juv ~ sal range + high adult cover + high air temp<br />
+5–&gt; juv ~ high adult cover + high air temp + adult cover:high temp<br />
+6–&gt; juv ~ high adult cover + high air temp<br />
+7–&gt; juv ~ max salinity<br />
+8–&gt; juv ~ sal range<br />
+9–&gt; juv ~ adult cover<br />
+10–&gt; juv ~ high temp</p>
+<pre class="r"><code>#models
+m1 &lt;- lm(no.small.fuc.q ~ daily.max.sal + lag.no.large.fuc.q + max.daily.air.gt26 + lag.no.large.fuc.q:max.daily.air.gt26, data=all)
+
+m2 &lt;- lm(no.small.fuc.q ~ daily.sal.range + lag.no.large.fuc.q + max.daily.air.gt26 + lag.no.large.fuc.q:max.daily.air.gt26, data=all)
+
+m3 &lt;- lm(no.small.fuc.q ~ daily.max.sal + lag.no.large.fuc.q + max.daily.air.gt26, data=all)
+
+m4 &lt;- lm(no.small.fuc.q ~ daily.sal.range + lag.no.large.fuc.q + max.daily.air.gt26 + lag.no.large.fuc.q:max.daily.air.gt26, data=all)
+
+m5 &lt;- lm(no.small.fuc.q ~ lag.no.large.fuc.q + max.daily.air.gt26 + lag.no.large.fuc.q:max.daily.air.gt26, data=all)
+
+m6 &lt;- lm(no.small.fuc.q ~ lag.no.large.fuc.q + max.daily.air.gt26, data=all)
+
+m7 &lt;- lm(no.small.fuc.q ~ daily.max.sal, data=all)
+
+m8 &lt;- lm(no.small.fuc.q ~ daily.sal.range, data=all)
+
+m9 &lt;- lm(no.small.fuc.q ~ lag.no.large.fuc.q , data=all)
+
+m10 &lt;- lm(no.small.fuc.q ~ max.daily.air.gt26, data=all)
+
+#define list of models
+models &lt;- list(m1,m2,m3,m4,m5,m6,m7,m8,m9,m10)
+
+#specify model names- just keeping them the same
+mod.names &lt;- c(&#39;m1&#39;,&#39;m2&#39;,&#39;m3&#39;,&#39;m4&#39;, &#39;m5&#39;,&#39;m6&#39;,&#39;m7&#39;,&#39;m8&#39;, &#39;m9&#39;,&#39;m10&#39;)
+
+#calculate AIC of each model
+aictab(cand.set = models, modnames = mod.names)</code></pre>
+<pre><code>## Warning in aictab.AIClm(cand.set = models, modnames = mod.names): 
+## Check model structure carefully as some models may be redundant</code></pre>
+<pre><code>## 
+## Model selection based on AICc:
+## 
+##     K   AICc Delta_AICc AICcWt Cum.Wt      LL
+## m3  5 507.11       0.00   0.53   0.53 -247.90
+## m1  6 509.00       1.88   0.21   0.74 -247.56
+## m2  6 509.95       2.84   0.13   0.87 -248.04
+## m4  6 509.95       2.84   0.13   1.00 -248.04
+## m9  3 519.94      12.83   0.00   1.00 -256.72
+## m6  4 521.84      14.73   0.00   1.00 -256.51
+## m5  5 524.15      17.03   0.00   1.00 -256.43
+## m7  3 555.39      48.28   0.00   1.00 -274.46
+## m8  3 557.61      50.50   0.00   1.00 -275.58
+## m10 3 569.57      62.45   0.00   1.00 -281.56</code></pre>
+<p>Now model 3 with the max daily salinity is the top ranked model!</p>
 </div>
 <div id="oogonia-per-thalli" class="section level4">
 <h4>oogonia per thalli</h4>
