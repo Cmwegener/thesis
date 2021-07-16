@@ -364,18 +364,18 @@ summary {
 
 <h1 class="title toc-ignore">Environmental and field data</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">12 July, 2021</h4>
+<h4 class="date">16 July, 2021</h4>
 
 </div>
 
 
 <p><strong>Overview:</strong> Setting up my environmental and field data to run analysis. On the same row I’ll have monthly field variables (ex. mean density one month) and enviromental data since the last field survey or since 30 days prior. Field data will be linked with closest water station. China camp and paradise cay, EOS pier and point chauncy, Richardson Bay and brickyard park, and Horseshoe bay and fort point. I also have EOS air linked with Paradised Cay and Point Chauncy field data and Golden Gate air data with Horseshoe Bay and Richardson Bay field data. Possibly a cleaner way to do this but this works. I then merge all data to one large df that I will use for analysis.</p>
 <p>Steps for environmental data: The environmental data here has been cleaned and is the filtered for tide hourly median dfs. First I filter between survey dates, then take median. Next I did daily minimum, daily maximum, daily range, and daily median and saved these in a csv to explore more later. I then took the median of those values subseted between survey dates. I combine the data into one df per site/station. At the end I’ll export these as csvs which I could then use for analysis.</p>
-<p>Events I’m interested in as define by my research questions and that will be used for model analysis (need to talk to Karina):<br />
+<p>Events I’m interested in as define by my research questions and that will be used for model analysis:<br />
 - daily maximum salinity less than 10<br />
 - daily minimum salinity greater than 28<br />
 - daily maximum air temperature great than 26C (~80F)<br />
-- daily maximum pH less than 7 - Adult density from the month prior. The first two values for this column will be “NA” since we didn’t count adult density the first month (first NA) and then there’s an NA for the adult density before surveys started. Doing this at the very end.</p>
+- daily maximum pH greater than 8 - Adult density from the month prior. The first two values for this column will be “NA” since we didn’t count adult density the first month (first NA) and then there’s an NA for the adult density before surveys started. Doing this at the very end.</p>
 <p>UPDATE: 7/8/2021 - I removed dissoloved oxygen from this markdown. I did not filter dissolved oxygen for tide. Not using dissolved oxygen in my analysis. I was orgionally interested in dissolved oxygen as a pH proxy.<br />
 - I also focused “extreme” events for my analysis (I had too many random ones before I wasn’t using)</p>
 <p>Notes:<br />
@@ -1145,32 +1145,32 @@ cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
 pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;min.daily.sal.gt28&quot;)], by=&quot;date&quot;)</code></pre>
-<p>pH Number of days where max.daily.ph is &lt;8</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&lt;8, ])
-aa2&lt;-nrow(a2[a2$max.daily.ph&lt;8, ])
-aa3&lt;-nrow(a3[a3$max.daily.ph&lt;8, ])
-aa4&lt;-nrow(a4[a4$max.daily.ph&lt;8, ])
-aa5&lt;-nrow(a5[a5$max.daily.ph&lt;8, ])
-aa6&lt;-nrow(a6[a6$max.daily.ph&lt;8, ])
-aa7&lt;-nrow(a7[a7$max.daily.ph&lt;8, ])
-aa8&lt;-nrow(a8[a8$max.daily.ph&lt;8, ])
-aa9&lt;-nrow(a9[a9$max.daily.ph&lt;8, ])
-aa10&lt;-nrow(a10[a10$max.daily.ph&lt;8, ])
-aa11&lt;-nrow(a11[a11$max.daily.ph&lt;8, ])
-aa12&lt;-nrow(a12[a12$max.daily.ph&lt;8, ])
-aa13&lt;-nrow(a13[a13$max.daily.ph&lt;8, ])
-aa14&lt;-nrow(a14[a14$max.daily.ph&lt;8, ])
+<p>pH Number of days where max.daily.ph is &gt;8</p>
+<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&gt;8, ])
+aa2&lt;-nrow(a2[a2$max.daily.ph&gt;8, ])
+aa3&lt;-nrow(a3[a3$max.daily.ph&gt;8, ])
+aa4&lt;-nrow(a4[a4$max.daily.ph&gt;8, ])
+aa5&lt;-nrow(a5[a5$max.daily.ph&gt;8, ])
+aa6&lt;-nrow(a6[a6$max.daily.ph&gt;8, ])
+aa7&lt;-nrow(a7[a7$max.daily.ph&gt;8, ])
+aa8&lt;-nrow(a8[a8$max.daily.ph&gt;8, ])
+aa9&lt;-nrow(a9[a9$max.daily.ph&gt;8, ])
+aa10&lt;-nrow(a10[a10$max.daily.ph&gt;8, ])
+aa11&lt;-nrow(a11[a11$max.daily.ph&gt;8, ])
+aa12&lt;-nrow(a12[a12$max.daily.ph&gt;8, ])
+aa13&lt;-nrow(a13[a13$max.daily.ph&gt;8, ])
+aa14&lt;-nrow(a14[a14$max.daily.ph&gt;8, ])
 
 cc.dates&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,          &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
 cc.dates&lt;-as.data.frame(cc.dates)
 
 #change column names
 names(cc.dates)[1] &lt;- &quot;date&quot;
-names(cc.dates)[2] &lt;- &quot;max.daily.ph.lt8&quot;
+names(cc.dates)[2] &lt;- &quot;max.daily.ph.gt8&quot;
 cc.dates$date&lt;-as.Date(cc.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
-pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;max.daily.ph.lt8&quot;)], by=&quot;date&quot;)</code></pre>
+pc.cc&lt;-merge(pc.cc, cc.dates[,c(&quot;date&quot;, &quot;max.daily.ph.gt8&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Save csvs</p>
 <pre class="r"><code>write.csv(pc.cc, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/cc.daily.sum.csv&quot;)</code></pre>
 <p>cc.daily sum: <a href="https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/cc.daily.sum.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/cc.daily.sum.csv</a></p>
@@ -1935,22 +1935,22 @@ eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;min.daily.sal.gt28&quot;)], by=&quot;date&quot;)</code></pre>
 <p>pH</p>
-<p>Number of days where max.daily.ph is &lt;8</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&lt;8, ])
-aa2&lt;-nrow(a2[a2$max.daily.ph&lt;8, ])
-aa3&lt;-nrow(a3[a3$max.daily.ph&lt;8, ])
-aa4&lt;-nrow(a4[a4$max.daily.ph&lt;8, ])
-aa5&lt;-nrow(a5[a5$max.daily.ph&lt;8, ])
-aa6&lt;-nrow(a6[a6$max.daily.ph&lt;8, ])
-aa7&lt;-nrow(a7[a7$max.daily.ph&lt;8, ])
-aa8&lt;-nrow(a8[a8$max.daily.ph&lt;8, ])
-aa9&lt;-nrow(a9[a9$max.daily.ph&lt;8, ])
-aa10&lt;-nrow(a10[a10$max.daily.ph&lt;8, ])
-aa11&lt;-nrow(a11[a11$max.daily.ph&lt;8, ])
-aa12&lt;-nrow(a12[a12$max.daily.ph&lt;8, ])
-aa13&lt;-nrow(a13[a13$max.daily.ph&lt;8, ])
-aa14&lt;-nrow(a14[a14$max.daily.ph&lt;8, ])
-aa15&lt;-nrow(a15[a15$max.daily.ph&lt;8, ])
+<p>Number of days where max.daily.ph is &gt;8</p>
+<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&gt;8, ])
+aa2&lt;-nrow(a2[a2$max.daily.ph&gt;8, ])
+aa3&lt;-nrow(a3[a3$max.daily.ph&gt;8, ])
+aa4&lt;-nrow(a4[a4$max.daily.ph&gt;8, ])
+aa5&lt;-nrow(a5[a5$max.daily.ph&gt;8, ])
+aa6&lt;-nrow(a6[a6$max.daily.ph&gt;8, ])
+aa7&lt;-nrow(a7[a7$max.daily.ph&gt;8, ])
+aa8&lt;-nrow(a8[a8$max.daily.ph&gt;8, ])
+aa9&lt;-nrow(a9[a9$max.daily.ph&gt;8, ])
+aa10&lt;-nrow(a10[a10$max.daily.ph&gt;8, ])
+aa11&lt;-nrow(a11[a11$max.daily.ph&gt;8, ])
+aa12&lt;-nrow(a12[a12$max.daily.ph&gt;8, ])
+aa13&lt;-nrow(a13[a13$max.daily.ph&gt;8, ])
+aa14&lt;-nrow(a14[a14$max.daily.ph&gt;8, ])
+aa15&lt;-nrow(a15[a15$max.daily.ph&gt;8, ])
 
 eos.mon.sal&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
 eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
@@ -1958,11 +1958,11 @@ eos.mon.sal&lt;-as.data.frame(eos.mon.sal)
 
 #change column names
 names(eos.dates)[1] &lt;- &quot;date&quot;
-names(eos.dates)[2] &lt;- &quot;max.daily.ph.lt8&quot;
+names(eos.dates)[2] &lt;- &quot;max.daily.ph.gt8&quot;
 eos.dates$date&lt;-as.Date(eos.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
-nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;max.daily.ph.lt8&quot;)], by=&quot;date&quot;)</code></pre>
+nd.eos&lt;-merge(nd.eos, eos.dates[,c(&quot;date&quot;, &quot;max.daily.ph.gt8&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Save csv</p>
 <pre class="r"><code>write.csv(nd.eos, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/eos.daily.sum.csv&quot;)</code></pre>
 <p>eos.daily.sum: <a href="https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/eos.daily.sum.csv" class="uri">https://github.com/Cmwegener/thesis/blob/master/data/environmental/daily_summaries/eos.daily.sum.csv</a></p>
@@ -2745,34 +2745,34 @@ rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 #merge dfs
 by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;min.daily.sal.gt28&quot;)], by=&quot;date&quot;)</code></pre>
 <p>pH</p>
-<p>Number of days where max.daily.ph is &lt;8</p>
-<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&lt;8, ])
-aa2&lt;-nrow(a2[a2$max.daily.ph&lt;8, ])
-aa3&lt;-nrow(a3[a3$max.daily.ph&lt;8, ])
-aa4&lt;-nrow(a4[a4$max.daily.ph&lt;8, ])
-aa5&lt;-nrow(a5[a5$max.daily.ph&lt;8, ])
-aa6&lt;-nrow(a6[a6$max.daily.ph&lt;8, ])
-aa7&lt;-nrow(a7[a7$max.daily.ph&lt;8, ])
-aa8&lt;-nrow(a8[a8$max.daily.ph&lt;8, ])
-aa9&lt;-nrow(a9[a9$max.daily.ph&lt;8, ])
-aa10&lt;-nrow(a10[a10$max.daily.ph&lt;8, ])
-aa11&lt;-nrow(a11[a11$max.daily.ph&lt;8, ])
-aa12&lt;-nrow(a12[a12$max.daily.ph&lt;8, ])
-aa13&lt;-nrow(a13[a13$max.daily.ph&lt;8, ])
-aa14&lt;-nrow(a14[a14$max.daily.ph&lt;8, ])
-aa15&lt;-nrow(a15[a15$max.daily.ph&lt;8, ])
-aa16&lt;-nrow(a16[a16$max.daily.ph&lt;8, ])
+<p>Number of days where max.daily.ph is &gt;8</p>
+<pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.ph&gt;8, ])
+aa2&lt;-nrow(a2[a2$max.daily.ph&gt;8, ])
+aa3&lt;-nrow(a3[a3$max.daily.ph&gt;8, ])
+aa4&lt;-nrow(a4[a4$max.daily.ph&gt;8, ])
+aa5&lt;-nrow(a5[a5$max.daily.ph&gt;8, ])
+aa6&lt;-nrow(a6[a6$max.daily.ph&gt;8, ])
+aa7&lt;-nrow(a7[a7$max.daily.ph&gt;8, ])
+aa8&lt;-nrow(a8[a8$max.daily.ph&gt;8, ])
+aa9&lt;-nrow(a9[a9$max.daily.ph&gt;8, ])
+aa10&lt;-nrow(a10[a10$max.daily.ph&gt;8, ])
+aa11&lt;-nrow(a11[a11$max.daily.ph&gt;8, ])
+aa12&lt;-nrow(a12[a12$max.daily.ph&gt;8, ])
+aa13&lt;-nrow(a13[a13$max.daily.ph&gt;8, ])
+aa14&lt;-nrow(a14[a14$max.daily.ph&gt;8, ])
+aa15&lt;-nrow(a15[a15$max.daily.ph&gt;8, ])
+aa16&lt;-nrow(a16[a16$max.daily.ph&gt;8, ])
 
 rb.dates&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
 rb.dates&lt;-as.data.frame(rb.dates)
 
 #change column names
 names(rb.dates)[1] &lt;- &quot;date&quot;
-names(rb.dates)[2] &lt;- &quot;max.daily.ph.lt8&quot;
+names(rb.dates)[2] &lt;- &quot;max.daily.ph.gt8&quot;
 rb.dates$date&lt;-as.Date(rb.dates$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #merge dfs
-by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;max.daily.ph.lt8&quot;)], by=&quot;date&quot;)</code></pre>
+by.rb&lt;-merge(by.rb, rb.dates[,c(&quot;date&quot;, &quot;max.daily.ph.gt8&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Save csv</p>
 <pre class="r"><code>write.csv(by.rb, &quot;C:/Users/chels/Box Sync/Thesis/Data/Working data/Bouy data/rb.daily.sum.csv&quot;)</code></pre>
 <p>rb.daily.sum: <a href="https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/rb.daily.sum.csv" class="uri">https://raw.githubusercontent.com/Cmwegener/thesis/master/data/environmental/daily_summaries/rb.daily.sum.csv</a></p>
