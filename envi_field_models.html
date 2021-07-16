@@ -583,7 +583,7 @@ plot(m4) </code></pre>
 <pre class="r"><code># load required packages
 library(sjPlot) # table functions</code></pre>
 <pre><code>## Warning: package &#39;sjPlot&#39; was built under R version 4.0.5</code></pre>
-<pre><code>## #refugeeswelcome</code></pre>
+<pre><code>## Learn more about sjPlot with &#39;browseVignettes(&quot;sjPlot&quot;)&#39;.</code></pre>
 <pre class="r"><code>library(sjmisc)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;sjmisc&#39;</code></pre>
@@ -1139,6 +1139,177 @@ R<sup>2</sup> / R<sup>2</sup> adjusted
 </ul>
 </table>
 </div>
+<div id="what-air-temp" class="section level4">
+<h4>what air temp?</h4>
+<p>I’m going to do the same thing but with air temperature using the top ranking model from the precious section.</p>
+<pre class="r"><code>m1&lt;- lm(no.small.fuc.q ~ daily.min.sal + lag.no.large.fuc.q + max.daily.air.gt26, data=all)
+
+m2&lt;- lm(no.small.fuc.q ~ daily.min.sal + lag.no.large.fuc.q + air.temp, data=all)
+
+m3&lt;- lm(no.small.fuc.q ~ daily.min.sal + lag.no.large.fuc.q + daily.min.air, data=all)
+
+m4&lt;- lm(no.small.fuc.q ~ daily.min.sal + lag.no.large.fuc.q + daily.max.air, data=all)
+
+m5&lt;- lm(no.small.fuc.q ~ daily.min.sal + lag.no.large.fuc.q + daily.air.range, data=all)
+
+#define list of models
+models &lt;- list(m1,m2,m3,m4,m5)
+
+#specify model names- just keeping them the same
+mod.names &lt;- c(&#39;m1&#39;,&#39;m2&#39;,&#39;m3&#39;,&#39;m4&#39;, &#39;m5&#39;)
+
+#calculate AIC of each model
+aictab(cand.set = models, modnames = mod.names)</code></pre>
+<pre><code>## 
+## Model selection based on AICc:
+## 
+##    K   AICc Delta_AICc AICcWt Cum.Wt      LL
+## m4 5 253.86       0.00   0.41   0.41 -120.35
+## m5 5 254.49       0.63   0.30   0.71 -120.66
+## m3 5 254.56       0.70   0.29   1.00 -120.70
+## m1 5 502.00     248.14   0.00   1.00 -245.35
+## m2 5 506.19     252.33   0.00   1.00 -247.44</code></pre>
+<p>Model 4 with max daily air ranked highest with air range ranking second.</p>
+<p>Does this mean that is this is the best model since I ranked all the salinity terms and then the air temp terms? no.small.fuc.q ~ daily.min.sal + lag.no.large.fuc.q + daily.max.air</p>
+<pre class="r"><code>tab_model(m4,
+  show.ci = 0.95,
+  show.se = TRUE,
+  show.stat = FALSE,
+  emph.p = TRUE,
+  df.method = &quot;kr&quot;,
+  p.style = &quot;numeric_stars&quot;,
+  title = &quot;Linear Model for Juvenile Abundance&quot;,
+  linebreak = TRUE,
+  dv.labels = c(
+    &quot;Juvenile Density (0.25m^2)&quot;
+      ),
+  pred.labels = c(&quot;(Intercept)&quot;, &quot;daily minimum salinity&quot;, &quot;large thalli density month prior&quot;, &quot;maximum daily air temperature&quot;),
+  CSS = css_theme(&quot;cells&quot;)
+  )</code></pre>
+<table style="border-collapse:collapse; border:none;">
+<caption style="font-weight: bold; text-align:left;">
+Linear Model for Juvenile Abundance
+</caption>
+<tr>
+<th style="border:1px solid black; border-bottom:1px solid black; text-align:left; ">
+ 
+</th>
+<th colspan="4" style="border:1px solid black; border-bottom:1px solid black;">
+Juvenile Density (0.25m^2)
+</th>
+</tr>
+<tr>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; text-align:left; ">
+Predictors
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+Estimates
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+std. Error
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+CI
+</td>
+<td style="border:1px solid black; text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal; border-bottom:1px solid black; ">
+p
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+(Intercept)
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-58.82 <sup></sup>
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+44.11
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-150.55 – 32.92
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.197
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+daily minimum salinity
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+1.65 <sup></sup>
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+1.12
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.68 – 3.99
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.155
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+large thalli density month prior
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+2.19 <sup></sup>
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+1.32
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-0.56 – 4.93
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.112
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+maximum daily air temperature
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+2.51 <sup></sup>
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+2.97
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+-3.67 – 8.70
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.408
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
+Observations
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center; border-top:1px solid;" colspan="4">
+25
+</td>
+</tr>
+<tr>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+R<sup>2</sup> / R<sup>2</sup> adjusted
+</td>
+<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center;" colspan="4">
+0.311 / 0.212
+</td>
+</tr>
+<tr>
+<td colspan="5" style="font-style:italic; border-top:double black; text-align:right;">
+<ul>
+<li>p&lt;0.05   ** p&lt;0.01   *** p&lt;0.001
+</td>
+</tr></li>
+</ul>
+</table>
+<p>QUESTION: why do the same p values change depending on the model?</p>
+<p>–&gt;overall these models indicate that salinity, large thalli density, and air temperature affect juvenile abundance. The affect of air temperature may vary depending on adult density. These terms together have a higher explanitory power than any single term but it appears that adult cover alone may have more power than environmental variables.</p>
+</div>
 <div id="oogonia-per-thalli" class="section level4">
 <h4>oogonia per thalli</h4>
 <p>Adult reproduction, pH, and salinity<br />
@@ -1326,6 +1497,45 @@ R<sup>2</sup> / R<sup>2</sup> adjusted
 </ul>
 </table>
 <p>This is the top ranked one but is it significant? Maybe not but it explains what’s happening more than the other models. Tie in lack of repro seasonality.</p>
+<p>Although the number of days with a maximum pH less than 8 is the topped ranked model, meaning of the models it has the most explanitory power, it is not significant. This indicates that there are other models/factors that are affecting oogonia per thalli than explored here.</p>
+</div>
+<div id="trying-other-ph-terms" class="section level4">
+<h4>trying other pH terms</h4>
+<p>The top ranked model above was with just pH so I’m going to look at the other pH terms I have.</p>
+<pre class="r"><code>#models
+m1 &lt;- lm(oog.thalli ~ max.daily.ph.lt8, data=all)
+
+m2 &lt;- lm(oog.thalli ~ ph, data=all)
+
+m3 &lt;- lm(oog.thalli ~ daily.min.ph, data=all)
+
+m4 &lt;- lm(oog.thalli ~ daily.max.ph, data=all)
+
+m5 &lt;- lm(oog.thalli ~ daily.ph.range, data=all)
+
+m6 &lt;- lm(oog.thalli ~ daily.med.ph, data=all)
+
+
+
+#define list of models
+models &lt;- list(m1,m2,m3,m4,m5,m6)
+
+#specify model names- just keeping them the same
+mod.names &lt;- c(&#39;m1&#39;,&#39;m2&#39;,&#39;m3&#39;,&#39;m4&#39;, &#39;m5&#39;, &#39;m6&#39;)
+
+#calculate AIC of each model
+aictab(cand.set = models, modnames = mod.names)</code></pre>
+<pre><code>## 
+## Model selection based on AICc:
+## 
+##    K    AICc Delta_AICc AICcWt Cum.Wt      LL
+## m2 3 1146.07       0.00   0.52   0.52 -569.72
+## m6 3 1148.55       2.49   0.15   0.68 -570.96
+## m4 3 1149.00       2.93   0.12   0.80 -571.18
+## m3 3 1149.72       3.65   0.08   0.88 -571.54
+## m5 3 1150.41       4.35   0.06   0.94 -571.89
+## m1 3 1150.44       4.37   0.06   1.00 -571.90</code></pre>
+<p>Model 2 ranked highest which is just mean of the hourly means over a month…not sure how to interpret that or if i should even have that term in the model.</p>
 </div>
 
 
