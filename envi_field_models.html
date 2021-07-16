@@ -583,8 +583,8 @@ plot(m4) </code></pre>
 <pre class="r"><code># load required packages
 library(sjPlot) # table functions</code></pre>
 <pre><code>## Warning: package &#39;sjPlot&#39; was built under R version 4.0.5</code></pre>
+<pre><code>## #refugeeswelcome</code></pre>
 <pre class="r"><code>library(sjmisc)</code></pre>
-<pre><code>## Learn more about sjmisc with &#39;browseVignettes(&quot;sjmisc&quot;)&#39;.</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;sjmisc&#39;</code></pre>
 <pre><code>## The following object is masked from &#39;package:purrr&#39;:
@@ -1001,9 +1001,8 @@ aictab(cand.set = models, modnames = mod.names)</code></pre>
 ## m2  6 509.95       7.95   0.01   1.00 -248.04
 ## m9  5 524.28      22.28   0.00   1.00 -256.50
 ## m3  6 526.69      24.69   0.00   1.00 -256.43</code></pre>
-<p>Model 5 no.small.fuc.q ~ daily.min.sal + lag.no.large.fuc.q + max.daily.air.gt26 + lag.no.large.fuc.q:max.daily.air.gt26</p>
-<p>Table</p>
-<pre class="r"><code>tab_model(m5,
+<p>Model 11 ranked first and model 5 ranked second. The only difference between the two is the interaction term. Model 11 does not have the interaction term and model 5 does. m11 no.small.fuc.q ~ daily.min.sal + lag.no.large.fuc.q + max.daily.air.gt26 Table</p>
+<pre class="r"><code>tab_model(m11,
   show.ci = 0.95,
   show.se = TRUE,
   show.stat = FALSE,
@@ -1015,7 +1014,7 @@ aictab(cand.set = models, modnames = mod.names)</code></pre>
   dv.labels = c(
     &quot;Juvenile Density (0.25m^2)&quot;
       ),
-  pred.labels = c(&quot;(Intercept)&quot;, &quot;daily minimum salinity&quot;, &quot;large thalli density month prior&quot;, &quot;number of days with a max daily air temperature &gt; 26C&quot;, &quot;large thalli density month prior:number of days with a max daily air temperature &gt; 26C&quot;),
+  pred.labels = c(&quot;(Intercept)&quot;, &quot;daily minimum salinity&quot;, &quot;large thalli density month prior&quot;, &quot;number of days with a max daily air temperature &gt; 26C&quot;),
   CSS = css_theme(&quot;cells&quot;)
   )</code></pre>
 <table style="border-collapse:collapse; border:none;">
@@ -1052,16 +1051,16 @@ p
 (Intercept)
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--26.06 <sup></sup>
+-22.33 <sup></sup>
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-15.55
+14.66
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--57.35 – 5.23
+-51.81 – 7.15
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.100
+0.134
 </td>
 </tr>
 <tr>
@@ -1069,13 +1068,13 @@ p
 daily minimum salinity
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-2.33 <sup>***</sup>
+2.29 <sup>***</sup>
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 0.61
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-1.10 – 3.56
+1.07 – 3.51
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
 <strong>&lt;0.001
@@ -1086,16 +1085,16 @@ daily minimum salinity
 large thalli density month prior
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-1.81 <sup></sup>
+1.40 <sup></sup>
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-1.07
+0.91
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--0.33 – 3.96
+-0.42 – 3.22
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.096
+0.130
 </td>
 </tr>
 <tr>
@@ -1103,33 +1102,16 @@ large thalli density month prior
 number of days with a max daily air temperature &gt; 26C
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--0.44 <sup></sup>
+-0.74 <sup>*</sup>
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.48
+0.28
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--1.42 – 0.53
+-1.30 – -0.17
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.363
-</td>
-</tr>
-<tr>
-<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
-large thalli density month prior:number of days with a max daily air temperature &gt; 26C
-</td>
-<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--0.05 <sup></sup>
-</td>
-<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.06
-</td>
-<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
--0.17 – 0.08
-</td>
-<td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
-0.458
+<strong>0.012</strong>
 </td>
 </tr>
 <tr>
@@ -1145,7 +1127,7 @@ Observations
 R<sup>2</sup> / R<sup>2</sup> adjusted
 </td>
 <td style="border:1px solid black; padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:center;" colspan="4">
-0.268 / 0.205
+0.259 / 0.213
 </td>
 </tr>
 <tr>
