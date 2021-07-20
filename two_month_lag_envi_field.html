@@ -364,13 +364,13 @@ summary {
 
 <h1 class="title toc-ignore">TWO MONTH LAG- Environmental and field data</h1>
 <h4 class="author">Chelsey Wegener</h4>
-<h4 class="date">19 July, 2021</h4>
+<h4 class="date">20 July, 2021</h4>
 
 </div>
 
 
-<p>This is the the same approach I’ve done before but instead of filtering environmental data between sites, I’m fitlering it two months (60 days) before field surveys.</p>
-<p><strong>Overview:</strong> Setting up my environmental and field data to run analysis. On the same row I’ll have monthly field variables (ex. mean density one month) and enviromental data since the last field survey or since 30 days prior. Field data will be linked with closest water station. China camp and paradise cay, EOS pier and point chauncy, Richardson Bay and brickyard park, and Horseshoe bay and fort point. I also have EOS air linked with Paradised Cay and Point Chauncy field data and Golden Gate air data with Horseshoe Bay and Richardson Bay field data. Possibly a cleaner way to do this but this works. I then merge all data to one large df that I will use for analysis.</p>
+<p>Envirnomental data for 30 days starting 60 days from survey date (excludes the 30 days leading up to the survey date). Adult thalli density from two surveys/months before. Juvenile density is the mean.</p>
+<p><strong>Overview:</strong> Setting up my environmental and field data to run analysis. On the same row I’ll have monthly field variables (ex. mean density one month) and enviromental data. Field data will be linked with closest water station. China camp and paradise cay, EOS pier and point chauncy, Richardson Bay and brickyard park, and Horseshoe bay and fort point. I also have EOS air linked with Paradised Cay and Point Chauncy field data and Golden Gate air data with Horseshoe Bay and Richardson Bay field data. Possibly a cleaner way to do this but this works. I then merge all data to one large df that I will use for analysis.</p>
 <p>Steps for environmental data: The environmental data here has been cleaned and is the filtered for tide hourly median dfs. First I filter environmental data one month before field survey dates, then take median. Next I did daily minimum, daily maximum, daily range, and daily median and saved these in a csv to explore more later. I then took the median of those values subseted between survey dates. I combine the data into one df per site/station. At the end I’ll export these as csvs which I could then use for analysis.</p>
 <p>Events I’m interested in as define by my research questions and that will be used for model analysis:<br />
 - daily maximum salinity less than 10<br />
@@ -488,7 +488,7 @@ pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)
 pc$con.thalli &lt;- (pc$no.concept.recp * pc$apices.repro)
 pc.r&lt;-aggregate(con.thalli ~ date, pc, mean, na.rm=TRUE)
 pc.cc&lt;-merge(pc.cc, pc.r, by=&quot;date&quot;, all=TRUE)</code></pre>
-<p>Now I need to add the summaries of the environmental data. Filter environmental data 60 days before field survey.</p>
+<p>Now I need to add the summaries of the environmental data. Filter environmental data rom 60 days before field survey to 30 days before field survey.</p>
 <p>Salinity</p>
 <pre class="r"><code>#read and format data
 cc.sal.tide&lt;-read.csv(
@@ -503,20 +503,21 @@ print(pc.cc$date)</code></pre>
 ##  [6] &quot;2019-01-30&quot; &quot;2019-02-20&quot; &quot;2019-03-15&quot; &quot;2019-04-11&quot; &quot;2019-05-09&quot;
 ## [11] &quot;2019-06-09&quot; &quot;2019-07-21&quot; &quot;2019-08-04&quot; &quot;2019-09-12&quot;</code></pre>
 <pre class="r"><code>#Subset data by dates 
-a1&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-04-15&quot; &amp; cc.sal.tide$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-05-18&quot; &amp; cc.sal.tide$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-06-08&quot; &amp; cc.sal.tide$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-07-13&quot; &amp; cc.sal.tide$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-10-06&quot; &amp; cc.sal.tide$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-12-01&quot; &amp; cc.sal.tide$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-12-22&quot; &amp; cc.sal.tide$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-01-14&quot; &amp; cc.sal.tide$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-02-10&quot; &amp; cc.sal.tide$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-03-10&quot; &amp; cc.sal.tide$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-04-10&quot; &amp; cc.sal.tide$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-05-22&quot; &amp; cc.sal.tide$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-06-05&quot; &amp; cc.sal.tide$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-07-14&quot; &amp; cc.sal.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-04-15&quot; &amp; cc.sal.tide$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-05-18&quot; &amp; cc.sal.tide$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-06-08&quot; &amp; cc.sal.tide$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-07-13&quot; &amp; cc.sal.tide$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-10-06&quot; &amp; cc.sal.tide$date &lt; &quot;2018-11-05&quot;,]
+a6&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-12-01&quot; &amp; cc.sal.tide$date &lt; &quot;2018-12-31&quot;,]
+a7&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2018-12-22&quot; &amp; cc.sal.tide$date &lt; &quot;2019-01-21&quot;,]
+a8&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-01-14&quot; &amp; cc.sal.tide$date &lt; &quot;2019-02-13&quot;,]
+a9&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-02-10&quot; &amp; cc.sal.tide$date &lt; &quot;2019-03-12&quot;,]
+a10&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-03-10&quot; &amp; cc.sal.tide$date &lt; &quot;2019-04-09&quot;,]
+a11&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-04-10&quot; &amp; cc.sal.tide$date &lt; &quot;2019-05-10&quot;,]
+a12&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-05-22&quot; &amp; cc.sal.tide$date &lt; &quot;2019-06-21&quot;,]
+a13&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-06-05&quot; &amp; cc.sal.tide$date &lt; &quot;2019-07-05&quot;,]
+a14&lt;- cc.sal.tide[cc.sal.tide$date &gt;= &quot;2019-07-14&quot; &amp; cc.sal.tide$date &lt; &quot;2019-08-13&quot;,]
+
 
 #median
 aa1&lt;-median(a1$salinity, na.rm=TRUE)
@@ -555,20 +556,21 @@ cc.daily.sum$daily.sal.range&lt;-cc.daily.sum$max.daily.sal - cc.daily.sum$min.d
 
 #Daily min 
 #subset dates 
-a1&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; cc.daily.sum$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; cc.daily.sum$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; cc.daily.sum$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; cc.daily.sum$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; cc.daily.sum$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; cc.daily.sum$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; cc.daily.sum$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; cc.daily.sum$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; cc.daily.sum$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; cc.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; cc.daily.sum$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; cc.daily.sum$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; cc.daily.sum$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; cc.daily.sum$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; cc.daily.sum$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; cc.daily.sum$date &lt; &quot;2018-11-05&quot;,]
+a6&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; cc.daily.sum$date &lt; &quot;2018-12-31&quot;,]
+a7&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; cc.daily.sum$date &lt; &quot;2019-01-21&quot;,]
+a8&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; cc.daily.sum$date &lt; &quot;2019-02-13&quot;,]
+a9&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-03-12&quot;,]
+a10&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a11&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-05-10&quot;,]
+a12&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; cc.daily.sum$date &lt; &quot;2019-06-21&quot;,]
+a13&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; cc.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a14&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; cc.daily.sum$date &lt; &quot;2019-08-13&quot;,]
+
 
 #median
 aa1&lt;-median(a1$min.daily.sal, na.rm=TRUE)
@@ -697,20 +699,21 @@ cc.ph.tide&lt;-read.csv(
 cc.ph.tide$date&lt;-as.Date(cc.ph.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
-a1&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-04-15&quot; &amp; cc.ph.tide$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-05-18&quot; &amp; cc.ph.tide$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-06-08&quot; &amp; cc.ph.tide$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-07-13&quot; &amp; cc.ph.tide$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-10-06&quot; &amp; cc.ph.tide$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-12-01&quot; &amp; cc.ph.tide$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-12-22&quot; &amp; cc.ph.tide$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-01-14&quot; &amp; cc.ph.tide$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-02-10&quot; &amp; cc.ph.tide$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-03-10&quot; &amp; cc.ph.tide$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-04-10&quot; &amp; cc.ph.tide$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-05-22&quot; &amp; cc.ph.tide$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-06-05&quot; &amp; cc.ph.tide$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-07-14&quot; &amp; cc.ph.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-04-15&quot; &amp; cc.ph.tide$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-05-18&quot; &amp; cc.ph.tide$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-06-08&quot; &amp; cc.ph.tide$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-07-13&quot; &amp; cc.ph.tide$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-10-06&quot; &amp; cc.ph.tide$date &lt; &quot;2018-11-05&quot;,]
+a6&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-12-01&quot; &amp; cc.ph.tide$date &lt; &quot;2018-12-31&quot;,]
+a7&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2018-12-22&quot; &amp; cc.ph.tide$date &lt; &quot;2019-01-21&quot;,]
+a8&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-01-14&quot; &amp; cc.ph.tide$date &lt; &quot;2019-02-13&quot;,]
+a9&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-02-10&quot; &amp; cc.ph.tide$date &lt; &quot;2019-03-12&quot;,]
+a10&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-03-10&quot; &amp; cc.ph.tide$date &lt; &quot;2019-04-09&quot;,]
+a11&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-04-10&quot; &amp; cc.ph.tide$date &lt; &quot;2019-05-10&quot;,]
+a12&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-05-22&quot; &amp; cc.ph.tide$date &lt; &quot;2019-06-21&quot;,]
+a13&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-06-05&quot; &amp; cc.ph.tide$date &lt; &quot;2019-07-05&quot;,]
+a14&lt;- cc.ph.tide[cc.ph.tide$date &gt;= &quot;2019-07-14&quot; &amp; cc.ph.tide$date &lt; &quot;2019-08-13&quot;,]
+
 
 #median 
 aa2&lt;-median(a2$ph, na.rm=TRUE)
@@ -750,20 +753,20 @@ cc.daily.sum&lt;-merge(cc.daily.sum, cc.daily.sum.ph, by=&quot;date&quot;, all=T
 
 #Daily min 
 #subset dates 
-a1&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2018-04-15&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2018-05-18&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2018-06-08&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2018-07-13&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2018-10-06&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2018-12-01&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2018-12-22&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2019-01-14&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2019-02-10&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2019-03-10&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2019-04-10&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2019-05-22&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2019-06-05&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc.daily.sum.ph[cc.daily.sum.ph$date &gt;= &quot;2019-07-14&quot; &amp; cc.daily.sum.ph$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; cc.daily.sum$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; cc.daily.sum$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; cc.daily.sum$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; cc.daily.sum$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; cc.daily.sum$date &lt; &quot;2018-11-05&quot;,]
+a6&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; cc.daily.sum$date &lt; &quot;2018-12-31&quot;,]
+a7&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; cc.daily.sum$date &lt; &quot;2019-01-21&quot;,]
+a8&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; cc.daily.sum$date &lt; &quot;2019-02-13&quot;,]
+a9&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-03-12&quot;,]
+a10&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a11&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-05-10&quot;,]
+a12&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; cc.daily.sum$date &lt; &quot;2019-06-21&quot;,]
+a13&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; cc.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a14&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; cc.daily.sum$date &lt; &quot;2019-08-13&quot;,]
 
 
 #median
@@ -892,20 +895,20 @@ cc.wtemp.tide&lt;-read.csv(
 cc.wtemp.tide$date&lt;-as.Date(cc.wtemp.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
-a1&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-04-15&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-05-18&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-06-08&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-07-13&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-10-06&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-12-01&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-12-22&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-01-14&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-02-10&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-03-10&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-04-10&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-05-22&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-06-05&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-07-14&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-04-15&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-05-18&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-06-08&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-07-13&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-10-06&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-11-05&quot;,]
+a6&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-12-01&quot; &amp; cc.wtemp.tide$date &lt; &quot;2018-12-31&quot;,]
+a7&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2018-12-22&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-01-21&quot;,]
+a8&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-01-14&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-02-13&quot;,]
+a9&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-02-10&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-03-12&quot;,]
+a10&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-03-10&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-04-09&quot;,]
+a11&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-04-10&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-05-10&quot;,]
+a12&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-05-22&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-06-21&quot;,]
+a13&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-06-05&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-07-05&quot;,]
+a14&lt;- cc.wtemp.tide[cc.wtemp.tide$date &gt;= &quot;2019-07-14&quot; &amp; cc.wtemp.tide$date &lt; &quot;2019-08-13&quot;,]
 
 
 #median
@@ -947,20 +950,20 @@ cc.daily.sum&lt;-merge(cc.daily.sum, cc.daily.sum.wt, by=&quot;date&quot;, all=T
 
 #daily min 
 #subset dates 
-a1&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-04-15&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-05-18&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-06-08&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-07-13&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-10-06&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-12-01&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-12-22&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-01-14&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-02-10&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-03-10&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-04-10&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-05-22&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-06-05&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-07-14&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-04-15&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-05-18&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-06-08&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-07-13&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-10-06&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2018-11-05&quot;,]
+a6&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-12-01&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2018-12-31&quot;,]
+a7&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2018-12-22&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-01-21&quot;,]
+a8&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-01-14&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-02-13&quot;,]
+a9&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-02-10&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-03-12&quot;,]
+a10&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-03-10&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-04-09&quot;,]
+a11&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-04-10&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-05-10&quot;,]
+a12&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-05-22&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-06-21&quot;,]
+a13&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-06-05&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-07-05&quot;,]
+a14&lt;- cc.daily.sum.wt[cc.daily.sum.wt$date &gt;= &quot;2019-07-14&quot; &amp; cc.daily.sum.wt$date &lt; &quot;2019-08-13&quot;,]
 
 
 #median
@@ -1082,20 +1085,20 @@ cc.daily.med.wt$date&lt;-as.Date(cc.daily.med.wt$date, format=c(&quot;%Y-%m-%d&q
 pc.cc&lt;-merge(pc.cc, cc.daily.med.wt[,c(&quot;date&quot;, &quot;daily.med.wt&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Now I’m coing to count “events” and adding them to the above dataframes. I’m having a hard time doing a loop or counting “3 consecutive days of salinity below x” so instead I’m going to just count “days with salinity below x” and use that for analysis. These counts will be subseted by survey dates as done above.</p>
 <p>Subset by survey dates</p>
-<pre class="r"><code>a1&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; cc.daily.sum$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; cc.daily.sum$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; cc.daily.sum$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; cc.daily.sum$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; cc.daily.sum$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; cc.daily.sum$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; cc.daily.sum$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; cc.daily.sum$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; cc.daily.sum$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; cc.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; cc.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<pre class="r"><code>a1&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; cc.daily.sum$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; cc.daily.sum$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; cc.daily.sum$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; cc.daily.sum$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; cc.daily.sum$date &lt; &quot;2018-11-05&quot;,]
+a6&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; cc.daily.sum$date &lt; &quot;2018-12-31&quot;,]
+a7&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; cc.daily.sum$date &lt; &quot;2019-01-21&quot;,]
+a8&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; cc.daily.sum$date &lt; &quot;2019-02-13&quot;,]
+a9&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-03-12&quot;,]
+a10&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a11&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; cc.daily.sum$date &lt; &quot;2019-05-10&quot;,]
+a12&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; cc.daily.sum$date &lt; &quot;2019-06-21&quot;,]
+a13&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; cc.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a14&lt;- cc.daily.sum[cc.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; cc.daily.sum$date &lt; &quot;2019-08-13&quot;,]</code></pre>
 <p>Number of days with daily maximum salinity less than 10</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;10, ])
 aa2&lt;-nrow(a2[a2$max.daily.sal&lt;10, ])
@@ -1264,21 +1267,22 @@ print(nd.eos$date)</code></pre>
 ##  [6] &quot;2018-12-05&quot; &quot;2019-01-30&quot; &quot;2019-02-20&quot; &quot;2019-03-15&quot; &quot;2019-04-11&quot;
 ## [11] &quot;2019-05-09&quot; &quot;2019-06-09&quot; &quot;2019-07-21&quot; &quot;2019-08-04&quot; &quot;2019-09-12&quot;</code></pre>
 <pre class="r"><code>#subset the salinity data by dates
-a1&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-04-15&quot; &amp; eos.sal.tide$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-05-18&quot; &amp; eos.sal.tide$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-06-08&quot; &amp; eos.sal.tide$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-07-13&quot; &amp; eos.sal.tide$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-08-11&quot; &amp; eos.sal.tide$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-10-06&quot; &amp; eos.sal.tide$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-12-01&quot; &amp; eos.sal.tide$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-12-22&quot; &amp; eos.sal.tide$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-01-14&quot; &amp; eos.sal.tide$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-02-10&quot; &amp; eos.sal.tide$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-03-10&quot; &amp; eos.sal.tide$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-04-10&quot; &amp; eos.sal.tide$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-05-22&quot; &amp; eos.sal.tide$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-06-05&quot; &amp; eos.sal.tide$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-07-14&quot; &amp; eos.sal.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-04-15&quot; &amp; eos.sal.tide$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-05-18&quot; &amp; eos.sal.tide$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-06-08&quot; &amp; eos.sal.tide$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-07-13&quot; &amp; eos.sal.tide$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-08-11&quot; &amp; eos.sal.tide$date &lt; &quot;2018-09-10&quot;,]
+a6&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-10-06&quot; &amp; eos.sal.tide$date &lt; &quot;2018-11-05&quot;,]
+a7&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-12-01&quot; &amp; eos.sal.tide$date &lt; &quot;2018-12-31&quot;,]
+a8&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2018-12-22&quot; &amp; eos.sal.tide$date &lt; &quot;2019-01-21&quot;,]
+a9&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-01-14&quot; &amp; eos.sal.tide$date &lt; &quot;2019-02-13&quot;,]
+a10&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-02-10&quot; &amp; eos.sal.tide$date &lt; &quot;2019-03-12&quot;,]
+a11&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-03-10&quot; &amp; eos.sal.tide$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-04-10&quot; &amp; eos.sal.tide$date &lt; &quot;2019-05-10&quot;,]
+a13&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-05-22&quot; &amp; eos.sal.tide$date &lt; &quot;2019-06-21&quot;,]
+a14&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-06-05&quot; &amp; eos.sal.tide$date &lt; &quot;2019-07-05&quot;,]
+a15&lt;- eos.sal.tide[eos.sal.tide$date &gt;= &quot;2019-07-14&quot; &amp; eos.sal.tide$date &lt; &quot;2019-08-13&quot;,]
+
 
 #median of these salinity periods
 aa1&lt;-median(a1$salinity, na.rm=TRUE)
@@ -1318,22 +1322,21 @@ eos.daily.sum$daily.sal.range&lt;-eos.daily.sum$max.daily.sal - eos.daily.sum$mi
 
 #Daily min 
 #subset dates 
-a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-09-12&quot;,]
-
+a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-10&quot;,]
+a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-11-05&quot;,]
+a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-31&quot;,]
+a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-21&quot;,]
+a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-13&quot;,]
+a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-12&quot;,]
+a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-10&quot;,]
+a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-21&quot;,]
+a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a15&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-13&quot;,]
 
 #median 
 aa1&lt;-median(a1$min.daily.sal, na.rm=TRUE)
@@ -1467,21 +1470,21 @@ eos.ph.tide&lt;-read.csv(
 eos.ph.tide$date&lt;-as.Date(eos.ph.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
-a1&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-04-15&quot; &amp; eos.ph.tide$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-05-18&quot; &amp; eos.ph.tide$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-06-08&quot; &amp; eos.ph.tide$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-07-13&quot; &amp; eos.ph.tide$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-08-11&quot; &amp; eos.ph.tide$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-10-06&quot; &amp; eos.ph.tide$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-12-01&quot; &amp; eos.ph.tide$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-12-22&quot; &amp; eos.ph.tide$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-01-14&quot; &amp; eos.ph.tide$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-02-10&quot; &amp; eos.ph.tide$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-03-10&quot; &amp; eos.ph.tide$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-04-10&quot; &amp; eos.ph.tide$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-05-22&quot; &amp; eos.ph.tide$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-06-05&quot; &amp; eos.ph.tide$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-07-14&quot; &amp; eos.ph.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-04-15&quot; &amp; eos.ph.tide$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-05-18&quot; &amp; eos.ph.tide$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-06-08&quot; &amp; eos.ph.tide$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-07-13&quot; &amp; eos.ph.tide$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-08-11&quot; &amp; eos.ph.tide$date &lt; &quot;2018-09-10&quot;,]
+a6&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-10-06&quot; &amp; eos.ph.tide$date &lt; &quot;2018-11-05&quot;,]
+a7&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-12-01&quot; &amp; eos.ph.tide$date &lt; &quot;2018-12-31&quot;,]
+a8&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2018-12-22&quot; &amp; eos.ph.tide$date &lt; &quot;2019-01-21&quot;,]
+a9&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-01-14&quot; &amp; eos.ph.tide$date &lt; &quot;2019-02-13&quot;,]
+a10&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-02-10&quot; &amp; eos.ph.tide$date &lt; &quot;2019-03-12&quot;,]
+a11&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-03-10&quot; &amp; eos.ph.tide$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-04-10&quot; &amp; eos.ph.tide$date &lt; &quot;2019-05-10&quot;,]
+a13&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-05-22&quot; &amp; eos.ph.tide$date &lt; &quot;2019-06-21&quot;,]
+a14&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-06-05&quot; &amp; eos.ph.tide$date &lt; &quot;2019-07-05&quot;,]
+a15&lt;- eos.ph.tide[eos.ph.tide$date &gt;= &quot;2019-07-14&quot; &amp; eos.ph.tide$date &lt; &quot;2019-08-13&quot;,]
 
 #median 
 aa1&lt;-median(a1$ph, na.rm=TRUE)
@@ -1524,22 +1527,21 @@ eos.daily.sum&lt;-merge(eos.daily.sum, eos.daily.sum.ph, by=&quot;date&quot;, al
 
 #Daily min 
 #subset dates 
-a1&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-09-12&quot;,]
-
+a1&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-09-10&quot;,]
+a6&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-11-05&quot;,]
+a7&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2018-12-31&quot;,]
+a8&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-01-21&quot;,]
+a9&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-02-13&quot;,]
+a10&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-03-12&quot;,]
+a11&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-05-10&quot;,]
+a13&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-06-21&quot;,]
+a14&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-07-05&quot;,]
+a15&lt;- eos.daily.sum.ph[eos.daily.sum.ph$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum.ph$date &lt; &quot;2019-08-13&quot;,]
 
 #median 
 aa1&lt;-median(a1$min.daily.ph, na.rm=TRUE)
@@ -1673,22 +1675,21 @@ eos.wtemp.tide&lt;-read.csv(
 eos.wtemp.tide$date&lt;-as.Date(eos.wtemp.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset data
-a1&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-04-15&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-05-18&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-06-08&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-07-13&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-08-11&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-10-06&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-12-01&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-12-22&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-01-14&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-02-10&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-03-10&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-04-10&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-05-22&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-06-05&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-07-14&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-09-12&quot;,]
-
+a1&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-04-15&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-05-18&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-06-08&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-07-13&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-08-11&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-09-10&quot;,]
+a6&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-10-06&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-11-05&quot;,]
+a7&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-12-01&quot; &amp; eos.wtemp.tide$date &lt; &quot;2018-12-31&quot;,]
+a8&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2018-12-22&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-01-21&quot;,]
+a9&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-01-14&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-02-13&quot;,]
+a10&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-02-10&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-03-12&quot;,]
+a11&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-03-10&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-04-10&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-05-10&quot;,]
+a13&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-05-22&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-06-21&quot;,]
+a14&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-06-05&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-07-05&quot;,]
+a15&lt;- eos.wtemp.tide[eos.wtemp.tide$date &gt;= &quot;2019-07-14&quot; &amp; eos.wtemp.tide$date &lt; &quot;2019-08-13&quot;,]
 
 
 #median 
@@ -1732,21 +1733,21 @@ eos.daily.sum&lt;-merge(eos.daily.sum, eos.daily.sum.wt, by=&quot;date&quot;, al
 
 #Daily min 
 #subset dates 
-a1&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-09-10&quot;,]
+a6&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-11-05&quot;,]
+a7&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2018-12-31&quot;,]
+a8&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-01-21&quot;,]
+a9&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-02-13&quot;,]
+a10&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-03-12&quot;,]
+a11&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-05-10&quot;,]
+a13&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-06-21&quot;,]
+a14&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-07-05&quot;,]
+a15&lt;- eos.daily.sum.wt[eos.daily.sum.wt$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum.wt$date &lt; &quot;2019-08-13&quot;,]
 
 #median 
 aa1&lt;-median(a1$min.daily.wt, na.rm=TRUE)
@@ -1872,21 +1873,21 @@ eos.daily.med.wt$date&lt;-as.Date(eos.daily.med.wt$date, format=c(&quot;%Y-%m-%d
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.daily.med.wt[,c(&quot;date&quot;, &quot;daily.med.wt&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Daily summaries and “monthly” summaries done. Time for occurances of events Subset by survey dates</p>
-<pre class="r"><code>a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<pre class="r"><code>a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-10&quot;,]
+a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-11-05&quot;,]
+a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-31&quot;,]
+a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-21&quot;,]
+a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-13&quot;,]
+a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-12&quot;,]
+a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-10&quot;,]
+a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-21&quot;,]
+a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a15&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-13&quot;,]</code></pre>
 <p>Daily maximum salinity less than 10</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;10, ])
 aa2&lt;-nrow(a2[a2$max.daily.sal&lt;10, ])
@@ -2059,22 +2060,22 @@ print(by.rb$date)</code></pre>
 ## [11] &quot;2019-04-09&quot; &quot;2019-05-08&quot; &quot;2019-06-08&quot; &quot;2019-07-20&quot; &quot;2019-08-04&quot;
 ## [16] &quot;2019-09-12&quot;</code></pre>
 <pre class="r"><code>#subset the salinity data by dates 
-a1&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-04-16&quot; &amp; rb.sal.tide$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-05-17&quot; &amp; rb.sal.tide$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-06-07&quot; &amp; rb.sal.tide$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-07-12&quot; &amp; rb.sal.tide$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-08-10&quot; &amp; rb.sal.tide$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-09-07&quot; &amp; rb.sal.tide$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-10-05&quot; &amp; rb.sal.tide$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-12-02&quot; &amp; rb.sal.tide$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-12-23&quot; &amp; rb.sal.tide$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-01-13&quot; &amp; rb.sal.tide$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-02-09&quot; &amp; rb.sal.tide$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-03-09&quot; &amp; rb.sal.tide$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-04-09&quot; &amp; rb.sal.tide$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-05-21&quot; &amp; rb.sal.tide$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-06-05&quot; &amp; rb.sal.tide$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-07-14&quot; &amp; rb.sal.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-04-16&quot; &amp; rb.sal.tide$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-05-17&quot; &amp; rb.sal.tide$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-06-07&quot; &amp; rb.sal.tide$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-07-12&quot; &amp; rb.sal.tide$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-08-10&quot; &amp; rb.sal.tide$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-09-07&quot; &amp; rb.sal.tide$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-10-05&quot; &amp; rb.sal.tide$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-12-02&quot; &amp; rb.sal.tide$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2018-12-23&quot; &amp; rb.sal.tide$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-01-13&quot; &amp; rb.sal.tide$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-02-09&quot; &amp; rb.sal.tide$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-03-09&quot; &amp; rb.sal.tide$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-04-09&quot; &amp; rb.sal.tide$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-05-21&quot; &amp; rb.sal.tide$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-06-05&quot; &amp; rb.sal.tide$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- rb.sal.tide[rb.sal.tide$date &gt;= &quot;2019-07-14&quot; &amp; rb.sal.tide$date &lt; &quot;2019-08-13&quot;,]
 
 #median
 aa1&lt;-median(a1$salinity, na.rm=TRUE)
@@ -2114,23 +2115,22 @@ rb.daily.sum$daily.sal.range&lt;-rb.daily.sum$max.daily.sal - rb.daily.sum$min.d
 
 #Daily min 
 #subset dates 
-a1&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; rb.daily.sum$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; rb.daily.sum$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; rb.daily.sum$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; rb.daily.sum$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; rb.daily.sum$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; rb.daily.sum$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; rb.daily.sum$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; rb.daily.sum$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; rb.daily.sum$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; rb.daily.sum$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; rb.daily.sum$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; rb.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; rb.daily.sum$date &lt; &quot;2019-09-12&quot;,]
-
+a1&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; rb.daily.sum$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; rb.daily.sum$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; rb.daily.sum$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; rb.daily.sum$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; rb.daily.sum$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; rb.daily.sum$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; rb.daily.sum$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; rb.daily.sum$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; rb.daily.sum$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; rb.daily.sum$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; rb.daily.sum$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; rb.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; rb.daily.sum$date &lt; &quot;2019-08-13&quot;,]
 
 #median
 aa1&lt;-median(a1$min.daily.sal, na.rm=TRUE)
@@ -2268,22 +2268,22 @@ rb.ph.tide$date&lt;-as.Date(rb.ph.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
 #subset dates 
-a1&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-04-16&quot; &amp; rb.ph.tide$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-05-17&quot; &amp; rb.ph.tide$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-06-07&quot; &amp; rb.ph.tide$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-07-12&quot; &amp; rb.ph.tide$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-08-10&quot; &amp; rb.ph.tide$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-09-07&quot; &amp; rb.ph.tide$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-10-05&quot; &amp; rb.ph.tide$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-12-02&quot; &amp; rb.ph.tide$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-12-23&quot; &amp; rb.ph.tide$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-01-13&quot; &amp; rb.ph.tide$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-02-09&quot; &amp; rb.ph.tide$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-03-09&quot; &amp; rb.ph.tide$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-04-09&quot; &amp; rb.ph.tide$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-05-21&quot; &amp; rb.ph.tide$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-06-05&quot; &amp; rb.ph.tide$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-07-14&quot; &amp; rb.ph.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-04-16&quot; &amp; rb.ph.tide$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-05-17&quot; &amp; rb.ph.tide$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-06-07&quot; &amp; rb.ph.tide$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-07-12&quot; &amp; rb.ph.tide$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-08-10&quot; &amp; rb.ph.tide$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-09-07&quot; &amp; rb.ph.tide$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-10-05&quot; &amp; rb.ph.tide$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-12-02&quot; &amp; rb.ph.tide$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2018-12-23&quot; &amp; rb.ph.tide$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-01-13&quot; &amp; rb.ph.tide$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-02-09&quot; &amp; rb.ph.tide$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-03-09&quot; &amp; rb.ph.tide$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-04-09&quot; &amp; rb.ph.tide$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-05-21&quot; &amp; rb.ph.tide$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-06-05&quot; &amp; rb.ph.tide$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- rb.ph.tide[rb.ph.tide$date &gt;= &quot;2019-07-14&quot; &amp; rb.ph.tide$date &lt; &quot;2019-08-13&quot;,]
 
 
 #median
@@ -2327,24 +2327,22 @@ rb.daily.sum&lt;-merge(rb.daily.sum, rb.daily.sum.ph, by=&quot;date&quot;, all=T
 
 #Daily min 
 #subset dates 
-a1&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-04-16&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-05-17&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-06-07&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-07-12&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-08-10&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-09-07&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-10-05&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-12-02&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-12-23&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-01-13&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-02-09&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-03-09&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-04-09&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-05-21&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-06-05&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-07-14&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-09-12&quot;,]
-
-
+a1&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-04-16&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-05-17&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-06-07&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-07-12&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-08-10&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-09-07&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-10-05&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-12-02&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2018-12-23&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-01-13&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-02-09&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-03-09&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-04-09&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-05-21&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-06-05&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- rb.daily.sum.ph[rb.daily.sum.ph$date &gt;= &quot;2019-07-14&quot; &amp; rb.daily.sum.ph$date &lt; &quot;2019-08-13&quot;,]
 
 #median
 aa1&lt;-median(a1$min.daily.ph, na.rm=TRUE)
@@ -2480,23 +2478,22 @@ rb.wtemp.tide&lt;-read.csv(
 rb.wtemp.tide$date&lt;-as.Date(rb.wtemp.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #subset
-a1&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-04-16&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-05-17&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-06-07&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-07-12&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-08-10&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-09-07&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-10-05&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-12-02&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-12-23&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-01-13&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-02-09&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-03-09&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-04-09&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-05-21&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-06-05&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-07-14&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-09-12&quot;,]
-
+a1&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-04-16&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-05-17&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-06-07&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-07-12&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-08-10&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-09-07&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-10-05&quot; &amp; rb.wtemp.tide$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-12-02&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2018-12-23&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-01-13&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-02-09&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-03-09&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-04-09&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-05-21&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-06-05&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- rb.wtemp.tide[rb.wtemp.tide$date &gt;= &quot;2019-07-14&quot; &amp; rb.wtemp.tide$date &lt; &quot;2019-08-13&quot;,]
 
 #median
 aa1&lt;-median(a1$water_temp, na.rm=TRUE)
@@ -2539,22 +2536,22 @@ rb.daily.sum&lt;-merge(rb.daily.sum, rb.daily.sum.wt, by=&quot;date&quot;, all=T
 
 #Daily min 
 #subset dates 
-a1&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-04-16&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-05-17&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-06-07&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-07-12&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-08-10&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-09-07&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-10-05&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-12-02&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-12-23&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-01-13&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-02-09&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-03-09&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-04-09&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-05-21&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-06-05&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-07-14&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-04-16&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-05-17&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-06-07&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-07-12&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-08-10&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-09-07&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-10-05&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-12-02&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2018-12-23&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-01-13&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-02-09&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-03-09&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-04-09&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-05-21&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-06-05&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- rb.daily.sum.wt[rb.daily.sum.wt$date &gt;= &quot;2019-07-14&quot; &amp; rb.daily.sum.wt$date &lt; &quot;2019-08-13&quot;,]
 
 #median
 aa1&lt;-median(a1$min.daily.wt, na.rm=TRUE)
@@ -2683,22 +2680,22 @@ rb.daily.med.wt$date&lt;-as.Date(rb.daily.med.wt$date, format=c(&quot;%Y-%m-%d&q
 by.rb&lt;-merge(by.rb, rb.daily.med.wt[,c(&quot;date&quot;, &quot;daily.med.wt&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Daily summary</p>
 <p>Subset by survey dates</p>
-<pre class="r"><code>a1&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; rb.daily.sum$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; rb.daily.sum$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; rb.daily.sum$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; rb.daily.sum$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; rb.daily.sum$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; rb.daily.sum$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; rb.daily.sum$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; rb.daily.sum$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; rb.daily.sum$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; rb.daily.sum$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; rb.daily.sum$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; rb.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; rb.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<pre class="r"><code>a1&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; rb.daily.sum$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; rb.daily.sum$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; rb.daily.sum$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; rb.daily.sum$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; rb.daily.sum$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; rb.daily.sum$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; rb.daily.sum$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; rb.daily.sum$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; rb.daily.sum$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; rb.daily.sum$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; rb.daily.sum$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; rb.daily.sum$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; rb.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- rb.daily.sum[rb.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; rb.daily.sum$date &lt; &quot;2019-08-13&quot;,]</code></pre>
 <p>Daily maximum salinity less than 10</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;10, ])
 aa2&lt;-nrow(a2[a2$max.daily.sal&lt;10, ])
@@ -2873,22 +2870,22 @@ print(hs.fp$date)</code></pre>
 ## [11] &quot;2019-04-09&quot; &quot;2019-05-08&quot; &quot;2019-06-08&quot; &quot;2019-07-20&quot; &quot;2019-08-04&quot;
 ## [16] &quot;2019-09-12&quot;</code></pre>
 <pre class="r"><code>#Subset the data by dates 
-a1&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-04-16&quot; &amp; fp.sal.tide$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-05-17&quot; &amp; fp.sal.tide$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-06-07&quot; &amp; fp.sal.tide$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-07-12&quot; &amp; fp.sal.tide$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-08-10&quot; &amp; fp.sal.tide$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-09-07&quot; &amp; fp.sal.tide$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-10-05&quot; &amp; fp.sal.tide$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-12-02&quot; &amp; fp.sal.tide$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-12-23&quot; &amp; fp.sal.tide$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-01-13&quot; &amp; fp.sal.tide$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-02-09&quot; &amp; fp.sal.tide$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-03-09&quot; &amp; fp.sal.tide$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-04-09&quot; &amp; fp.sal.tide$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-05-21&quot; &amp; fp.sal.tide$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-06-05&quot; &amp; fp.sal.tide$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-07-14&quot; &amp; fp.sal.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-04-16&quot; &amp; fp.sal.tide$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-05-17&quot; &amp; fp.sal.tide$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-06-07&quot; &amp; fp.sal.tide$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-07-12&quot; &amp; fp.sal.tide$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-08-10&quot; &amp; fp.sal.tide$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-09-07&quot; &amp; fp.sal.tide$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-10-05&quot; &amp; fp.sal.tide$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-12-02&quot; &amp; fp.sal.tide$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2018-12-23&quot; &amp; fp.sal.tide$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-01-13&quot; &amp; fp.sal.tide$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-02-09&quot; &amp; fp.sal.tide$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-03-09&quot; &amp; fp.sal.tide$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-04-09&quot; &amp; fp.sal.tide$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-05-21&quot; &amp; fp.sal.tide$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-06-05&quot; &amp; fp.sal.tide$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- fp.sal.tide[fp.sal.tide$date &gt;= &quot;2019-07-14&quot; &amp; fp.sal.tide$date &lt; &quot;2019-08-13&quot;,]
 
 
 #median 
@@ -2930,22 +2927,22 @@ fp.daily.sum$daily.sal.range&lt;-fp.daily.sum$max.daily.sal - fp.daily.sum$min.d
 
 #Daily min 
 #subset dates 
-a1&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; fp.daily.sum$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; fp.daily.sum$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; fp.daily.sum$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; fp.daily.sum$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; fp.daily.sum$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; fp.daily.sum$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; fp.daily.sum$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; fp.daily.sum$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; fp.daily.sum$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; fp.daily.sum$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; fp.daily.sum$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; fp.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; fp.daily.sum$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; fp.daily.sum$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; fp.daily.sum$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; fp.daily.sum$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; fp.daily.sum$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; fp.daily.sum$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; fp.daily.sum$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; fp.daily.sum$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; fp.daily.sum$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; fp.daily.sum$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; fp.daily.sum$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; fp.daily.sum$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; fp.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; fp.daily.sum$date &lt; &quot;2019-08-13&quot;,]
 
 #median 
 aa1&lt;-median(a1$min.daily.sal, na.rm=TRUE)
@@ -3100,22 +3097,22 @@ fp.wtemp.tide&lt;-read.csv(
 fp.wtemp.tide$date&lt;-as.Date(fp.wtemp.tide$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #Subset the data by dates 
-a1&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-04-16&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-05-17&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-06-07&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-07-12&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-08-10&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-09-07&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-10-05&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-12-02&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-12-23&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-01-13&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-02-09&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-03-09&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-04-09&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-05-21&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-06-05&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-07-14&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-04-16&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-05-17&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-06-07&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-07-12&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-08-10&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-09-07&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-10-05&quot; &amp; fp.wtemp.tide$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-12-02&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2018-12-23&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-01-13&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-02-09&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-03-09&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-04-09&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-05-21&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-06-05&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- fp.wtemp.tide[fp.wtemp.tide$date &gt;= &quot;2019-07-14&quot; &amp; fp.wtemp.tide$date &lt; &quot;2019-08-13&quot;,]
 
 
 #median 
@@ -3159,22 +3156,22 @@ fp.daily.sum&lt;-merge(fp.daily.sum, fp.daily.sum.wt, by=&quot;date&quot;, all=T
 
 #Daily min 
 #subset dates 
-a1&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-04-16&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-05-17&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-06-07&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-07-12&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-08-10&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-09-07&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-10-05&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-12-02&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-12-23&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-01-13&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-02-09&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-03-09&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-04-09&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-05-21&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-06-05&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-07-14&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-04-16&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-05-17&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-06-07&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-07-12&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-08-10&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-09-07&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-10-05&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-12-02&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2018-12-23&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-01-13&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-02-09&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-03-09&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-04-09&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-05-21&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-06-05&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- fp.daily.sum.wt[fp.daily.sum.wt$date &gt;= &quot;2019-07-14&quot; &amp; fp.daily.sum.wt$date &lt; &quot;2019-08-13&quot;,]
 
 #median 
 aa1&lt;-median(a1$min.daily.wt, na.rm=TRUE)
@@ -3302,22 +3299,22 @@ fp.daily.med.wt$date&lt;-as.Date(fp.daily.med.wt$date, format=c(&quot;%Y-%m-%d&q
 #merge dfs
 hs.fp&lt;-merge(hs.fp, fp.daily.med.wt, hs=&quot;date&quot;)</code></pre>
 <p>Daily summary Subset hs survey dates</p>
-<pre class="r"><code>a1&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; fp.daily.sum$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; fp.daily.sum$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; fp.daily.sum$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; fp.daily.sum$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; fp.daily.sum$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; fp.daily.sum$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; fp.daily.sum$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; fp.daily.sum$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; fp.daily.sum$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; fp.daily.sum$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; fp.daily.sum$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; fp.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; fp.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<pre class="r"><code>a1&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; fp.daily.sum$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; fp.daily.sum$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; fp.daily.sum$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; fp.daily.sum$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; fp.daily.sum$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; fp.daily.sum$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; fp.daily.sum$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; fp.daily.sum$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; fp.daily.sum$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; fp.daily.sum$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; fp.daily.sum$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; fp.daily.sum$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; fp.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- fp.daily.sum[fp.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; fp.daily.sum$date &lt; &quot;2019-08-13&quot;,]</code></pre>
 <p>Daily maximum salinity less than 10</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.sal&lt;10, ])
 aa2&lt;-nrow(a2[a2$max.daily.sal&lt;10, ])
@@ -3410,20 +3407,20 @@ pc&lt;-subset(field, field$site == &quot;pc.cc&quot;)
 pc$date&lt;-as.Date(pc$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #Subset air data by dates 
-a1&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-04-15&quot; &amp; eos.air.tide$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-05-18&quot; &amp; eos.air.tide$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-06-08&quot; &amp; eos.air.tide$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-07-13&quot; &amp; eos.air.tide$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-10-06&quot; &amp; eos.air.tide$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-12-01&quot; &amp; eos.air.tide$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-12-22&quot; &amp; eos.air.tide$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-01-14&quot; &amp; eos.air.tide$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-02-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-03-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-04-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-05-22&quot; &amp; eos.air.tide$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-06-05&quot; &amp; eos.air.tide$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-07-14&quot; &amp; eos.air.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-04-15&quot; &amp; eos.air.tide$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-05-18&quot; &amp; eos.air.tide$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-06-08&quot; &amp; eos.air.tide$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-07-13&quot; &amp; eos.air.tide$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-10-06&quot; &amp; eos.air.tide$date &lt; &quot;2018-11-05&quot;,]
+a6&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-12-01&quot; &amp; eos.air.tide$date &lt; &quot;2018-12-31&quot;,]
+a7&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-12-22&quot; &amp; eos.air.tide$date &lt; &quot;2019-01-21&quot;,]
+a8&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-01-14&quot; &amp; eos.air.tide$date &lt; &quot;2019-02-13&quot;,]
+a9&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-02-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-03-12&quot;,]
+a10&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-03-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-04-09&quot;,]
+a11&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-04-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-05-10&quot;,]
+a12&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-05-22&quot; &amp; eos.air.tide$date &lt; &quot;2019-06-21&quot;,]
+a13&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-06-05&quot; &amp; eos.air.tide$date &lt; &quot;2019-07-05&quot;,]
+a14&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-07-14&quot; &amp; eos.air.tide$date &lt; &quot;2019-08-13&quot;,]
 
 
 #median air temp between field surveys
@@ -3463,20 +3460,20 @@ eos.daily.sum$daily.air.range&lt;-eos.daily.sum$max.daily.air - eos.daily.sum$mi
 
 #Daily min 
 #subset dates 
-a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-11-05&quot;,]
+a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-31&quot;,]
+a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-21&quot;,]
+a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-13&quot;,]
+a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-12&quot;,]
+a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-10&quot;,]
+a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-21&quot;,]
+a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-13&quot;,]
 
 
 #median
@@ -3598,20 +3595,20 @@ eos.daily.med.air$date&lt;-as.Date(eos.daily.med.air$date, format=c(&quot;%Y-%m-
 #merge dfs
 pc.eos&lt;-merge(pc.eos, eos.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Subset by survey dates</p>
-<pre class="r"><code>a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-05&quot;,]
-a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-30&quot;,]
-a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-20&quot;,]
-a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-15&quot;,]
-a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-11&quot;,]
-a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-09&quot;,]
-a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-09&quot;,]
-a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-21&quot;,]
-a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<pre class="r"><code>a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-11-05&quot;,]
+a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-31&quot;,]
+a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-21&quot;,]
+a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-13&quot;,]
+a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-12&quot;,]
+a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-10&quot;,]
+a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-21&quot;,]
+a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-13&quot;,]</code></pre>
 <p>Number of days with daily maximum air temperature greater than 26C</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.air&gt;26, ])
 aa2&lt;-nrow(a2[a2$max.daily.air&gt;26, ])
@@ -3655,21 +3652,22 @@ nd&lt;-subset(field, field$site == &quot;nd.eos&quot;)
 nd$date&lt;-as.Date(nd$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #Subset air data by dates between surveys
-a1&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-04-15&quot; &amp; eos.air.tide$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-05-18&quot; &amp; eos.air.tide$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-06-08&quot; &amp; eos.air.tide$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-07-13&quot; &amp; eos.air.tide$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-08-11&quot; &amp; eos.air.tide$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-10-06&quot; &amp; eos.air.tide$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-12-01&quot; &amp; eos.air.tide$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-12-22&quot; &amp; eos.air.tide$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-01-14&quot; &amp; eos.air.tide$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-02-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-03-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-04-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-05-22&quot; &amp; eos.air.tide$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-06-05&quot; &amp; eos.air.tide$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-07-14&quot; &amp; eos.air.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-04-15&quot; &amp; eos.air.tide$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-05-18&quot; &amp; eos.air.tide$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-06-08&quot; &amp; eos.air.tide$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-07-13&quot; &amp; eos.air.tide$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-08-11&quot; &amp; eos.air.tide$date &lt; &quot;2018-09-10&quot;,]
+a6&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-10-06&quot; &amp; eos.air.tide$date &lt; &quot;2018-11-05&quot;,]
+a7&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-12-01&quot; &amp; eos.air.tide$date &lt; &quot;2018-12-31&quot;,]
+a8&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2018-12-22&quot; &amp; eos.air.tide$date &lt; &quot;2019-01-21&quot;,]
+a9&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-01-14&quot; &amp; eos.air.tide$date &lt; &quot;2019-02-13&quot;,]
+a10&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-02-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-03-12&quot;,]
+a11&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-03-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-04-10&quot; &amp; eos.air.tide$date &lt; &quot;2019-05-10&quot;,]
+a13&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-05-22&quot; &amp; eos.air.tide$date &lt; &quot;2019-06-21&quot;,]
+a14&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-06-05&quot; &amp; eos.air.tide$date &lt; &quot;2019-07-05&quot;,]
+a15&lt;- eos.air.tide[eos.air.tide$date &gt;= &quot;2019-07-14&quot; &amp; eos.air.tide$date &lt; &quot;2019-08-13&quot;,]
+
 #median air temp between field surveys
 aa1&lt;-median(a1$air_temperature, na.rm=TRUE)
 aa2&lt;-median(a2$air_temperature, na.rm=TRUE)
@@ -3709,21 +3707,21 @@ eos.daily.sum$daily.air.range&lt;-eos.daily.sum$max.daily.air - eos.daily.sum$mi
 
 #Daily min 
 #subset dates 
-a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-10&quot;,]
+a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-11-05&quot;,]
+a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-31&quot;,]
+a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-21&quot;,]
+a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-13&quot;,]
+a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-12&quot;,]
+a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-10&quot;,]
+a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-21&quot;,]
+a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a15&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-13&quot;,]
 
 #median
 aa1&lt;-median(a1$min.daily.air, na.rm=TRUE)
@@ -3850,21 +3848,21 @@ eos.daily.med.air$date&lt;-as.Date(eos.daily.med.air$date, format=c(&quot;%Y-%m-
 #merge dfs
 nd.eos&lt;-merge(nd.eos, eos.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Subset by survey dates</p>
-<pre class="r"><code>a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-14&quot;,]
-a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-17&quot;,]
-a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-07&quot;,]
-a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-11&quot;,]
-a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-10-10&quot;,]
-a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-05&quot;,]
-a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-30&quot;,]
-a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-20&quot;,]
-a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-15&quot;,]
-a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-11&quot;,]
-a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-09&quot;,]
-a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-09&quot;,]
-a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-21&quot;,]
-a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a15&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<pre class="r"><code>a1&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-04-15&quot; &amp; eos.daily.sum$date &lt; &quot;2018-05-15&quot;,]
+a2&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-05-18&quot; &amp; eos.daily.sum$date &lt; &quot;2018-06-17&quot;,]
+a3&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-06-08&quot; &amp; eos.daily.sum$date &lt; &quot;2018-07-08&quot;,]
+a4&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-07-13&quot; &amp; eos.daily.sum$date &lt; &quot;2018-08-12&quot;,]
+a5&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-08-11&quot; &amp; eos.daily.sum$date &lt; &quot;2018-09-10&quot;,]
+a6&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-10-06&quot; &amp; eos.daily.sum$date &lt; &quot;2018-11-05&quot;,]
+a7&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-01&quot; &amp; eos.daily.sum$date &lt; &quot;2018-12-31&quot;,]
+a8&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2018-12-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-01-21&quot;,]
+a9&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-01-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-02-13&quot;,]
+a10&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-02-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-03-12&quot;,]
+a11&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-03-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-04-09&quot;,]
+a12&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-04-10&quot; &amp; eos.daily.sum$date &lt; &quot;2019-05-10&quot;,]
+a13&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-05-22&quot; &amp; eos.daily.sum$date &lt; &quot;2019-06-21&quot;,]
+a14&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; eos.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a15&lt;- eos.daily.sum[eos.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; eos.daily.sum$date &lt; &quot;2019-08-13&quot;,]</code></pre>
 <p>Daily maximum air temperature greater than 26C</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.air&gt;26, ])
 aa2&lt;-nrow(a2[a2$max.daily.air&gt;26, ])
@@ -3908,22 +3906,22 @@ by&lt;-subset(field, field$site == &quot;by.rb&quot;)
 by$date&lt;-as.Date(by$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #Subset air data by dates between surveys
-a1&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-04-16&quot; &amp; gg.air.tide$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-05-17&quot; &amp; gg.air.tide$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-06-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-07-12&quot; &amp; gg.air.tide$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-08-10&quot; &amp; gg.air.tide$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-09-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-10-05&quot; &amp; gg.air.tide$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-02&quot; &amp; gg.air.tide$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-23&quot; &amp; gg.air.tide$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-01-13&quot; &amp; gg.air.tide$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-02-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-03-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-04-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-05-21&quot; &amp; gg.air.tide$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-06-05&quot; &amp; gg.air.tide$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-07-14&quot; &amp; gg.air.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-04-16&quot; &amp; gg.air.tide$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-05-17&quot; &amp; gg.air.tide$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-06-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-07-12&quot; &amp; gg.air.tide$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-08-10&quot; &amp; gg.air.tide$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-09-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-10-05&quot; &amp; gg.air.tide$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-02&quot; &amp; gg.air.tide$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-23&quot; &amp; gg.air.tide$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-01-13&quot; &amp; gg.air.tide$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-02-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-03-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-04-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-05-21&quot; &amp; gg.air.tide$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-06-05&quot; &amp; gg.air.tide$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-07-14&quot; &amp; gg.air.tide$date &lt; &quot;2019-08-13&quot;,]
 
 #median air temp between field surveys
 aa1&lt;-median(a1$air_temp, na.rm=TRUE)
@@ -3964,22 +3962,22 @@ gg.daily.sum$daily.air.range&lt;-gg.daily.sum$max.daily.air - gg.daily.sum$min.d
 
 #Daily min 
 #subset dates 
-a1&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; gg.daily.sum$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; gg.daily.sum$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; gg.daily.sum$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; gg.daily.sum$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; gg.daily.sum$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; gg.daily.sum$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; gg.daily.sum$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; gg.daily.sum$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; gg.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; gg.daily.sum$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; gg.daily.sum$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; gg.daily.sum$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; gg.daily.sum$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; gg.daily.sum$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; gg.daily.sum$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; gg.daily.sum$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; gg.daily.sum$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; gg.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; gg.daily.sum$date &lt; &quot;2019-08-13&quot;,]
 
 
 #median
@@ -4112,22 +4110,22 @@ gg.daily.med.air$date&lt;-as.Date(gg.daily.med.air$date, format=c(&quot;%Y-%m-%d
 #merge dfs
 by.gg&lt;-merge(by.gg, gg.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], by=&quot;date&quot;)</code></pre>
 <p>Subset by survey dates</p>
-<pre class="r"><code>a1&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; gg.daily.sum$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; gg.daily.sum$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; gg.daily.sum$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; gg.daily.sum$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; gg.daily.sum$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; gg.daily.sum$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; gg.daily.sum$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; gg.daily.sum$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; gg.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; gg.daily.sum$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<pre class="r"><code>a1&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; gg.daily.sum$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; gg.daily.sum$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; gg.daily.sum$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; gg.daily.sum$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; gg.daily.sum$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; gg.daily.sum$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; gg.daily.sum$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; gg.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; gg.daily.sum$date &lt; &quot;2019-08-13&quot;,]</code></pre>
 <p>Number of days with daily maximum air temperature greater than 26C</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.air&gt;26, ])
 aa2&lt;-nrow(a2[a2$max.daily.air&gt;26, ])
@@ -4169,22 +4167,22 @@ hs&lt;-subset(field, field$site == &quot;hs.fp&quot;)
 hs$date&lt;-as.Date(hs$date, format=c(&quot;%Y-%m-%d&quot;))
 
 #Subset air data hs dates between surveys
-a1&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-04-16&quot; &amp; gg.air.tide$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-05-17&quot; &amp; gg.air.tide$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-06-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-07-12&quot; &amp; gg.air.tide$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-08-10&quot; &amp; gg.air.tide$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-09-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-10-05&quot; &amp; gg.air.tide$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-02&quot; &amp; gg.air.tide$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-23&quot; &amp; gg.air.tide$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-01-13&quot; &amp; gg.air.tide$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-02-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-03-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-04-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-05-21&quot; &amp; gg.air.tide$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-06-05&quot; &amp; gg.air.tide$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-07-14&quot; &amp; gg.air.tide$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-04-16&quot; &amp; gg.air.tide$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-05-17&quot; &amp; gg.air.tide$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-06-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-07-12&quot; &amp; gg.air.tide$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-08-10&quot; &amp; gg.air.tide$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-09-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-10-05&quot; &amp; gg.air.tide$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-02&quot; &amp; gg.air.tide$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-23&quot; &amp; gg.air.tide$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-01-13&quot; &amp; gg.air.tide$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-02-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-03-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-04-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-05-21&quot; &amp; gg.air.tide$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-06-05&quot; &amp; gg.air.tide$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-07-14&quot; &amp; gg.air.tide$date &lt; &quot;2019-08-13&quot;,]
 
 
 #median air temp between field surveys
@@ -4226,22 +4224,22 @@ gg.daily.sum$daily.air.range&lt;-gg.daily.sum$max.daily.air - gg.daily.sum$min.d
 
 #Daily min 
 #subset dates 
-a1&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; gg.daily.sum$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; gg.daily.sum$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; gg.daily.sum$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; gg.daily.sum$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; gg.daily.sum$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; gg.daily.sum$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; gg.daily.sum$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; gg.daily.sum$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; gg.daily.sum$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; gg.daily.sum$date &lt; &quot;2019-09-12&quot;,]
+a1&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-04-16&quot; &amp; gg.daily.sum$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-05-17&quot; &amp; gg.daily.sum$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-06-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-07-12&quot; &amp; gg.daily.sum$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-08-10&quot; &amp; gg.daily.sum$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-09-07&quot; &amp; gg.daily.sum$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-10-05&quot; &amp; gg.daily.sum$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-02&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2018-12-23&quot; &amp; gg.daily.sum$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-01-13&quot; &amp; gg.daily.sum$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-02-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-03-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-04-09&quot; &amp; gg.daily.sum$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-05-21&quot; &amp; gg.daily.sum$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-06-05&quot; &amp; gg.daily.sum$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- gg.daily.sum[gg.daily.sum$date &gt;= &quot;2019-07-14&quot; &amp; gg.daily.sum$date &lt; &quot;2019-08-13&quot;,]
 
 #median
 aa1&lt;-median(a1$min.daily.air, na.rm=TRUE)
@@ -4373,22 +4371,22 @@ gg.daily.med.air$date&lt;-as.Date(gg.daily.med.air$date, format=c(&quot;%Y-%m-%d
 #merge dfs
 hs.gg&lt;-merge(hs.gg, gg.daily.med.air[,c(&quot;date&quot;, &quot;daily.med.air&quot;)], hs=&quot;date&quot;)</code></pre>
 <p>Subset hs survey dates</p>
-<pre class="r"><code>a1&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-04-16&quot; &amp; gg.air.tide$date &lt; &quot;2018-06-15&quot;,]
-a2&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-05-17&quot; &amp; gg.air.tide$date &lt; &quot;2018-07-16&quot;,]
-a3&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-06-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-08-06&quot;,]
-a4&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-07-12&quot; &amp; gg.air.tide$date &lt; &quot;2018-09-10&quot;,]
-a5&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-08-10&quot; &amp; gg.air.tide$date &lt; &quot;2018-10-09&quot;,]
-a6&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-09-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-11-06&quot;,]
-a7&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-10-05&quot; &amp; gg.air.tide$date &lt; &quot;2018-12-04&quot;,]
-a8&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-02&quot; &amp; gg.air.tide$date &lt; &quot;2019-01-31&quot;,]
-a9&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-23&quot; &amp; gg.air.tide$date &lt; &quot;2019-02-21&quot;,]
-a10&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-01-13&quot; &amp; gg.air.tide$date &lt; &quot;2019-03-14&quot;,]
-a11&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-02-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-04-09&quot;,]
-a12&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-03-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-05-08&quot;,]
-a13&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-04-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-06-08&quot;,]
-a14&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-05-21&quot; &amp; gg.air.tide$date &lt; &quot;2019-07-20&quot;,]
-a15&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-06-05&quot; &amp; gg.air.tide$date &lt; &quot;2019-08-04&quot;,]
-a16&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-07-14&quot; &amp; gg.air.tide$date &lt; &quot;2019-09-12&quot;,]</code></pre>
+<pre class="r"><code>a1&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-04-16&quot; &amp; gg.air.tide$date &lt; &quot;2018-05-16&quot;,]
+a2&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-05-17&quot; &amp; gg.air.tide$date &lt; &quot;2018-06-16&quot;,]
+a3&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-06-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-07-07&quot;,]
+a4&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-07-12&quot; &amp; gg.air.tide$date &lt; &quot;2018-08-11&quot;,]
+a5&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-08-10&quot; &amp; gg.air.tide$date &lt; &quot;2018-09-09&quot;,]
+a6&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-09-07&quot; &amp; gg.air.tide$date &lt; &quot;2018-10-07&quot;,]
+a7&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-10-05&quot; &amp; gg.air.tide$date &lt; &quot;2018-11-04&quot;,]
+a8&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-02&quot; &amp; gg.air.tide$date &lt; &quot;2019-01-01&quot;,]
+a9&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2018-12-23&quot; &amp; gg.air.tide$date &lt; &quot;2019-01-22&quot;,]
+a10&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-01-13&quot; &amp; gg.air.tide$date &lt; &quot;2019-02-12&quot;,]
+a11&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-02-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-03-10&quot;,]
+a12&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-03-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-04-08&quot;,]
+a13&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-04-09&quot; &amp; gg.air.tide$date &lt; &quot;2019-05-09&quot;,]
+a14&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-05-21&quot; &amp; gg.air.tide$date &lt; &quot;2019-06-20&quot;,]
+a15&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-06-05&quot; &amp; gg.air.tide$date &lt; &quot;2019-07-05&quot;,]
+a16&lt;- gg.air.tide[gg.air.tide$date &gt;= &quot;2019-07-14&quot; &amp; gg.air.tide$date &lt; &quot;2019-08-13&quot;,]</code></pre>
 <p>Daily maximum air temperature greater than 26C</p>
 <pre class="r"><code>aa1&lt;-nrow(a1[a1$max.daily.air&gt;26, ])
 aa2&lt;-nrow(a2[a2$max.daily.air&gt;26, ])
@@ -4428,9 +4426,9 @@ hs.gg$site&lt;-&quot;hs.fp&quot;
 #combine
 all&lt;-dplyr::bind_rows(pc.eos, nd.eos, by.gg, hs.gg)</code></pre>
 </div>
-<div id="adding-adult-density-from-prior-month" class="section level4">
-<h4>Adding adult density from prior month</h4>
-<p>Probably a cleaner way of doing this but this works. It’s not a large data set so this is doable.</p>
+<div id="adding-adult-density-from-two-months-prior-to-field-survey" class="section level4">
+<h4>Adding adult density from two months prior to field survey</h4>
+<p>Probably a cleaner way of doing this but this works. It’s not a large data set so this is doable. We didn’t count adult and juvenile density separately the fist month (NA).</p>
 <pre class="r"><code>#remove everthing except for &quot;all&quot; df
 rm(list=setdiff(ls(), &quot;all&quot;))
 
@@ -4443,21 +4441,22 @@ hs&lt;-subset(all, all$site == &quot;hs.fp&quot;)</code></pre>
 <pre class="r"><code>#print adult density 
 print(pc$no.large.fuc.q)</code></pre>
 <pre><code>##  [1]   NA  3.2 15.4  4.3 13.5  8.8 15.0 13.2 11.4  8.9  2.9  1.7  4.4  3.1</code></pre>
-<pre class="r"><code>#Copy and list printed values lagging the values by one month
+<pre class="r"><code>#Copy and list printed values lagging the values by two months
 aa1&lt;-&quot;NA&quot;
 aa2&lt;-&quot;NA&quot;
-aa3&lt;-&quot;3.2&quot;
-aa4&lt;-&quot;15.4&quot;
-aa5&lt;-&quot;4.3&quot;
-aa6&lt;-&quot;13.5&quot;
-aa7&lt;-&quot;8.8&quot;
-aa8&lt;-&quot;15.0&quot;
-aa9&lt;-&quot;13.2&quot;
-aa10&lt;-&quot;11.4&quot;
-aa11&lt;-&quot;8.9&quot;
-aa12&lt;-&quot;2.9&quot;
-aa13&lt;-&quot;1.7&quot;
-aa14&lt;-&quot;4.4&quot;
+aa3&lt;-&quot;NA&quot;
+aa4&lt;-&quot;3.2&quot;
+aa5&lt;-&quot;15.4&quot;
+aa6&lt;-&quot;4.3&quot;
+aa7&lt;-&quot;13.5&quot;
+aa8&lt;-&quot;8.8&quot;
+aa9&lt;-&quot;15.0&quot;
+aa10&lt;-&quot;13.2&quot;
+aa11&lt;-&quot;11.4&quot;
+aa12&lt;-&quot;8.9&quot;
+aa13&lt;-&quot;2.9&quot;
+aa14&lt;-&quot;1.7&quot;
+
 
 #string these values to a data frame. Using field surveys dates for this site
 pc.den&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;, &#39;2018-09-11&#39;, &#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,            &#39;2019-03-15&#39;,&#39;2019-04-11&#39;,&#39;2019-05-09&#39;,&#39;2019-06-09&#39;,&#39;2019-07-21&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14))
@@ -4473,27 +4472,28 @@ pc&lt;-merge(pc, pc.den[,c(&quot;date&quot;, &quot;lag.no.large.fuc.q&quot;)], b
 
 #checking that it worked before doing the same for the other field sites
 check&lt;-pc %&gt;% select(date, no.large.fuc.q, lag.no.large.fuc.q)</code></pre>
-<p>Perfect! Now doing the same for all other sites.</p>
+<p>Perfect, Now doing the same for all other sites.</p>
 <p>Point Chauncy</p>
 <pre class="r"><code>#print adult density 
 print(nd$no.large.fuc.q)</code></pre>
 <pre><code>##  [1]   NA 12.4 22.9  5.2  3.0  5.2 12.1  2.7  4.6  7.9  8.9  5.2  2.6  2.7  1.9</code></pre>
-<pre class="r"><code>#Copy and list printed values lagging the values by one month
+<pre class="r"><code>#Copy and list printed values lagging the values by two months
 aa1&lt;-&quot;NA&quot;
 aa2&lt;-&quot;NA&quot;
-aa3&lt;-&quot;12.4&quot;
-aa4&lt;-&quot;22.9&quot;
-aa5&lt;-&quot;5.2&quot;
-aa6&lt;-&quot;3.0&quot;
-aa7&lt;-&quot;5.2&quot;
-aa8&lt;-&quot;12.1&quot;
-aa9&lt;-&quot;2.7&quot;
-aa10&lt;-&quot;4.6&quot;
-aa11&lt;-&quot;7.9&quot;
-aa12&lt;-&quot;8.9&quot;
-aa13&lt;-&quot;5.2&quot;
-aa14&lt;-&quot;2.6&quot;
-aa15&lt;-&quot;2.7&quot;
+aa3&lt;-&quot;NA&quot;
+aa4&lt;-&quot;12.4&quot;
+aa5&lt;-&quot;22.9&quot;
+aa6&lt;-&quot;5.2&quot;
+aa7&lt;-&quot;3.0&quot;
+aa8&lt;-&quot;5.2&quot;
+aa9&lt;-&quot;12.1&quot;
+aa10&lt;-&quot;2.7&quot;
+aa11&lt;-&quot;4.6&quot;
+aa12&lt;-&quot;7.9&quot;
+aa13&lt;-&quot;8.9&quot;
+aa14&lt;-&quot;5.2&quot;
+aa15&lt;-&quot;2.6&quot;
+
 
 #string these values to a data frame. Using field surveys dates for this site
 nd.den&lt;-list(c(&#39;2018-06-14&#39;,&#39;2018-07-17&#39;,&#39;2018-08-07&#39;,&#39;2018-09-11&#39;,&#39;2018-10-10&#39;,&#39;2018-12-05&#39;,&#39;2019-01-30&#39;,&#39;2019-02-20&#39;,&#39;2019-03-15&#39;, &#39;2019-04-11&#39;, &#39;2019-05-09&#39;, &#39;2019-06-09&#39;, &#39;2019-07-21&#39;, &#39;2019-08-04&#39;, &#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13, aa14, aa15))
@@ -4515,23 +4515,24 @@ check&lt;-nd %&gt;% select(date, no.large.fuc.q, lag.no.large.fuc.q)</code></pre
 print(by$no.large.fuc.q)</code></pre>
 <pre><code>##  [1]   NA 10.9 12.9  4.8  8.9 10.2  8.1  4.0  7.2 10.3  7.9  6.2  3.4  0.7  0.6
 ## [16]  1.2</code></pre>
-<pre class="r"><code>#Copy and list printed values lagging the values by one month
+<pre class="r"><code>#Copy and list printed values lagging the values by two months
 aa1&lt;-&quot;NA&quot;
 aa2&lt;-&quot;NA&quot;
-aa3&lt;-&quot;10.9&quot;
-aa4&lt;-&quot;12.9&quot;
-aa5&lt;-&quot;4.8&quot;
-aa6&lt;-&quot;8.9&quot;
-aa7&lt;-&quot;10.2&quot;
-aa8&lt;-&quot;8.1&quot;
-aa9&lt;-&quot;4.0&quot;
-aa10&lt;-&quot;7.2&quot;
-aa11&lt;-&quot;10.3&quot;
-aa12&lt;-&quot;7.9&quot;
-aa13&lt;-&quot;6.2&quot;
-aa14&lt;-&quot;3.4&quot;
-aa15&lt;-&quot;0.7&quot;
-aa16&lt;-&quot;0.6&quot;
+aa3&lt;-&quot;NA&quot;
+aa4&lt;-&quot;10.9&quot;
+aa5&lt;-&quot;12.9&quot;
+aa6&lt;-&quot;4.8&quot;
+aa7&lt;-&quot;8.9&quot;
+aa8&lt;-&quot;10.2&quot;
+aa9&lt;-&quot;8.1&quot;
+aa10&lt;-&quot;4.0&quot;
+aa11&lt;-&quot;7.2&quot;
+aa12&lt;-&quot;10.3&quot;
+aa13&lt;-&quot;7.9&quot;
+aa14&lt;-&quot;6.2&quot;
+aa15&lt;-&quot;3.4&quot;
+aa16&lt;-&quot;0.7&quot;
+
 
 #string these values to a data frame. Using field surveys dates for this site
 by.den&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
@@ -4553,23 +4554,24 @@ check&lt;-by %&gt;% select(date, no.large.fuc.q, lag.no.large.fuc.q)</code></pre
 print(hs$no.large.fuc.q)</code></pre>
 <pre><code>##  [1]   NA  4.0 11.2  6.8  5.2  5.3  2.9 10.2  4.4  7.9  8.9 12.5  7.7  6.7  3.6
 ## [16]  3.3</code></pre>
-<pre class="r"><code>#Copy and list printed values lagging the values by one month
+<pre class="r"><code>#Copy and list printed values lagging the values by two months
 aa1&lt;-&quot;NA&quot;
 aa2&lt;-&quot;NA&quot;
-aa3&lt;-&quot;4.0&quot;
-aa4&lt;-&quot;11.2&quot;
-aa5&lt;-&quot;6.8&quot;
-aa6&lt;-&quot;5.2&quot;
-aa7&lt;-&quot;5.3&quot;
-aa8&lt;-&quot;2.9&quot;
-aa9&lt;-&quot;10.2&quot;
-aa10&lt;-&quot;4.4&quot;
-aa11&lt;-&quot;7.9&quot;
-aa12&lt;-&quot;8.9&quot;
-aa13&lt;-&quot;12.5&quot;
-aa14&lt;-&quot;7.7&quot;
-aa15&lt;-&quot;6.7&quot;
-aa16&lt;-&quot;3.6&quot;
+aa3&lt;-&quot;NA&quot;
+aa4&lt;-&quot;4.0&quot;
+aa5&lt;-&quot;11.2&quot;
+aa6&lt;-&quot;6.8&quot;
+aa7&lt;-&quot;5.2&quot;
+aa8&lt;-&quot;5.3&quot;
+aa9&lt;-&quot;2.9&quot;
+aa10&lt;-&quot;10.2&quot;
+aa11&lt;-&quot;4.4&quot;
+aa12&lt;-&quot;7.9&quot;
+aa13&lt;-&quot;8.9&quot;
+aa14&lt;-&quot;12.5&quot;
+aa15&lt;-&quot;7.7&quot;
+aa16&lt;-&quot;6.7&quot;
+
 
 #string these values to a data frame. Using field surveys dates for this site
 hs.den&lt;-list(c(&#39;2018-06-15&#39;,&#39;2018-07-16&#39;, &#39;2018-08-06&#39;, &#39;2018-09-10&#39;, &#39;2018-10-09&#39;, &#39;2018-11-06&#39;, &#39;2018-12-04&#39;, &#39;2019-01-31&#39;, &#39;2019-02-21&#39;,  &#39;2019-03-14&#39;, &#39;2019-04-09&#39;, &#39;2019-05-08&#39;, &#39;2019-06-08&#39;, &#39;2019-07-20&#39;, &#39;2019-08-04&#39;,&#39;2019-09-12&#39;), c(aa1, aa2, aa3, aa4, aa5, aa6, aa7, aa8, aa9, aa10, aa11, aa12, aa13,aa14,aa15,aa16))
