@@ -374,7 +374,7 @@ CHECK IF TIDAL HEIGHT IS IN FEET OR METERS -&gt;maybe do it “by hand” instea
 <p><strong>Goal of markdown:</strong> To filter out hourly median environmental water data (salinity, pH, and water temperature) during low tide when Fucus is exposed. I will do the opposite for air temperature (keeping data during low tide/when Fucus is exposed).</p>
 <p><strong>Approach:</strong><br />
 - Read in hourly median environmental data and format datetime - Create a df with hourly tidal height (datetime and tide height column) - Align tidal data with environmental data - Remove/replace with NA water data when tidal height is &lt;1m (when fucus is exposed) - Remove/ replace with NA air data when tidal height is &gt;1m (when fucus is submerged)</p>
-<p>Tidal height: For now I have tidal height from Chevron Pier in Richmond but Karina suggested using predictions from SF (which makes more sense given how water flows through the bay). For now I’m keeping the Richmond one but this will be an easy swap. I want to look into another R program becasue I found tidal heigh info at Point Chauncy but it’s not recognizing it for some reason. Something I need to look into more. I’m using a height of 1m for when Fucus is exposed (need to follow up with Ryan about tidal height of fucus). I remove air temeperature data when the tidal height is greater than 1 m for now.</p>
+<p>Tidal height: Using tidal height from North Point, Pier 41, San Francisco, San Francisco Bay, California I’m using a height of 1m for when Fucus is exposed (need to follow up with Ryan about tidal height of fucus). I remove air temeperature data when the tidal height is greater than 1 m for now.</p>
 <p>Links from searches:<br />
 <a href="https://tidesandcurrents.noaa.gov/map/index.shtml?lat=37.88157000000007&amp;lng=-122.46661999999998&amp;zoom=10" class="uri">https://tidesandcurrents.noaa.gov/map/index.shtml?lat=37.88157000000007&amp;lng=-122.46661999999998&amp;zoom=10</a><br />
 <a href="https://search.usa.gov/search?utf8=%E2%9C%93&amp;affiliate=noaa.gov&amp;query=tidal+height+data&amp;commit=" class="uri">https://search.usa.gov/search?utf8=%E2%9C%93&amp;affiliate=noaa.gov&amp;query=tidal+height+data&amp;commit=</a></p>
@@ -394,8 +394,9 @@ library(chron)
 library(plotly)
 library(taRifx)
 library(aweek)
-library(easypackages)
-library(renv)
+library(easypackages)</code></pre>
+<pre><code>## Error in get(genname, envir = envir) : object &#39;testthat_print&#39; not found</code></pre>
+<pre class="r"><code>library(renv)
 library(here)
 library(ggthemes)
 library(gridExtra)
